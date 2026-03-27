@@ -314,11 +314,30 @@ function logout() {
       transition: color 0.3s;
     }
 
+    // Element Plus 图标（如 el-icon）样式
+    :deep(.el-icon) {
+      color: var(--el-text-color-regular);
+      transition: color 0.3s;
+    }
+
     &:hover {
-      background: var(--el-fill-color-light);
+      background: transparent;
 
       :deep([class^="i-svg:"]) {
         color: var(--el-color-primary);
+      }
+
+      :deep(.el-icon) {
+        color: var(--el-color-primary);
+      }
+
+      // 搜索触发器：确保 hover 时是图标变色，而不是只出现边框变化
+      :deep(.command-palette-trigger) {
+        border-color: var(--el-border-color-lighter) !important;
+      }
+
+      :deep(.command-palette-trigger__left [class^="i-svg:"]) {
+        color: var(--el-color-primary) !important;
       }
     }
   }
@@ -335,12 +354,18 @@ function logout() {
       display: flex;
       align-items: center;
       justify-content: center;
+
+      // 给实际渲染的 el-avatar 增加边框
+      :deep(.el-avatar) {
+        border: 1px solid var(--el-color-primary);
+      }
     }
 
     &__avatar {
       flex-shrink: 0;
       width: 28px;
       height: 28px;
+      border: 1px solid var(--el-color-success);
       border-radius: 50%;
     }
 
@@ -350,7 +375,7 @@ function logout() {
       bottom: 0;
       width: 8px;
       height: 8px;
-      background-color: #50b731;
+      background-color: var(--el-color-success);
       border-radius: 50%;
       box-shadow: 0 0 2px rgba(0, 0, 0, 0.2);
     }
@@ -371,11 +396,27 @@ function logout() {
       color: color-mix(in srgb, var(--el-color-white) 85%, transparent);
     }
 
+    :deep(.el-icon) {
+      color: color-mix(in srgb, var(--el-color-white) 85%, transparent);
+    }
+
     &:hover {
-      background: color-mix(in srgb, var(--el-color-white) 10%, transparent);
+      background: transparent;
 
       :deep([class^="i-svg:"]) {
-        color: var(--el-color-white);
+        color: var(--el-color-primary);
+      }
+
+      :deep(.el-icon) {
+        color: var(--el-color-primary);
+      }
+
+      :deep(.command-palette-trigger) {
+        border-color: color-mix(in srgb, var(--el-color-white) 35%, transparent) !important;
+      }
+
+      :deep(.command-palette-trigger__left [class^="i-svg:"]) {
+        color: var(--el-color-primary) !important;
       }
     }
   }
@@ -393,9 +434,17 @@ function logout() {
     }
 
     &:hover {
-      background: rgba(0, 0, 0, 0.04);
+      background: transparent;
 
       :deep([class^="i-svg:"]) {
+        color: var(--el-color-primary) !important;
+      }
+
+      :deep(.command-palette-trigger) {
+        border-color: var(--el-border-color-lighter) !important;
+      }
+
+      :deep(.command-palette-trigger__left [class^="i-svg:"]) {
         color: var(--el-color-primary) !important;
       }
     }

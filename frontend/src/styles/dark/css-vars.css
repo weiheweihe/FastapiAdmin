@@ -205,8 +205,6 @@ html .el-table {
 }
 
 html.dark .el-table {
-  --el-table-header-bg-color: var(--el-fill-color);
-  /* --el-table-striped-row-bg: var(--el-fill-color); */
   --el-table-row-hover-bg-color: var(--el-fill-color-light);
 }
 

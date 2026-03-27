@@ -308,6 +308,7 @@
             trigger="click"
             :persistent="false"
             placement="auto-end"
+            popper-class="node-cron-popover-fix"
           >
             <template #reference>
               <el-input
@@ -830,5 +831,35 @@ onMounted(async () => {
   display: flex;
   justify-content: flex-end;
   margin-top: 16px;
+}
+</style>
+
+<!-- popover 挂载到 body，需单独写；修复 vue3-cron-plus 全局 .el-tag--info { margin-left: -60px } 误伤多选下拉里 tag -->
+<style lang="scss">
+.node-cron-popover-fix {
+  .vue3-cron-plus-container .el-select .el-tag {
+    margin-left: 0 !important;
+  }
+
+  /* 具体秒数等多选行：避免文案与选择器挤在同一行错位 */
+  .vue3-cron-plus-container .tabBody .el-radio.long {
+    align-items: flex-start;
+    height: auto;
+    white-space: normal;
+
+    .el-radio__label {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px 8px;
+      align-items: center;
+      line-height: 1.5;
+    }
+
+    .el-select {
+      flex: 1 1 200px;
+      min-width: 180px;
+      max-width: 100%;
+    }
+  }
 }
 </style>

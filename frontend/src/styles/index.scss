@@ -75,9 +75,45 @@
   background-color: var(--el-color-primary-light-9) !important;
 }
 
+// 经典蓝：激活项背景不使用偏白色，改为蓝系轻色差背景
+html.sidebar-color-blue {
+  .el-menu--vertical .el-menu-item.is-active,
+  .el-menu--popup .el-menu-item.is-active {
+    background-color: var(--menu-hover) !important;
+  }
+}
+
 // 混合布局左侧菜单 hover 不单独覆盖：
 // 统一交给 Element Plus 的 --el-menu-hover-bg-color 与 MenuItem.vue 的通用规则，
 // 确保 Mix-left 与 Left 侧边布局保持一致。
+
+// 暗色：菜单悬浮背景使用主题浅色，避免黑色悬浮
+html.dark .el-menu {
+  .el-menu-item:hover,
+  .el-sub-menu__title:hover {
+    background-color: var(--el-color-primary-light-9) !important;
+  }
+}
+
+html.dark .el-menu--popup {
+  .el-menu-item:hover {
+    background-color: var(--el-color-primary-light-9) !important;
+  }
+}
+
+// 亮色 + 经典蓝：悬浮背景使用经典蓝体系（比底色略深），避免发白
+html.sidebar-color-blue .el-menu {
+  .el-menu-item:hover,
+  .el-sub-menu__title:hover {
+    background-color: var(--menu-hover) !important;
+  }
+}
+
+html.sidebar-color-blue .el-menu--popup {
+  .el-menu-item:hover {
+    background-color: var(--menu-hover) !important;
+  }
+}
 
 // ==================== 窄屏时隐藏菜单文字，只显示图标 ====================
 // 窄屏时隐藏菜单文字，只显示图标
