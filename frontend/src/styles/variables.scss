@@ -30,13 +30,15 @@
 
 :root {
   --menu-background: #fff; // 菜单背景色
+  /* Logo 与侧栏导航同一底（亮色；暗色见 html.dark 与 css-vars --layout-nav-bg） */
+  --sidebar-logo-background: var(--menu-background);
+  --layout-logo-bg: var(--menu-background);
   --menu-text: #212121; // 菜单文字颜色 浅色主题-白色侧边栏配色下仅占位，实际颜色由 el-menu-item 组件决定
   --menu-active-text: var(
     --el-menu-active-color
   ); // 菜单激活文字颜色 浅色主题-白色侧边栏配色下仅占位，实际颜色由 el-menu-item 组件决定
 
   --menu-hover: #e6f4ff; // 菜单悬停背景色 浅色主题-白色侧边栏配色下仅占位，实际颜色由 el-menu-item 组件决定
-  --sidebar-logo-background: #f5f5f5; // 侧边栏 Logo 背景色
   --sidebar-logo-text-color: #333; // 侧边栏 Logo 文字颜色
 }
 
@@ -47,17 +49,18 @@ html.sidebar-color-blue {
   --menu-active-text: var(--el-menu-active-color); // 菜单激活文字颜色
   --menu-hover: #263445; // 菜单悬停背景色
   --el-menu-hover-bg-color: var(--menu-hover); // 顶部/侧边菜单 hover 统一
-  --sidebar-logo-background: #2d3748; // 侧边栏 Logo 背景色
   --sidebar-logo-text-color: #fff; // 侧边栏 Logo 文字颜色
 }
 
 /** 暗黑主题 */
 html.dark {
-  --menu-background: var(--el-bg-color-overlay);
+  /* 侧栏底：与主内容区分区，见 src/styles/dark/css-vars.css --layout-nav-bg */
+  --menu-background: var(--layout-nav-bg);
   --menu-text: #fff;
   --menu-active-text: var(--el-menu-active-color);
   --menu-hover: var(--el-menu-hover-bg-color);
-  --sidebar-logo-background: rgb(0 0 0 / 20%);
+  --sidebar-logo-background: var(--layout-sidebar-logo-bg);
+  --layout-logo-bg: var(--layout-sidebar-logo-bg);
   --sidebar-logo-text-color: #fff;
 
   /** WangEditor Dark */

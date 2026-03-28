@@ -87,7 +87,7 @@ const leftMenuBasePath = computed(() => {
     width: 100%;
     height: $navbar-height;
     color: var(--menu-text);
-    background-color: var(--menu-background);
+    background-color: var(--layout-header-bg, var(--menu-background));
     border-bottom: 1px solid var(--el-border-color-light);
 
     &--with-tags {

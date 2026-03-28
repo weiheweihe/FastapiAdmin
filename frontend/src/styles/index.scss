@@ -116,6 +116,35 @@
   background-color: var(--el-color-primary);
 }
 
+// ==================== 全局原生滚动条（与主题主色混色，Firefox + WebKit） ====================
+* {
+  scrollbar-width: thin;
+  scrollbar-color: var(--app-scrollbar-thumb) var(--app-scrollbar-track);
+}
+
+*::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+*::-webkit-scrollbar-track {
+  background: var(--app-scrollbar-track);
+  border-radius: 4px;
+}
+
+*::-webkit-scrollbar-thumb {
+  background: var(--app-scrollbar-thumb);
+  border-radius: 4px;
+}
+
+*::-webkit-scrollbar-thumb:hover {
+  background: var(--app-scrollbar-thumb-hover);
+}
+
+*::-webkit-scrollbar-corner {
+  background: var(--app-scrollbar-track);
+}
+
 // ==================== 菜单选中态（子菜单） ====================
 // 给左侧/混合左侧以及顶部弹层子菜单的选中项增加背景色，增强可见性
 .el-menu--vertical .el-menu-item.is-active,

@@ -26,13 +26,14 @@ html :root {
   --el-bg-color-overlay: #ffffff;
   --el-fill-color: #e2e8f0;
   --el-fill-color-light: color-mix(in srgb, var(--el-color-primary, #4080ff) 7%, #f1f5f9 93%);
-  --el-border-color: color-mix(in srgb, var(--el-color-primary, #4080ff) 9%, #cbd5e1 91%);
-  --el-border-color-light: color-mix(in srgb, var(--el-color-primary, #4080ff) 11%, #e2e8f0 89%);
-  --el-border-color-lighter: color-mix(in srgb, var(--el-color-primary, #4080ff) 12%, #eceff1 88%);
+  /* 亮色：分割线偏淡（主色比例略降、灰底偏浅） */
+  --el-border-color: color-mix(in srgb, var(--el-color-primary, #4080ff) 6%, #e2e8f0 94%);
+  --el-border-color-light: color-mix(in srgb, var(--el-color-primary, #4080ff) 7.5%, #eef2f7 92.5%);
+  --el-border-color-lighter: color-mix(in srgb, var(--el-color-primary, #4080ff) 8%, #f1f5f9 92%);
   --el-border-color-extra-light: color-mix(
     in srgb,
-    var(--el-color-primary, #4080ff) 10%,
-    #f2f4f8 90%
+    var(--el-color-primary, #4080ff) 5.5%,
+    #f4f6f8 94.5%
   );
   --el-text-color-primary: #0f172a;
   --el-text-color-regular: #475569;
@@ -48,6 +49,23 @@ html :root {
 
   /* 菜单 hover 兼容 */
   --el-menu-hover-bg-color: color-mix(in srgb, var(--el-color-primary, #4080ff) 8%, #f3f6fb 92%);
+
+  /* 全局原生滚动条：轨道浅底 + 滑块混主色（随 theme.ts / --el-color-primary 变） */
+  --app-scrollbar-track: color-mix(in srgb, var(--el-color-primary, #4080ff) 5%, #eef2f7 95%);
+  --app-scrollbar-thumb: color-mix(in srgb, var(--el-color-primary, #4080ff) 35%, #bcc8d4 65%);
+  --app-scrollbar-thumb-hover: color-mix(in srgb, var(--el-color-primary, #4080ff) 48%, #94a3b8 52%);
+
+  /*
+   * 表格：表头 / 斑马 / 行悬停 — 同一主色，深浅分层（亮底；整体偏浅、主色占比低）
+   * 表头略深 → 悬停中等 → 斑马最浅
+   */
+  --el-table-theme-header-bg: color-mix(in srgb, var(--el-color-primary, #4080ff) 8%, #f4f6f9 92%);
+  --el-table-theme-hover-bg: color-mix(in srgb, var(--el-color-primary, #4080ff) 5.5%, var(--el-bg-color-overlay) 94.5%);
+  --el-table-theme-stripe-bg: color-mix(in srgb, var(--el-color-primary, #4080ff) 3%, var(--el-bg-color-overlay) 97%);
+  /*
+   * 表格线：浅灰为主、主色极淡，避免格线抢眼（接近分割线「若有若无」）
+   */
+  --el-table-theme-border-color: color-mix(in srgb, var(--el-color-primary, #4080ff) 4.5%, #eef2f7 95.5%);
 
   /* 画布/分割线交给 Element Plus：不再维护 layout-* 混色变量 */
 
@@ -72,19 +90,30 @@ html :root {
 }
 
 html.dark {
-  /* 基础中性色（暗色画布/分割线同系轻混主色） */
-  --el-bg-color: color-mix(in srgb, var(--el-color-primary, #4080ff) 5%, #0f172a 95%);
-  --el-bg-color-page: var(--el-bg-color);
-  --el-bg-color-overlay: #1e293b;
+  /*
+   * 布局分区（仅暗色）：侧栏主色略高 → 顶栏次之 → 主内容最淡（大面积阅读区）→ 卡片 overlay 略亮
+   */
+  --layout-nav-bg: color-mix(in srgb, var(--el-color-primary, #4080ff) 6.5%, #101828 93.5%);
+  --layout-header-bg: color-mix(in srgb, var(--el-color-primary, #4080ff) 5%, #121a2a 95%);
+  --layout-content-bg: color-mix(in srgb, var(--el-color-primary, #4080ff) 4%, #0f172a 96%);
+  /* Logo 区与侧栏同一底（左侧布局下与 .layout__sidebar / --menu-background 一致，避免色差条） */
+  --layout-sidebar-logo-bg: var(--layout-nav-bg);
+  /* 卡片/表格面板：比主内容略「抬」一点 */
+  --el-bg-color-overlay: color-mix(in srgb, var(--el-color-primary, #4080ff) 6%, #1e293b 94%);
+
+  /* 基础中性色（画布 = 主内容区） */
+  --el-bg-color: var(--layout-content-bg);
+  --el-bg-color-page: var(--layout-content-bg);
   --el-fill-color: #1e293b;
   --el-fill-color-light: color-mix(in srgb, var(--el-color-primary, #4080ff) 8%, #334155 92%);
-  --el-border-color: color-mix(in srgb, var(--el-color-primary, #4080ff) 12%, #334155 88%);
-  --el-border-color-light: color-mix(in srgb, var(--el-color-primary, #4080ff) 10%, #475569 90%);
-  --el-border-color-lighter: color-mix(in srgb, var(--el-color-primary, #4080ff) 12%, #3d4f69 88%);
+  /* 暗色：缝隙/分割线略深一层，区划更清晰 */
+  --el-border-color: color-mix(in srgb, var(--el-color-primary, #4080ff) 14%, #334155 86%);
+  --el-border-color-light: color-mix(in srgb, var(--el-color-primary, #4080ff) 12%, #475569 88%);
+  --el-border-color-lighter: color-mix(in srgb, var(--el-color-primary, #4080ff) 13%, #3d4f69 87%);
   --el-border-color-extra-light: color-mix(
     in srgb,
-    var(--el-color-primary, #4080ff) 10%,
-    #334155 90%
+    var(--el-color-primary, #4080ff) 11%,
+    #334155 89%
   );
   --el-text-color-primary: #f8fafc;
   --el-text-color-regular: #e2e8f0;
@@ -99,7 +128,21 @@ html.dark {
   --el-overlay-color-lighter: rgba(0, 0, 0, 0.3);
 
   /* 菜单 hover 兼容 */
-  --el-menu-hover-bg-color: color-mix(in srgb, var(--el-color-primary, #4080ff) 10%, #1b2a45 90%);
+  --el-menu-hover-bg-color: color-mix(in srgb, var(--el-color-primary, #4080ff) 9.5%, #1b2a45 90.5%);
+
+  /* 暗色全局滚动条：与主内容区协调，滑块略柔 */
+  --app-scrollbar-track: color-mix(in srgb, var(--el-color-primary, #4080ff) 7.5%, #0f172a 92.5%);
+  --app-scrollbar-thumb: color-mix(in srgb, var(--el-color-primary, #4080ff) 33%, #475569 67%);
+  --app-scrollbar-thumb-hover: color-mix(in srgb, var(--el-color-primary, #4080ff) 46%, #64748b 54%);
+
+  /*
+   * 表格：暗底整体偏浅一档，主色占比降低，更接近面板底 --el-bg-color-overlay
+   */
+  --el-table-theme-header-bg: color-mix(in srgb, var(--el-color-primary, #4080ff) 11%, #243044 89%);
+  --el-table-theme-hover-bg: color-mix(in srgb, var(--el-color-primary, #4080ff) 7.5%, var(--el-bg-color-overlay) 92.5%);
+  --el-table-theme-stripe-bg: color-mix(in srgb, var(--el-color-primary, #4080ff) 4%, var(--el-bg-color-overlay) 96%);
+  /* 表格线：暗色下偏柔，与 overlay 接近、略亮一线即可辨认 */
+  --el-table-theme-border-color: color-mix(in srgb, var(--el-color-primary, #4080ff) 9%, #3d4f63 91%);
 
   /* 画布/分割线/Tags hover 不再维护 layout-* 混色变量 */
 
@@ -211,15 +254,24 @@ html.dark .el-progress-bar__outer {
 html .el-table {
   --el-table-bg-color: var(--el-bg-color-overlay);
   --el-table-tr-bg-color: var(--el-bg-color-overlay);
-  --el-table-header-bg-color: var(--el-fill-color-light);
-  --el-table-striped-row-bg: var(--el-fill-color-light);
-  --el-table-row-hover-bg-color: var(--el-fill-color);
-}
-
-html.dark .el-table {
-  --el-table-row-hover-bg-color: var(--el-fill-color-light);
+  --el-table-header-bg-color: var(--el-table-theme-header-bg);
+  --el-table-striped-row-bg: var(--el-table-theme-stripe-bg);
+  --el-table-row-hover-bg-color: var(--el-table-theme-hover-bg);
+  --el-table-border-color: var(--el-table-theme-border-color);
+  --el-table-border: 1px solid var(--el-table-border-color);
 }
 
 html .el-table.el-table--striped {
-  --el-fill-color-lighter: var(--el-table-striped-row-bg);
+  --el-fill-color-lighter: var(--el-table-theme-stripe-bg);
+}
+
+/*
+ * Element Plus 自绘滚动条（el-scrollbar）：侧栏菜单、表格 body、TagsView、分页等
+ * EP 默认 --el-scrollbar-bg-color 为 text-secondary + 低透明度，与主题无关；此处与上方「全局原生滚动条」同色
+ */
+html .el-scrollbar {
+  --el-scrollbar-bg-color: var(--app-scrollbar-thumb);
+  --el-scrollbar-hover-bg-color: var(--app-scrollbar-thumb-hover);
+  --el-scrollbar-opacity: 1;
+  --el-scrollbar-hover-opacity: 1;
 }
