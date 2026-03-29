@@ -107,17 +107,11 @@ function syncMenuActive(val: string) {
   menuRef.value?.updateActiveIndex(val);
 }
 
+// 仅 nextTick 一次同步；若侧栏 default-active 偶发与路由不同步，可恢复为多次 syncMenuActive（见本文件 git 历史）
 watch(
   activeMenuPath,
   (val) => {
-    nextTick(() => {
-      syncMenuActive(val);
-      requestAnimationFrame(() => {
-        syncMenuActive(val);
-        setTimeout(() => syncMenuActive(val), 0);
-        setTimeout(() => syncMenuActive(val), 50);
-      });
-    });
+    nextTick(() => syncMenuActive(val));
   },
   { immediate: true, flush: "post" }
 );
