@@ -4,7 +4,6 @@ from fastapi import APIRouter, Body, Depends, Path
 from fastapi.responses import JSONResponse
 
 from app.api.v1.module_system.auth.schema import AuthSchema
-from app.common.request import PaginationService
 from app.common.response import ResponseSchema, StreamResponse, SuccessResponse
 from app.core.base_params import PaginationQueryParam
 from app.core.dependencies import AuthPermission
@@ -15,6 +14,7 @@ from app.utils.common_util import bytes2file_response
 from .schema import (
     GenCreateTableSqlBody,
     GenDBTableSchema,
+    GenSyncPreviewSchema,
     GenTableOutSchema,
     GenTableQueryParam,
     GenTableSchema,
@@ -82,12 +82,12 @@ async def get_gen_db_table_list_controller(
     返回:
     - JSONResponse: 包含查询结果和分页信息的JSON响应
     """
-    # 表名来自 ORM Inspector 全量遍历，无法在单条 SQL 中 LIMIT；先取全量再分页
-    result_dict_list = await GenTableService.get_gen_db_table_list_service(auth=auth, search=search)
-    result_dict = await PaginationService.paginate(
-        data_list=result_dict_list,
+    # 优化：数据库侧分页（MySQL information_schema / Postgres pg_catalog），避免全量反射导致卡顿
+    result_dict = await GenTableService.get_gen_db_table_page_service(
+        auth=auth,
         page_no=page.page_no,
         page_size=page.page_size,
+        search=search,
     )
     log.info("获取数据库表列表成功")
     return SuccessResponse(data=result_dict, msg="获取数据库表列表成功")
@@ -336,3 +336,17 @@ async def sync_db_controller(
     result = await GenTableService.sync_db_service(auth, table_name)
     log.info(f"同步数据库,表名：{table_name},成功")
     return SuccessResponse(msg="同步数据库成功", data=result)
+
+
+@GenRouter.get(
+    "/sync_db/preview/{table_name}",
+    summary="同步数据库差异预览",
+    description="同步数据库前差异预览（主表 + 可选子表），不落库",
+    response_model=ResponseSchema[GenSyncPreviewSchema],
+)
+async def sync_db_preview_controller(
+    table_name: Annotated[str, Path(description="表名")],
+    auth: Annotated[AuthSchema, Depends(AuthPermission(["module_generator:db:sync"]))],
+) -> JSONResponse:
+    result = await GenTableService.sync_db_preview_service(auth, table_name)
+    return SuccessResponse(msg="获取同步差异预览成功", data=result)

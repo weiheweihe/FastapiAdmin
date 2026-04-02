@@ -18,9 +18,9 @@
       <template #toolbar="{ toolbarRight, onToolbar, removeIds, cols }">
         <CrudToolbarLeft
           :remove-ids="removeIds"
-          :perm-create="['module_example:demo:demo01:create']"
-          :perm-delete="['module_example:demo:demo01:delete']"
-          :perm-patch="['module_example:demo:demo01:patch']"
+          :perm-create="['module_example:demo01:create']"
+          :perm-delete="['module_example:demo01:delete']"
+          :perm-patch="['module_example:demo01:patch']"
           @add="handleOpenDialog('create')"
           @delete="onToolbar('delete')"
           @more="handleMoreClick"
@@ -139,7 +139,7 @@
             >
               <template #default="scope">
                 <el-button
-                  v-hasPerm="['module_example:demo:demo01:detail']"
+                  v-hasPerm="['module_example:demo01:detail']"
                   type="info"
                   size="small"
                   link
@@ -149,7 +149,7 @@
                   详情
                 </el-button>
                 <el-button
-                  v-hasPerm="['module_example:demo:demo01:update']"
+                  v-hasPerm="['module_example:demo01:update']"
                   type="primary"
                   size="small"
                   link
@@ -159,7 +159,7 @@
                   编辑
                 </el-button>
                 <el-button
-                  v-hasPerm="['module_example:demo:demo01:delete']"
+                  v-hasPerm="['module_example:demo01:delete']"
                   type="danger"
                   size="small"
                   link
@@ -269,11 +269,7 @@ import { ref, reactive, onMounted, markRaw, nextTick } from "vue";
 import { fetchAllPages } from "@/utils/fetchAllPages";
 import { ElMessageBox } from "element-plus";
 import { ResultEnum } from "@/enums/api/result.enum";
-import Demo01API, {
-  Demo01Table,
-  Demo01Form,
-  Demo01PageQuery,
-} from "@/api/module_example/demo01/demo01";
+import Demo01API, { Demo01Table, Demo01Form, Demo01PageQuery } from "@/api/module_example/demo01";
 import CrudToolbarLeft from "@/components/CURD/CrudToolbarLeft.vue";
 import CrudToolbarRight from "@/components/CURD/CrudToolbarRight.vue";
 import PageSearch from "@/components/CURD/PageSearch.vue";
@@ -290,7 +286,7 @@ function triggerUserSearch() {
 }
 
 const searchConfig = reactive<ISearchConfig>({
-  permPrefix: "module_example:demo:demo01",
+  permPrefix: "module_example:demo01",
   colon: true,
   isExpandable: true,
   showNumber: 2,
@@ -401,7 +397,7 @@ function normalizeDemo01Query(params: Record<string, unknown>) {
 }
 
 const contentConfig = reactive<IContentConfig<Demo01PageQuery>>({
-  permPrefix: "module_example:demo:demo01",
+  permPrefix: "module_example:demo01",
   hideColumnFilter: false,
   initialFetch: false,
   cols: contentCols as IContentConfig["cols"],

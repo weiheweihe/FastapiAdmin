@@ -16,7 +16,7 @@ from app.utils.common_util import bytes2file_response
 from .schema import Demo01CreateSchema, Demo01OutSchema, Demo01QueryParam, Demo01UpdateSchema
 from .service import Demo01Service
 
-Demo01Router = APIRouter(route_class=OperationLogRoute, prefix="/demo/demo01", tags=["示例01模块"])
+Demo01Router = APIRouter(route_class=OperationLogRoute, prefix="/demo01", tags=["示例01模块"])
 
 
 @Demo01Router.get(
@@ -27,7 +27,7 @@ Demo01Router = APIRouter(route_class=OperationLogRoute, prefix="/demo/demo01", t
 )
 async def get_obj_detail_controller(
     id: Annotated[int, Path(description="示例ID")],
-    auth: Annotated[AuthSchema, Depends(AuthPermission(["module_example:demo:demo01:detail"]))],
+    auth: Annotated[AuthSchema, Depends(AuthPermission(["module_example:demo01:detail"]))],
 ) -> JSONResponse:
     """
     获取示例01详情
@@ -53,7 +53,7 @@ async def get_obj_detail_controller(
 async def get_obj_list_controller(
     page: Annotated[PaginationQueryParam, Depends()],
     search: Annotated[Demo01QueryParam, Depends()],
-    auth: Annotated[AuthSchema, Depends(AuthPermission(["module_example:demo:demo01:query"]))],
+    auth: Annotated[AuthSchema, Depends(AuthPermission(["module_example:demo01:query"]))],
 ) -> JSONResponse:
     """
     查询示例01列表
@@ -86,7 +86,7 @@ async def get_obj_list_controller(
 )
 async def create_obj_controller(
     data: Demo01CreateSchema,
-    auth: Annotated[AuthSchema, Depends(AuthPermission(["module_example:demo:demo01:create"]))],
+    auth: Annotated[AuthSchema, Depends(AuthPermission(["module_example:demo01:create"]))],
 ) -> JSONResponse:
     """
     创建示例01
@@ -112,7 +112,7 @@ async def create_obj_controller(
 async def update_obj_controller(
     data: Demo01UpdateSchema,
     id: Annotated[int, Path(description="示例ID")],
-    auth: Annotated[AuthSchema, Depends(AuthPermission(["module_example:demo:demo01:update"]))],
+    auth: Annotated[AuthSchema, Depends(AuthPermission(["module_example:demo01:update"]))],
 ) -> JSONResponse:
     """
     修改示例01
@@ -138,7 +138,7 @@ async def update_obj_controller(
 )
 async def delete_obj_controller(
     ids: Annotated[list[int], Body(description="ID列表")],
-    auth: Annotated[AuthSchema, Depends(AuthPermission(["module_example:demo:demo01:delete"]))],
+    auth: Annotated[AuthSchema, Depends(AuthPermission(["module_example:demo01:delete"]))],
 ) -> JSONResponse:
     """
     删除示例01
@@ -163,7 +163,7 @@ async def delete_obj_controller(
 )
 async def batch_set_available_obj_controller(
     data: BatchSetAvailable,
-    auth: Annotated[AuthSchema, Depends(AuthPermission(["module_example:demo:demo01:patch"]))],
+    auth: Annotated[AuthSchema, Depends(AuthPermission(["module_example:demo01:patch"]))],
 ) -> JSONResponse:
     """
     批量修改示例01状态
@@ -187,7 +187,7 @@ async def batch_set_available_obj_controller(
 )
 async def export_obj_list_controller(
     search: Annotated[Demo01QueryParam, Depends()],
-    auth: Annotated[AuthSchema, Depends(AuthPermission(["module_example:demo:demo01:export"]))],
+    auth: Annotated[AuthSchema, Depends(AuthPermission(["module_example:demo01:export"]))],
 ) -> StreamingResponse:
     """
     导出示例01
@@ -218,7 +218,7 @@ async def export_obj_list_controller(
 )
 async def import_obj_list_controller(
     file: UploadFile,
-    auth: Annotated[AuthSchema, Depends(AuthPermission(["module_example:demo:demo01:import"]))],
+    auth: Annotated[AuthSchema, Depends(AuthPermission(["module_example:demo01:import"]))],
 ) -> JSONResponse:
     """
     导入示例01
@@ -241,7 +241,7 @@ async def import_obj_list_controller(
     "/download/template",
     summary="获取示例01导入模板",
     description="获取示例01导入模板",
-    dependencies=[Depends(AuthPermission(["module_example:demo:demo01:download"]))],
+    dependencies=[Depends(AuthPermission(["module_example:demo01:download"]))],
 )
 async def export_obj_template_controller() -> StreamingResponse:
     """

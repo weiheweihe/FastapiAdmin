@@ -1,3 +1,4 @@
+import re
 from dataclasses import dataclass
 
 from fastapi import Query
@@ -45,15 +46,19 @@ class GenTableColumnSchema(BaseModel):
     is_unique: bool = Field(default=False, description="是否唯一（True是 False否）")
     python_type: str = Field(default="str", description="python类型")
     python_field: str = Field(default="", description="python字段名")
-    is_insert: bool = Field(default=True, description="是否为插入字段（True是 False否）")
-    is_edit: bool = Field(default=True, description="是否编辑字段（True是 False否）")
-    is_list: bool = Field(default=True, description="是否列表字段（True是 False否）")
-    is_query: bool = Field(default=True, description="是否查询字段（True是 False否）")
+    # 这些开关若默认 True，会导致导入/同步时无法触发自动推断（如主键 id 误入新增/编辑/列表/查询）
+    # 约定：None 表示“未配置”，由 GenUtils.init_column_field 推断填充
+    is_insert: bool | None = Field(default=None, description="是否为新增字段（True是 False否）")
+    is_edit: bool | None = Field(default=None, description="是否编辑字段（True是 False否）")
+    is_list: bool | None = Field(default=None, description="是否列表字段（True是 False否）")
+    is_query: bool | None = Field(default=None, description="是否查询字段（True是 False否）")
     query_type: str | None = Field(
         default=None, description="查询方式（等于、不等于、大于、小于、范围）"
     )
+    # html_type 若给默认值会导致导入/同步时无法触发自动推断（全部变成 input）
+    # 约定：None 表示“未配置”，由 GenUtils.init_column_field 推断填充
     html_type: str | None = Field(
-        default="input",
+        default=None,
         description="显示类型（文本框、文本域、下拉框、复选框、单选框、日期控件）",
     )
     dict_type: str | None = Field(default="", description="字典类型")
@@ -107,13 +112,86 @@ class GenTableSchema(BaseModel):
 
     columns: list["GenTableColumnOutSchema"] | None = Field(default=None, description="表列信息")
 
+    @staticmethod
+    def _normalize_slug_segment(v: str, *, allow_slash: bool = False) -> str:
+        """
+        将输入规范成工程约定的路径片段：
+        - 小写
+        - 只保留 a-z 0-9 _
+        - 连续 _ 合并
+        - 首字符不能是数字（则前置 _）
+        - allow_slash=True 时允许多段 path（每段分别规范）
+        """
+        raw = (v or "").strip()
+        if not raw:
+            return ""
+        if allow_slash:
+            segs = [s for s in raw.strip("/").split("/") if s.strip()]
+            norm = [GenTableSchema._normalize_slug_segment(s, allow_slash=False) for s in segs]
+            norm = [s for s in norm if s]
+            return "/".join(norm)
+        s = raw.lower()
+        s = re.sub(r"[^a-z0-9_]+", "_", s)
+        s = re.sub(r"_+", "_", s).strip("_")
+        if not s:
+            return ""
+        if s[0].isdigit():
+            s = "_" + s
+        return s
+
     @field_validator("table_name")
     @classmethod
     def table_name_update(cls, v: str) -> str:
         """更新表名称"""
         if not v:
             raise ValueError("表名称不能为空")
-        return v
+        return v.strip()
+
+    @field_validator(
+        "table_comment",
+        "class_name",
+        "function_name",
+        "description",
+        mode="before",
+    )
+    @classmethod
+    def strip_optional_text_fields(cls, v: str | None) -> str | None:
+        """文本类字段统一去首尾空格；空串视为 None。"""
+        if v is None:
+            return None
+        s = str(v).strip()
+        return s if s else None
+
+    @field_validator("package_name", mode="before")
+    @classmethod
+    def normalize_package_name(cls, v: str | None) -> str | None:
+        """包名规范：必须是 module_xxx 形态（工程约定）。"""
+        if v is None:
+            return None
+        s = cls._normalize_slug_segment(str(v), allow_slash=False)
+        if not s:
+            return None
+        return s if s.startswith("module_") else f"module_{s}"
+
+    @field_validator("module_name", mode="before")
+    @classmethod
+    def normalize_module_name(cls, v: str | None) -> str | None:
+        """模块名规范：示例模式下要求不带 module_ 前缀；统一按 slug 规范。"""
+        if v is None:
+            return None
+        s = cls._normalize_slug_segment(str(v), allow_slash=False)
+        if not s:
+            return None
+        return s[7:] if s.startswith("module_") else s
+
+    @field_validator("business_name", mode="before")
+    @classmethod
+    def normalize_business_name(cls, v: str | None) -> str | None:
+        """业务名允许多段：demo/demo01；统一按 slug 规范。"""
+        if v is None:
+            return None
+        s = cls._normalize_slug_segment(str(v), allow_slash=True)
+        return s if s else None
 
     @field_validator("sub_table_name", "sub_table_fk_name", mode="before")
     @classmethod
@@ -131,12 +209,39 @@ class GenTableOutSchema(GenTableSchema, BaseSchema):
     model_config = ConfigDict(from_attributes=True)
 
     pk_column: GenTableColumnOutSchema | None = Field(default=None, description="主键信息")
-    sub_table: GenTableSchema | None = Field(default=None, description="子表信息")
+    # 子表同样需要携带 columns/pk_column 等输出字段，使用 OutSchema 便于模板与类型检查
+    sub_table: "GenTableOutSchema | None" = Field(default=None, description="子表信息")
     sub: bool | None = Field(default=None, description="是否为子表")
     master_sub_hint: str | None = Field(
         default=None,
         description="主子表配置说明或异常提示（仅接口输出，不落库）",
     )
+
+
+class GenSyncColumnChange(BaseModel):
+    """同步差异：单个字段的变化项（用于预览，不落库）。"""
+
+    model_config = ConfigDict(from_attributes=True)
+
+    column_name: str = Field(..., description="列名")
+    change_fields: list[str] = Field(default_factory=list, description="变化字段名列表")
+    before: dict = Field(default_factory=dict, description="同步前（当前 gen 配置）摘要")
+    after: dict = Field(default_factory=dict, description="同步后（来自 DB）摘要")
+
+
+class GenSyncPreviewSchema(BaseModel):
+    """同步数据库前的差异预览（主表 + 可选子表）。"""
+
+    model_config = ConfigDict(from_attributes=True)
+
+    table_name: str = Field(..., description="表名")
+    added: list[str] = Field(default_factory=list, description="新增列（DB有、gen无）")
+    removed: list[str] = Field(default_factory=list, description="删除列（gen有、DB无）")
+    changed: list[GenSyncColumnChange] = Field(default_factory=list, description="变更列（同名但属性变化）")
+    unchanged: int = Field(default=0, description="未变化列数（同名且关键属性一致）")
+
+    sub_table_name: str | None = Field(default=None, description="子表表名")
+    sub: "GenSyncPreviewSchema | None" = Field(default=None, description="子表差异（若配置了主子表）")
 
 
 @dataclass

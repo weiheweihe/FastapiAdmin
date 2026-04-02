@@ -22,7 +22,13 @@
         <code>demo/demo01</code>
         、
         <code>gen_demo02</code>
-        对照）。动态路由将
+        对照）。权限为
+        <code>包名:模块名:操作</code>
+        ，第三段是操作类型（如
+        <code>query</code>
+        、
+        <code>create</code>
+        ），与业务目录名无关。动态路由将
         <code>module_xxx</code>
         映射为接口前缀
         <code>/xxx</code>
@@ -55,9 +61,9 @@ const rows = [
 
 <style scoped lang="scss">
 .gencode-help-collapse {
+  overflow: hidden;
   border: 1px solid var(--el-border-color-lighter);
   border-radius: var(--el-border-radius-base);
-  overflow: hidden;
 }
 
 .gencode-help-collapse :deep(.el-collapse-item__header) {
@@ -99,7 +105,7 @@ const rows = [
 .gencode-help-footnote code {
   padding: 0 4px;
   font-size: 11px;
-  border-radius: 3px;
   background: var(--el-fill-color);
+  border-radius: 3px;
 }
 </style>

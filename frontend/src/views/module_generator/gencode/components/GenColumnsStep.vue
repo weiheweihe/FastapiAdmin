@@ -35,7 +35,7 @@
         class="gencode-column-filter"
         :prefix-icon="Search"
       />
-      <el-tag size="small" type="info">批量设置</el-tag>
+      <span class="gencode-bulk-hint">批量设置：</span>
       <el-space size="small">
         <el-dropdown>
           <el-button size="small" type="primary" plain>查询</el-button>
@@ -81,7 +81,7 @@
         v-loading="loading"
         :data="displayColumns"
         row-key="id"
-        max-height="520"
+        max-height="580"
         highlight-current-row
         border
         stripe
@@ -89,6 +89,17 @@
         <template #empty>
           <el-empty :image-size="80" description="暂无数据" />
         </template>
+        <el-table-column label="拖拽" width="56" fixed align="center">
+          <template #default>
+            <span
+              class="gencode-drag-handle"
+              :class="{ disabled: !!columnKeyword.trim() }"
+              title="拖拽排序（筛选时禁用）"
+            >
+              <el-icon><Rank /></el-icon>
+            </span>
+          </template>
+        </el-table-column>
         <el-table-column label="序号" type="index" width="60" fixed />
         <el-table-column
           label="列名"
@@ -104,7 +115,7 @@
         />
         <el-table-column label="长度" prop="column_length" width="80" :show-overflow-tooltip="true">
           <template #default="scope">
-            <el-input v-model="scope.row.column_length" :disabled="scope.row.is_pk === '1'" />
+            <el-input v-model="scope.row.column_length" :disabled="!!scope.row.is_pk" />
           </template>
         </el-table-column>
         <el-table-column label="注释" min-width="60">
@@ -174,7 +185,7 @@
           :show-overflow-tooltip="true"
         >
           <template #default="scope">
-            <el-input v-model="scope.row.column_default" :disabled="scope.row.is_pk === '1'" />
+            <el-input v-model="scope.row.column_default" :disabled="!!scope.row.is_pk" />
           </template>
         </el-table-column>
         <el-table-column label="自增" width="60">
@@ -235,8 +246,9 @@
 </template>
 
 <script setup lang="ts">
-import { computed, ref } from "vue";
+import { computed, onBeforeUnmount, onMounted, ref, watch, nextTick } from "vue";
 import { Search } from "@element-plus/icons-vue";
+import { useDraggable } from "vue-draggable-plus";
 import type { GenTableSchema } from "@/api/module_generator/gencode";
 import type { DictTable } from "@/api/module_system/dict";
 
@@ -250,6 +262,17 @@ const props = defineProps<{
 }>();
 
 const columnKeyword = ref("");
+const dragTable = ref<any>(null);
+const dragContainer = ref<HTMLElement | null>(null);
+let draggableApi: { destroy?: () => void; pause?: () => void; start?: () => void } | null = null;
+
+const columnsModel = computed({
+  get: () => props.info.columns || [],
+  set: (v) => {
+    // props.info 是父组件传入的 reactive 对象，可以直接回写
+    props.info.columns = v as any;
+  },
+});
 
 const displayColumns = computed(() => {
   const cols = props.info.columns || [];
@@ -260,6 +283,56 @@ const displayColumns = computed(() => {
     const comment = String(c.column_comment ?? "").toLowerCase();
     return name.includes(q) || comment.includes(q);
   });
+});
+
+function syncSortNumbers() {
+  const cols = columnsModel.value || [];
+  cols.forEach((c: any, idx: number) => {
+    c.sort = idx + 1;
+  });
+}
+
+async function setupRowDraggable() {
+  // 筛选状态下禁用拖拽：displayColumns 是子集，直接拖拽会导致索引映射混乱
+  if (columnKeyword.value.trim()) {
+    draggableApi?.destroy?.();
+    draggableApi = null;
+    dragContainer.value = null;
+    return;
+  }
+
+  await nextTick();
+  const el = dragTable.value?.$el as HTMLElement | undefined;
+  const tbody = el?.querySelector?.(".el-table__body-wrapper tbody") as HTMLElement | null;
+  if (!tbody) return;
+  dragContainer.value = tbody;
+
+  // 重新绑定
+  draggableApi?.destroy?.();
+  draggableApi = useDraggable(dragContainer, columnsModel, {
+    animation: 150,
+    draggable: "tr",
+    handle: ".gencode-drag-handle:not(.disabled)",
+    onEnd() {
+      syncSortNumbers();
+    },
+  });
+}
+
+onMounted(() => {
+  void setupRowDraggable();
+});
+
+watch(
+  () => [columnKeyword.value, (props.info.columns || []).length],
+  async () => {
+    await setupRowDraggable();
+  }
+);
+
+onBeforeUnmount(() => {
+  draggableApi?.destroy?.();
+  draggableApi = null;
 });
 </script>
 
@@ -274,5 +347,29 @@ const displayColumns = computed(() => {
 .gencode-column-filter {
   width: 200px;
   max-width: 100%;
+}
+
+.gencode-bulk-hint {
+  font-size: 12px;
+  color: var(--el-text-color-secondary);
+  user-select: none;
+}
+
+.gencode-drag-handle {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 22px;
+  font-size: 14px;
+  line-height: 1;
+  color: var(--el-text-color-secondary);
+  cursor: grab;
+  user-select: none;
+}
+
+.gencode-drag-handle.disabled {
+  cursor: not-allowed;
+  opacity: 0.35;
 }
 </style>

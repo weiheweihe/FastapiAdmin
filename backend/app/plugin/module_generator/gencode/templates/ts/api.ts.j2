@@ -1,12 +1,8 @@
 import request from "@/utils/request";
 
-{% if is_example_style %}
-// module_example 约定：API 路径 /example/{模块}/{业务?}（与 module_example 示例一致）
-const API_PATH = "/{{ api_route_prefix }}/{{ module_name }}{% if business_name %}/{{ business_name|lower }}{% endif %}";
-{% else %}
-// 旧约定：discover 中 module_xxx → 前缀 /{{ api_route_prefix }}
-const API_PATH = "/{{ api_route_prefix }}/{{ business_name|lower }}";
-{% endif %}
+// API 前缀来自分系统包 module_xxx → /xxx
+// 对齐 module_example/demo：业务接口固定为 /{prefix}/{module_name}
+const API_PATH = "/{{ api_route_prefix }}/{{ module_name }}";
 
 const {{ class_name }}API = {
   // 列表查询
@@ -102,7 +98,8 @@ export default {{ class_name }}API;
 export interface {{ class_name }}PageQuery extends PageQuery {
   {% for column in columns %}
   {# query_type 为 BETWEEN 的字段由范围查询或单独字段表达，勿生成标量；勿使用不存在的 column.column #}
-  {% if column.is_query and column.query_type != "BETWEEN" and column.column_name not in ['created_time', 'updated_time'] %}
+  {# 主键列默认不参与查询（避免 id 混入搜索类型）；若确需查询请在模板中单独放开 #}
+  {% if column.is_query and column.column_name != pk_column_name and column.query_type != "BETWEEN" and column.column_name not in ['created_time', 'updated_time'] %}
   {# LIKE 走字符串；EQ 等与列 python_type 一致（来自 DB→Python 映射） #}
   {{ column.column_name }}?: {{
     'string' if column.query_type == 'LIKE'

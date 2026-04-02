@@ -12,7 +12,6 @@
       <el-step title="字段配置" />
       <el-step title="预览代码" />
     </el-steps>
-    <p v-if="stepHintText" class="gencode-step-hint">{{ stepHintText }}</p>
 
     <div class="gencode-drawer-step-wrap mt-4">
       <div v-show="activeStep === 0">
@@ -104,13 +103,6 @@ import GenPreviewStep from "./GenPreviewStep.vue";
 
 defineOptions({ name: "GenCodeDrawer" });
 
-/** 每步一行，细则在基础配置页的折叠「对照表」 */
-const STEP_HINTS = [
-  "配置包名、模块名与上级目录；点「下一步」保存并进入字段页（规则见本页折叠说明）。",
-  "批量设置可快速改列表/查询；点「下一步」保存并加载预览。",
-  "左侧点文件看代码；「下载」=ZIP；「写入本地」=服务端落盘并创建菜单。",
-] as const;
-
 const props = defineProps<{
   info: GenTableSchema;
   rules: FormRules;
@@ -126,7 +118,6 @@ const props = defineProps<{
   bulkSet: (field: string | string[], value: unknown) => void;
 }>();
 
-const stepHintText = computed(() => STEP_HINTS[props.activeStep] ?? "");
 const nextStepButtonLabel = computed(() =>
   props.activeStep === 0 ? "下一步：字段配置" : "下一步：预览代码"
 );
@@ -156,15 +147,8 @@ const emit = defineEmits<{
 /* 新版 ElDrawer 内部用 Splitter，size 需为百分比或纯数字(px)，勿用 min()，否则面板宽度可能异常 */
 .gencode-drawer-step-wrap {
   max-height: calc(100vh - 220px);
+  padding-right: 6px;
   overflow-x: hidden;
   overflow-y: auto;
-  padding-right: 6px;
-}
-
-.gencode-step-hint {
-  margin: 10px 0 0;
-  font-size: 13px;
-  line-height: 1.5;
-  color: var(--el-text-color-secondary);
 }
 </style>

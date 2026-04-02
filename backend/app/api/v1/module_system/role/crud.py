@@ -66,7 +66,12 @@ class RoleCRUD(CRUDBase[RoleModel, RoleCreateSchema, RoleUpdateSchema]):
         - None
         """
         roles = await self.list(search={"id": ("in", role_ids)})
-        menus = await MenuCRUD(self.auth).get_list_crud(search={"id": ("in", menu_ids)})
+        # 前端未勾选时 menu_ids 可能为空：此时应清空关联，而不是触发全量查询
+        menus = (
+            []
+            if not menu_ids
+            else await MenuCRUD(self.auth).get_list_crud(search={"id": ("in", menu_ids)})
+        )
 
         for obj in roles:
             relationship = obj.menus
@@ -99,7 +104,12 @@ class RoleCRUD(CRUDBase[RoleModel, RoleCreateSchema, RoleUpdateSchema]):
         - None
         """
         roles = await self.list(search={"id": ("in", role_ids)})
-        depts = await DeptCRUD(self.auth).get_list_crud(search={"id": ("in", dept_ids)})
+        # 前端未勾选时 dept_ids 可能为空：此时应清空关联，而不是触发全量查询
+        depts = (
+            []
+            if not dept_ids
+            else await DeptCRUD(self.auth).get_list_crud(search={"id": ("in", dept_ids)})
+        )
 
         for obj in roles:
             relationship = obj.depts

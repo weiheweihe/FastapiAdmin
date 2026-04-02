@@ -98,6 +98,14 @@ const GencodeAPI = {
       method: "post",
     });
   },
+
+  // 同步数据库差异预览（不落库）
+  syncDbPreview(table_name: string) {
+    return request<ApiResponse<GenSyncPreviewSchema>>({
+      url: `${API_PATH}/sync_db/preview/${table_name}`,
+      method: "get",
+    });
+  },
 };
 
 export default GencodeAPI;
@@ -112,108 +120,80 @@ export interface GeneratorPreviewVO {
   content: string;
 }
 
-/** 代码生成表分页查询参数 */
-export interface DBTablePageQuery extends PageQuery {
-  /** 表名称 */
-  table_name?: string;
-  /** 表描述 */
-  table_comment?: string;
-}
-
-/**数据库表基本信息接口 */
-export interface DBTableSchema {
-  database_name?: string;
-  table_name?: string;
-  table_comment?: string;
-  table_type?: string;
-}
-
-/** 代码生成表分页查询参数 */
-export interface GenTablePageQuery extends PageQuery {
-  /** 表名称 */
-  table_name?: string;
-  /** 表描述 */
-  table_comment?: string;
-}
-
-/** 代码生成业务表模型 */
+/** 业务表结构 */
 export interface GenTableSchema extends BaseType {
-  /** 表名称 */
   table_name?: string;
-  /** 表描述 */
   table_comment?: string;
-  /** 关联子表的表名 */
-  sub_table_name?: string;
-  /** 关联子表的外键名 */
-  sub_table_fk_name?: string;
-  /** 实体类名称 */
   class_name?: string;
-  /** 生成包路径 */
   package_name?: string;
-  /** 生成模块名 */
   module_name?: string;
-  /** 功能子目录与接口路径段；导入默认表名；同模块多表须不同；可嵌套如 demo/demo01，参见 module_example */
   business_name?: string;
-  /** 生成功能名 */
   function_name?: string;
-  /** 写入本地：有上级→页面路由 /包名/业务名；无上级→页面路由 /module_包名/业务名；后端 API 仍为 /短名/业务 */
+  description?: string;
   parent_menu_id?: number;
-  /** 表列信息 */
-  columns: GenTableColumnSchema[];
-  /** 主键信息 */
-  pk_column?: GenTableColumnSchema;
-  /** 子表信息 */
-  sub_table?: GenTableSchema;
-  /** 是否为子表 */
   sub?: boolean;
-  /** 主子表配置提示（仅展示，保存后由后端根据库表刷新） */
-  master_sub_hint?: string;
-  created_by?: CommonType;
-  updated_by?: CommonType;
+  sub_table_name?: string;
+  sub_table_fk_name?: string;
+  master_sub_hint?: string | null;
+  pk_column?: GenTableColumnSchema;
+  columns: GenTableColumnSchema[];
+  sub_table?: GenTableSchema;
 }
 
-/** 代码生成业务表列模型 */
 export interface GenTableColumnSchema extends BaseType {
-  /** 归属表编号 */
   table_id?: number;
-  /** 列名称 */
-  column_name: string;
-  /** 列描述 */
+  column_name?: string;
   column_comment?: string;
-  /** 列类型 */
   column_type?: string;
-  /** 列长度 */
   column_length?: string;
-  /** 列默认值 */
   column_default?: string;
-  /** PYTHON类型 */
-  python_type?: string;
-  /** PYTHON字段名 */
-  python_field?: string;
-  /** 是否主键（1是） */
   is_pk?: boolean;
-  /** 是否自增（1是） */
   is_increment?: boolean;
-  /** 是否必填（1是） */
   is_nullable?: boolean;
-  /** 是否唯一（1是） */
   is_unique?: boolean;
-  /** 是否为新增字段（1是） */
-  is_insert?: boolean;
-  /** 是否编辑字段（1是） */
-  is_edit?: boolean;
-  /** 是否列表字段（1是） */
-  is_list?: boolean;
-  /** 是否查询字段（1是） */
-  is_query?: boolean;
-  /** 查询方式（等于、不等于、大于、小于、范围） */
-  query_type?: string;
-  /** 显示类型（文本框、文本域、下拉框、复选框、单选框、日期控件） */
-  html_type?: string;
-  /** 字典类型 */
-  dict_type?: string;
-  /** 排序 */
   sort?: number;
-  created_by?: CommonType;
-  updated_by?: CommonType;
+  python_type?: string;
+  python_field?: string;
+  html_type?: string | null;
+  dict_type?: string;
+  is_insert?: boolean | null;
+  is_edit?: boolean | null;
+  is_list?: boolean | null;
+  is_query?: boolean | null;
+  query_type?: string | null;
+}
+
+/** 查询参数：生成表 */
+export interface GenTablePageQuery extends PageQuery {
+  table_name?: string;
+  table_comment?: string;
+}
+
+/** 查询参数：DB 表 */
+export interface DBTablePageQuery extends PageQuery {
+  table_name?: string;
+  table_comment?: string;
+}
+
+export interface DBTableSchema {
+  table_name: string;
+  table_comment?: string;
+  create_time?: string;
+  update_time?: string;
+}
+
+export interface GenSyncColumnChange {
+  column_name: string;
+  before?: Record<string, any> | null;
+  after?: Record<string, any> | null;
+  changed_keys?: string[];
+}
+
+export interface GenSyncPreviewSchema {
+  table_name: string;
+  added: string[];
+  removed: string[];
+  unchanged: string[];
+  changed: GenSyncColumnChange[];
+  sub_tables?: GenSyncPreviewSchema[];
 }

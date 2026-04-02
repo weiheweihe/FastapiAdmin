@@ -8,8 +8,8 @@ from typing import Any
 import anyio
 import sqlglot
 from sqlglot.expressions import (
-    Add,
     Alter,
+    Comment,
     Create,
     Delete,
     Drop,
@@ -20,6 +20,7 @@ from sqlglot.expressions import (
 )
 
 from app.api.v1.module_system.auth.schema import AuthSchema
+from app.common.constant import GenConstant
 from app.config.path_conf import BASE_DIR
 from app.config.setting import settings
 from app.core.exceptions import CustomException
@@ -27,6 +28,8 @@ from app.core.logger import log
 
 from .crud import GenTableColumnCRUD, GenTableCRUD
 from .schema import (
+    GenSyncColumnChange,
+    GenSyncPreviewSchema,
     GenTableColumnOutSchema,
     GenTableColumnSchema,
     GenTableOutSchema,
@@ -57,10 +60,40 @@ class GenTableService:
     """代码生成业务表服务层"""
 
     @classmethod
-    def _is_example_style(cls, package_name: str | None, module_name: str | None) -> bool:
-        """委托 ``Jinja2TemplateUtil.is_example_style``，保证与模板/路径逻辑一致。"""
-        return Jinja2TemplateUtil.is_example_style(package_name, module_name)
+    async def _effective_package_name(
+        cls, auth: AuthSchema, parent_catalog_id: int | None, package_name: str | None
+    ) -> str:
+        """根据「是否选择上级目录」计算最终包名（分系统根目录）。
 
+        规则（与你描述一致）：
+        - **未选上级目录**：认为是「新分系统」，包名固定为 ``module_目录``（即 ``module_xxx``）。
+        - **已选上级目录**：认为是「分系统内新模块」，包名继承上级目录对应的 ``module_xxx``。
+        """
+        pn = (package_name or "").strip()
+        # 1) 选择上级目录：从上级菜单 route_path 第一段推断 module_xxx
+        if parent_catalog_id is not None:
+            from app.api.v1.module_system.menu.crud import MenuCRUD
+
+            m = await MenuCRUD(auth).get_by_id_crud(parent_catalog_id)
+            if not m:
+                raise CustomException(msg="上级菜单不存在")
+            route_path = (getattr(m, "route_path", None) or "").strip()
+            # 期望形如 /module_xxx 或 /module_xxx/yyy
+            seg = route_path.strip("/").split("/", 1)[0] if route_path else ""
+            seg = (seg or "").strip()
+            if seg:
+                return seg if seg.startswith("module_") else f"module_{seg}"
+            # 路由缺失则回退包名字段
+            if pn:
+                return pn if pn.startswith("module_") else f"module_{pn}"
+            raise CustomException(msg="无法从上级目录推断分系统包名，请先完善上级目录路由")
+
+        # 2) 未选上级目录：以包名字段为准，并确保 module_ 前缀
+        if not pn:
+            raise CustomException(msg="包名不能为空")
+        return pn if pn.startswith("module_") else f"module_{pn}"
+
+    @classmethod
     @classmethod
     async def _assert_parent_menu_is_catalog(cls, auth: AuthSchema, parent_menu_id: int | None) -> None:
         """上级菜单仅允许目录：与前端树只展示目录一致，避免挂到菜单/按钮下。"""
@@ -80,30 +113,14 @@ class GenTableService:
     ) -> str:
         """前端页面路由首段（与菜单 ``route_path`` 第一段一致）。
 
-        - **有上级目录**：使用 ``package_name``（如 ``/gencode/业务``）。
-        - **无上级**：使用 ``module_name``（如 ``module_gencode`` → ``/module_gencode/业务``），与侧栏第一层目录一致。
-
-        说明：后端 HTTP API 仍由动态路由 ``module_xxx → /xxx`` 映射，与此前端路径可不同。
+        统一规则：始终使用分系统包名 ``module_xxx`` 作为路由首段。
+        - **无上级目录**：``/module_xxx/...``（新分系统）
+        - **有上级目录**：``/module_xxx/...``（继承上级所属分系统）
         """
         pn = (package_name or "").strip()
-        mn = (module_name or "").strip()
-        is_ex = cls._is_example_style(pn, mn)
-        if parent_catalog_id is not None:
-            if not pn:
-                raise CustomException(msg="包名不能为空")
-            return pn
-        # 无上级：示例模式首段为插件包目录 module_xxx；旧模式首段为 module_xxx（原 module_name 字段）
-        if is_ex:
-            if not pn:
-                raise CustomException(msg="包名不能为空")
-            return pn if pn.startswith("module_") else f"module_{pn}"
-        if mn:
-            return mn
         if not pn:
-            raise CustomException(msg="包名或模块名至少填写一项以生成路由")
-        if pn.startswith("module_"):
-            return pn
-        return f"module_{pn}"
+            raise CustomException(msg="包名不能为空")
+        return pn if pn.startswith("module_") else f"module_{pn}"
 
     @classmethod
     def _catalog_menu_dir_key(
@@ -111,34 +128,17 @@ class GenTableService:
     ) -> str:
         """菜单上「模块目录」节点的 name（与路由第一段 package 独立）。
 
-        - 有上级目录：``包名（不带 module_ 前缀）``，侧栏为 上级 → 短包名 → 功能菜单 → 按钮。
-        - 无上级：``module_包名``，与 ``plugin/module_xxx`` 目录一致，侧栏为 module_包名 → 功能 → 按钮。
+        统一为 **目录 → 菜单 → 按钮**：
+        - 目录节点固定为 ``module_name``（你填写的“模块”）
+        - 是否选择上级目录，仅影响分系统根 ``module_xxx`` 的推断方式（见 ``_effective_package_name``）
         """
         pn = (package_name or "").strip()
         mn = (module_name or "").strip()
-        is_ex = cls._is_example_style(pn, mn)
-        if parent_catalog_id is not None:
-            if not pn:
-                raise CustomException(msg="包名不能为空")
-            base = pn[len("module_") :] if pn.startswith("module_") else pn
-            # 示例模式：同一包下多模块须区分目录节点，避免 name 都为短包名导致串单
-            if is_ex and mn:
-                return f"{base}_{mn}"
-            if pn.startswith("module_"):
-                return base
-            return pn
-        if is_ex:
-            if not pn or not mn:
-                raise CustomException(msg="包名、模块名不能为空")
-            # 根侧栏：按「包+模块」唯一，避免多模块共用一个目录菜单
-            return f"{pn}_{mn}"
-        if mn:
-            return mn
         if not pn:
-            raise CustomException(msg="包名或模块名至少填写一项以生成菜单目录")
-        if pn.startswith("module_"):
-            return pn
-        return f"module_{pn}"
+            raise CustomException(msg="包名不能为空")
+        if not mn:
+            raise CustomException(msg="模块名不能为空")
+        return mn
 
     @classmethod
     async def _get_or_create_package_directory_menu(
@@ -157,8 +157,6 @@ class GenTableService:
         if not pn:
             raise CustomException(msg="包名不能为空")
         mn = (module_name or "").strip()
-        bn = (business_name or "").strip()
-        is_ex = cls._is_example_style(pn, mn)
         dir_key = cls._catalog_menu_dir_key(parent_catalog_id, pn, module_name)
 
         if parent_catalog_id is not None:
@@ -176,13 +174,11 @@ class GenTableService:
             return int(existing.id)
 
         route_first = cls._menu_route_first_segment(parent_catalog_id, pn, module_name)
-        # 示例模式：目录菜单对应「包/模块」路径；默认跳到模块根，避免多模块共用一个 redirect 指向某一业务
-        if is_ex:
-            catalog_route_path = f"/{route_first}/{mn}"
-            redirect = f"/{route_first}/{mn}"
-        else:
-            catalog_route_path = f"/{route_first}"
-            redirect = f"/{route_first}/{bn}" if bn else f"/{route_first}"
+        # 目录菜单固定跳到模块根：/{module_xxx}/{module_name}
+        catalog_route_path = f"/{route_first}/{mn}"
+        redirect = f"/{route_first}/{mn}"
+        # route_name 须唯一且体现「分系统+模块目录」，勿仅用 package（会与 module_example 根混淆）
+        catalog_route_name = CamelCaseUtil.snake_to_camel(f"{route_first}_{mn}")
         created = await menu_crud.create(
             MenuCreateSchema(
                 name=dir_key,
@@ -190,7 +186,7 @@ class GenTableService:
                 order=9999,
                 permission=None,
                 icon="menu",
-                route_name=CamelCaseUtil.snake_to_camel(route_first),
+                route_name=catalog_route_name,
                 route_path=catalog_route_path,
                 component_path=None,
                 redirect=redirect,
@@ -291,6 +287,28 @@ class GenTableService:
         """
         gen_db_table_list_result = await GenTableCRUD(auth=auth).get_db_table_list(search)
         return gen_db_table_list_result
+
+    @classmethod
+    @handle_service_exception
+    async def get_gen_db_table_page_service(
+        cls,
+        auth: AuthSchema,
+        page_no: int,
+        page_size: int,
+        search: GenTableQueryParam,
+    ) -> dict[str, Any]:
+        """数据库表列表分页（数据库侧 OFFSET/LIMIT）。"""
+        offset = (page_no - 1) * page_size
+        items, total = await GenTableCRUD(auth=auth).get_db_table_page(
+            search=search, offset=offset, limit=page_size
+        )
+        return {
+            "items": items,
+            "total": total,
+            "page_no": page_no,
+            "page_size": page_size,
+            "has_next": offset + page_size < total,
+        }
 
     @classmethod
     @handle_service_exception
@@ -399,19 +417,16 @@ class GenTableService:
             if not sql_statements:
                 raise CustomException(msg="无法解析SQL语句，请检查SQL语法")
 
-            # 校验sql语句是否为合法的建表语句
-            validate_create = [
-                isinstance(sql_statement, Create) for sql_statement in sql_statements
-            ]
-            validate_forbidden_keywords = [
-                isinstance(
-                    sql_statement,
-                    (Add, Alter, Delete, Drop, Insert, TruncateTable, Update),
-                )
-                for sql_statement in sql_statements
-            ]
-            if not any(validate_create) or any(validate_forbidden_keywords):
-                raise CustomException(msg="sql语句不是合法的建表语句")
+            # 校验 SQL 是否为合法的建表语句集合：
+            # - 允许：CREATE TABLE + COMMENT ON TABLE/COLUMN +（可选）ALTER TABLE ADD CONSTRAINT ... FOREIGN KEY ...
+            # - 禁止：DROP/DELETE/INSERT/UPDATE/TRUNCATE 等破坏性语句
+            has_create = any(isinstance(s, Create) for s in sql_statements)
+            if not has_create:
+                raise CustomException(msg="sql语句不是合法的建表语句：缺少 CREATE TABLE")
+
+            forbidden = (Delete, Drop, Insert, TruncateTable, Update)
+            if any(isinstance(s, forbidden) for s in sql_statements):
+                raise CustomException(msg="sql语句包含禁止的关键操作（DROP/DELETE/INSERT/UPDATE/TRUNCATE）")
 
             # 获取要创建的表名
             table_names = []
@@ -440,10 +455,28 @@ class GenTableService:
 
             # 表不存在，执行SQL语句创建表
             for sql_statement in sql_statements:
-                if not isinstance(sql_statement, Create):
+                # 只执行白名单语句：Create / Comment /（受限）Alter
+                if not isinstance(sql_statement, (Create, Comment, Alter)):
                     continue
                 exc_sql = sql_statement.sql(dialect=settings.DATABASE_TYPE)
                 log.info(f"执行SQL语句: {exc_sql}")
+
+                # ALTER 仅允许添加外键约束，避免任意 ALTER 带来的破坏性
+                if isinstance(sql_statement, Alter):
+                    upper = exc_sql.upper()
+                    allow = (
+                        "ALTER TABLE" in upper
+                        and "ADD" in upper
+                        and "CONSTRAINT" in upper
+                        and "FOREIGN KEY" in upper
+                        and "DROP" not in upper
+                        and "RENAME" not in upper
+                        and "SET " not in upper
+                    )
+                    if not allow:
+                        raise CustomException(
+                            msg="仅允许 ALTER TABLE ADD CONSTRAINT ... FOREIGN KEY ...（拒绝其它 ALTER）"
+                        )
                 if not await gen_table_crud.execute_sql(exc_sql):
                     raise CustomException(msg=f"执行SQL语句 {exc_sql} 失败，请检查数据库")
             return True
@@ -588,6 +621,17 @@ class GenTableService:
         await cls.set_pk_column(gen_table)
         await cls.hydrate_sub_table(auth, gen_table)
         cls._assert_master_sub_config_valid(gen_table)
+        # 预览回显的路径/包名规则必须与「写入本地」一致：
+        # - 选择上级目录：继承上级目录所属 module_xxx
+        # - 未选上级目录：使用表单包名（并补齐 module_ 前缀）
+        gen_table.package_name = await cls._effective_package_name(
+            auth, gen_table.parent_menu_id, gen_table.package_name
+        )
+        # 子表与主表同分系统/同模块
+        if gen_table.sub and gen_table.sub_table:
+            gen_table.sub_table.package_name = gen_table.package_name
+            if not (gen_table.sub_table.module_name or "").strip():
+                gen_table.sub_table.module_name = gen_table.module_name
         env = Jinja2TemplateUtil.get_env()
         context = Jinja2TemplateUtil.prepare_context(gen_table)
         template_list = Jinja2TemplateUtil.get_template_list()
@@ -621,9 +665,13 @@ class GenTableService:
         """生成代码至指定路径（安全写入+可跳过覆盖）。
 
         菜单固定为 **目录(type=1) + 菜单(type=2) + 按钮(type=3)**：
-        - **有上级目录**：``上级目录 / 包名(无 module_ 前缀) / 功能菜单 / 按钮``；页面路由 ``/包名/业务名``。
-        - **无上级**：``module_包名 / 功能菜单 / 按钮``；页面路由 ``/module_包名/业务名``（与侧栏第一层一致）。
-        - 后端 HTTP 接口仍为动态路由前缀 ``/短名``（``module_xxx``→``/xxx``），与前端页面路由可不同。
+        - **目录层(name)**：固定为你填写的 ``module_name``（模块）
+        - **分系统根(package_name)**：
+          - 选上级目录：继承上级目录所属 ``module_xxx``
+          - 未选上级目录：使用你填写的包名（自动补齐 ``module_`` 前缀）
+        - **页面路由**：``/{module_xxx}/{module_name}/{business_path}``
+        - **组件路径**：``module_xxx/module_name/business_path/index``
+        - **后端 HTTP 接口前缀**：由动态路由发现容器提供 ``/xxx``（``module_xxx``→去掉 ``module_``）
 
         参数:
         - auth (AuthSchema): 认证信息。
@@ -643,25 +691,17 @@ class GenTableService:
         from app.api.v1.module_system.menu.schema import MenuCreateSchema
         from app.utils.common_util import CamelCaseUtil
 
-        is_ex = cls._is_example_style(gen_table_schema.package_name, gen_table_schema.module_name)
-        if is_ex:
-            if not (gen_table_schema.module_name or "").strip():
-                raise CustomException(msg="模块名称不能为空")
-            pn = (gen_table_schema.package_name or "").strip()
-            mn = (gen_table_schema.module_name or "").strip()
-            raw_bn = (gen_table_schema.business_name or "").strip()
-            perm_segs = [pn, mn]
-            if raw_bn:
-                perm_segs.extend(s for s in raw_bn.split("/") if s)
-            permission_prefix = ":".join(perm_segs)
-            _slug_src = raw_bn or mn
-            _business_route_slug = Jinja2TemplateUtil.business_name_to_slug(_slug_src)
-        else:
-            if not gen_table_schema.business_name:
-                raise CustomException(msg="业务名称不能为空")
-            _bn_perm = (gen_table_schema.business_name or "").strip().replace("/", ":")
-            permission_prefix = f"{gen_table_schema.module_name}:{_bn_perm}"
-            _business_route_slug = Jinja2TemplateUtil.business_name_to_slug(gen_table_schema.business_name)
+        # 按“上级目录”规则矫正最终包名（分系统根）
+        gen_table_schema.package_name = await cls._effective_package_name(
+            auth, gen_table_schema.parent_menu_id, gen_table_schema.package_name
+        )
+        # 统一权限前缀（对齐 module_example/demo）：
+        # - module_xxx:module_name（操作在按钮/模板中追加 :query/:create...）
+        pn = (gen_table_schema.package_name or "").strip()
+        mn = (gen_table_schema.module_name or "").strip()
+        if not mn:
+            raise CustomException(msg="模块名不能为空")
+        permission_prefix = ":".join([s for s in [pn, mn] if s])
         # 创建菜单 CRUD 实例
         menu_crud = MenuCRUD(auth)
         if not gen_table_schema.function_name:
@@ -693,18 +733,14 @@ class GenTableService:
             gen_table_schema.package_name or "",
             gen_table_schema.module_name,
         )
-        if is_ex:
-            _pn = (gen_table_schema.package_name or "").strip()
-            _mn = (gen_table_schema.module_name or "").strip()
-            _bn = (gen_table_schema.business_name or "").strip()
-            _rsegs = [route_seg, _mn]
-            if _bn:
-                _rsegs.extend(s for s in _bn.split("/") if s)
-            _route_path = "/" + "/".join(_rsegs)
-            _component_path = f"{_pn}/{_mn}" + (f"/{_bn}" if _bn else "") + "/index"
-        else:
-            _route_path = f"/{route_seg}/{gen_table_schema.business_name}"
-            _component_path = f"{gen_table_schema.module_name}/{gen_table_schema.business_name}/index"
+        _pn = (gen_table_schema.package_name or "").strip()
+        _mn = (gen_table_schema.module_name or "").strip()
+        if not _mn:
+            raise CustomException(msg="模块名不能为空")
+
+        # 与 Jinja2TemplateUtil.get_file_name 统一：module_xxx/{module_name}
+        _route_path = f"/{route_seg}/{_mn}"
+        _component_path = f"{_pn}/{_mn}/index"
         # 创建功能菜单（类型=2：菜单）
         parent_menu = await menu_crud.create(
             MenuCreateSchema(
@@ -713,7 +749,8 @@ class GenTableService:
                 order=9999,
                 permission=f"{permission_prefix}:query",
                 icon="menu",
-                route_name=CamelCaseUtil.snake_to_camel(_business_route_slug),
+                # route_name 使用模块名（对齐 module_example/demo：/example/demo）
+                route_name=CamelCaseUtil.snake_to_camel(_mn),
                 route_path=_route_path,
                 component_path=_component_path,
                 redirect=None,
@@ -817,20 +854,20 @@ class GenTableService:
                         raise CustomException(msg="【代码生成】生成路径为空")
                     os.makedirs(os.path.dirname(gen_path), exist_ok=True)
                     await anyio.Path(gen_path).write_text(render_content, encoding="utf-8")
-                    plugin_root = (
-                        (table_schema.package_name or "").strip()
-                        if cls._is_example_style(table_schema.package_name, table_schema.module_name)
-                        else (table_schema.module_name or "").strip()
-                    )
-                    if plugin_root:
-                        module_init_path = BASE_DIR.parent.joinpath(
-                            f"backend/app/plugin/{plugin_root}/__init__.py"
-                        )
-                        if not module_init_path.exists():
-                            os.makedirs(os.path.dirname(module_init_path), exist_ok=True)
-                            await anyio.Path(module_init_path).write_text(
-                                "# -*- coding: utf-8 -*-", encoding="utf-8"
-                            )
+                    # Python 插件目录需保证包层级可导入：为分系统/模块目录补齐 __init__.py
+                    # 生成规则固定为 backend/app/plugin/{module_xxx}/{module_name}/...
+                    pn = (table_schema.package_name or "").strip()
+                    mn = (table_schema.module_name or "").strip()
+                    if pn and mn:
+                        plugin_base = BASE_DIR.parent.joinpath(f"backend/app/plugin/{pn}")
+                        module_base = plugin_base.joinpath(mn)
+                        for d in (plugin_base, module_base):
+                            init_path = d.joinpath("__init__.py")
+                            if not init_path.exists():
+                                os.makedirs(str(d), exist_ok=True)
+                                await anyio.Path(str(init_path)).write_text(
+                                    "# -*- coding: utf-8 -*-", encoding="utf-8"
+                                )
                 except Exception as e:
                     raise CustomException(
                         msg=f"渲染模板失败，表名：{table_schema.table_name}，详细错误信息：{e!s}"
@@ -904,7 +941,7 @@ class GenTableService:
 
     @classmethod
     @handle_service_exception
-    async def sync_db_service(cls, auth: AuthSchema, table_name: str) -> None:
+    async def sync_db_service(cls, auth: AuthSchema, table_name: str, _sync_sub: bool = True) -> None:
         """
         同步数据库表结构到业务表。
 
@@ -933,29 +970,43 @@ class GenTableService:
         db_table_columns = [col for col in db_table_columns if col is not None]
         db_table_column_names = [column.column_name for column in db_table_columns]
         try:
+            # 参考 RuoYi：同步 DB 元信息，但尽量保留用户“生成配置”字段（dict/html/query/python_field...）
+            preserve_keys = {
+                "dict_type",
+                "query_type",
+                "python_field",
+                "python_type",
+                "is_insert",
+                "is_edit",
+                "is_list",
+                "is_query",
+                "sort",
+            }
+
             for column in db_table_columns:
                 GenUtils.init_column_field(column, table)
                 if column.column_name in table_column_map:
                     prev_column = table_column_map[column.column_name]
-                    if hasattr(prev_column, "id") and prev_column.id:
+                    if getattr(prev_column, "id", None):
                         column.id = prev_column.id
-                    if hasattr(prev_column, "dict_type") and prev_column.dict_type:
-                        column.dict_type = prev_column.dict_type
-                    if hasattr(prev_column, "query_type") and prev_column.query_type:
-                        column.query_type = prev_column.query_type
-                    if hasattr(prev_column, "html_type") and prev_column.html_type:
-                        column.html_type = prev_column.html_type
-                    is_pk_bool = False
-                    if hasattr(prev_column, "is_pk"):
-                        is_pk_bool = (
-                            prev_column.is_pk
-                            if isinstance(prev_column.is_pk, bool)
-                            else str(prev_column.is_pk) == "1"
-                        )
-                    if hasattr(prev_column, "is_nullable") and not is_pk_bool:
+                    prev_dump = prev_column.model_dump() if hasattr(prev_column, "model_dump") else {}
+                    for k in preserve_keys:
+                        if k in prev_dump and prev_dump.get(k) not in (None, ""):
+                            setattr(column, k, prev_dump.get(k))
+                    # html_type：保留用户显式选择的非 input；若仍是默认 input，则允许按 DB 重新推断
+                    prev_html = prev_dump.get("html_type")
+                    if prev_html not in (None, "", GenConstant.HTML_INPUT):
+                        column.html_type = prev_html
+                    # 主键强约束：避免历史配置导致主键出现在新增/编辑/列表/查询
+                    if bool(getattr(column, "is_pk", False)):
+                        column.is_insert = False
+                        column.is_edit = False
+                        column.is_list = False
+                        column.is_query = False
+                        column.query_type = None
+                    # is_nullable：主键列以 DB 为准，其余保留用户设置
+                    if not bool(getattr(column, "is_pk", False)) and hasattr(prev_column, "is_nullable"):
                         column.is_nullable = prev_column.is_nullable
-                    if hasattr(prev_column, "python_field"):
-                        column.python_field = prev_column.python_field or column.python_field
                     if hasattr(column, "id") and column.id:
                         await GenTableColumnCRUD(auth).update_gen_table_column_crud(
                             column.id, column
@@ -977,12 +1028,23 @@ class GenTableService:
                         await GenTableColumnCRUD(auth).delete_gen_table_column_by_column_id_crud([
                             column.id
                         ])
+
+            # 主子表：若子表也已导入生成器，则一并同步子表配置（更接近 RuoYi 体验）
+            sn = (table.sub_table_name or "").strip()
+            fk = (table.sub_table_fk_name or "").strip()
+            if _sync_sub and sn and fk:
+                sub_cfg = await GenTableCRUD(auth).get_gen_table_by_name(sn)
+                if sub_cfg:
+                    await cls.sync_db_service(auth, sn, _sync_sub=False)
         except Exception as e:
             raise CustomException(msg=f"同步失败: {e!s}")
 
     @classmethod
     async def hydrate_sub_table(cls, auth: AuthSchema, gen_table: GenTableOutSchema) -> None:
-        """从数据库加载子表列结构，填充 ``sub_table`` 并设置 ``sub``。"""
+        """主子表：优先使用“已导入的子表配置”，否则回退 DB 结构只读。
+
+        对齐 RuoYi 的更佳体验：子表应当是一个可配置的 gen_table（可单独编辑字段），主表只引用它。
+        """
         gen_table.master_sub_hint = None
         sub_name_raw = (gen_table.sub_table_name or "").strip()
         fk_raw = (gen_table.sub_table_fk_name or "").strip()
@@ -1005,6 +1067,34 @@ class GenTableService:
             gen_table.sub_table = None
             gen_table.master_sub_hint = "子表表名不能与主表表名相同"
             return
+
+        # 1) 若子表已作为 gen_table 导入，则使用其 columns 配置（可控、可复用）
+        try:
+            sub_cfg_model = await GenTableCRUD(auth).get_gen_table_by_name(sub_name_raw, preload=["columns"])
+        except Exception:
+            sub_cfg_model = None
+        if sub_cfg_model:
+            sub_cfg = GenTableOutSchema.model_validate(sub_cfg_model)
+            await cls.set_pk_column(sub_cfg)
+            # 校验外键列存在于子表配置中
+            fk_names = {c.column_name for c in (sub_cfg.columns or []) if c.column_name}
+            if fk_raw not in fk_names:
+                gen_table.sub = False
+                gen_table.sub_table = None
+                gen_table.master_sub_hint = (
+                    f"子表「{sub_name_raw}」已导入生成器，但其字段配置中不存在外键列「{fk_raw}」。"
+                    "请先在子表的字段配置中同步/保存后再生成。"
+                )
+                return
+            gen_table.sub = True
+            gen_table.sub_table = sub_cfg
+            gen_table.master_sub_hint = (
+                "主子表已启用：子表字段来自「已导入的子表配置」（更接近 RuoYi 的方式）。"
+                "如需调整子表字段，请在列表中打开该子表进行配置。"
+            )
+            return
+
+        # 2) 回退：仅从 DB 读取结构（只读，无法配置子表字段）
         try:
             gen_table_columns = await GenTableColumnCRUD(auth).get_gen_db_table_columns_by_name(
                 sub_name_raw
@@ -1031,32 +1121,144 @@ class GenTableService:
             )
             return
         table_comment = await GenTableCRUD(auth).get_db_table_comment(sub_name_raw)
-        sub = GenTableOutSchema(
-            id=-1,
-            table_name=sub_name_raw,
-            table_comment=table_comment or None,
-            class_name=GenUtils.convert_class_name(sub_name_raw),
-            package_name=gen_table.package_name,
-            module_name=gen_table.module_name,
-            business_name=sub_name_raw,
-            function_name=re.sub(r"(?:表|测试)", "", table_comment or "") or sub_name_raw,
-            sub_table_name=None,
-            sub_table_fk_name=None,
-            parent_menu_id=gen_table.parent_menu_id,
-            columns=[],
-            sub=False,
-            sub_table=None,
+        sub = GenTableOutSchema.model_validate(
+            {
+                "id": -1,
+                "table_name": sub_name_raw,
+                "table_comment": table_comment or None,
+                "class_name": GenUtils.convert_class_name(sub_name_raw),
+                "package_name": gen_table.package_name,
+                "module_name": gen_table.module_name,
+                "business_name": sub_name_raw,
+                "function_name": re.sub(r"(?:表|测试)", "", table_comment or "") or sub_name_raw,
+                "sub_table_name": None,
+                "sub_table_fk_name": None,
+                "parent_menu_id": gen_table.parent_menu_id,
+                "columns": [],
+                "sub": False,
+                "sub_table": None,
+            }
         )
         for column in gen_table_columns:
             col_dump = column.model_dump()
             col_dump["table_id"] = -1
             col_schema = GenTableColumnSchema.model_validate(col_dump)
             GenUtils.init_column_field(col_schema, sub)
+            if sub.columns is None:
+                sub.columns = []
             sub.columns.append(GenTableColumnOutSchema(**col_schema.model_dump()))
         await cls.set_pk_column(sub)
         gen_table.sub = True
         gen_table.sub_table = sub
-        gen_table.master_sub_hint = None
+        gen_table.master_sub_hint = (
+            "主子表已启用：当前子表仅从数据库结构读取（只读）。"
+            f"若要像 RuoYi 那样可配置子表字段，请先在「导入」中把子表「{sub_name_raw}」也导入生成器。"
+        )
+
+    @classmethod
+    def _sync_preview_diff(
+        cls,
+        current_cols: list[GenTableColumnOutSchema],
+        db_cols: list[GenTableColumnOutSchema],
+    ) -> tuple[list[str], list[str], list[GenSyncColumnChange], int]:
+        cur_map = {c.column_name: c for c in (current_cols or []) if c and c.column_name}
+        db_map = {c.column_name: c for c in (db_cols or []) if c and c.column_name}
+
+        cur_names = set(cur_map.keys())
+        db_names = set(db_map.keys())
+        added = sorted(db_names - cur_names)
+        removed = sorted(cur_names - db_names)
+
+        changed: list[GenSyncColumnChange] = []
+        unchanged = 0
+
+        keys = [
+            "column_type",
+            "column_comment",
+            "column_default",
+            "column_length",
+            "is_pk",
+            "is_increment",
+            "is_nullable",
+            "is_unique",
+        ]
+        for name in sorted(cur_names & db_names):
+            before = cur_map[name]
+            after = db_map[name]
+            diff_fields: list[str] = []
+            b_dump = before.model_dump()
+            a_dump = after.model_dump()
+            for k in keys:
+                if b_dump.get(k) != a_dump.get(k):
+                    diff_fields.append(k)
+            if diff_fields:
+                changed.append(
+                    GenSyncColumnChange(
+                        column_name=name,
+                        change_fields=diff_fields,
+                        before={k: b_dump.get(k) for k in keys},
+                        after={k: a_dump.get(k) for k in keys},
+                    )
+                )
+            else:
+                unchanged += 1
+
+        return added, removed, changed, unchanged
+
+    @classmethod
+    @handle_service_exception
+    async def sync_db_preview_service(
+        cls, auth: AuthSchema, table_name: str
+    ) -> dict[str, Any]:
+        """同步数据库前差异预览（主表 + 可选子表）。"""
+        if not table_name or not table_name.strip():
+            raise CustomException(msg="表名不能为空")
+        gen_table = await GenTableCRUD(auth).get_gen_table_by_name(table_name, preload=["columns"])
+        if not gen_table:
+            raise CustomException(msg="业务表不存在")
+
+        table = GenTableOutSchema.model_validate(gen_table)
+        if not table.id:
+            raise CustomException(msg="业务表ID不能为空")
+
+        db_cols = await GenTableColumnCRUD(auth).get_gen_db_table_columns_by_name(table_name)
+        added, removed, changed, unchanged = cls._sync_preview_diff(
+            current_cols=table.columns or [],
+            db_cols=db_cols or [],
+        )
+        preview = GenSyncPreviewSchema(
+            table_name=table_name,
+            added=added,
+            removed=removed,
+            changed=changed,
+            unchanged=unchanged,
+        )
+
+        # 子表差异：如果启用主子表，则同时预览子表（无论子表是否已导入）
+        sn = (table.sub_table_name or "").strip()
+        fk = (table.sub_table_fk_name or "").strip()
+        if sn and fk:
+            preview.sub_table_name = sn
+            # 优先取“已导入的子表配置”，否则用 DB 结构（只读）
+            sub_cfg = await GenTableCRUD(auth).get_gen_table_by_name(sn, preload=["columns"])
+            if sub_cfg:
+                cur_sub_cols = GenTableOutSchema.model_validate(sub_cfg).columns or []
+            else:
+                cur_sub_cols = []
+            db_sub_cols = await GenTableColumnCRUD(auth).get_gen_db_table_columns_by_name(sn)
+            s_added, s_removed, s_changed, s_unchanged = cls._sync_preview_diff(
+                current_cols=cur_sub_cols,
+                db_cols=db_sub_cols or [],
+            )
+            preview.sub = GenSyncPreviewSchema(
+                table_name=sn,
+                added=s_added,
+                removed=s_removed,
+                changed=s_changed,
+                unchanged=s_unchanged,
+            )
+
+        return preview.model_dump()
 
     @classmethod
     def _assert_master_sub_config_valid(cls, gen_table: GenTableOutSchema) -> None:
@@ -1117,6 +1319,10 @@ class GenTableService:
         if gen_table_model is None:
             raise CustomException(msg=f"业务表 {table_name} 不存在")
         gen_table = GenTableOutSchema.model_validate(gen_table_model)
+        # 生成代码时按“上级目录”规则矫正最终包名（不落库，仅影响本次生成/预览/下载/写入）
+        gen_table.package_name = await cls._effective_package_name(
+            auth, gen_table.parent_menu_id, gen_table.package_name
+        )
         await cls.set_pk_column(gen_table)
         await cls.hydrate_sub_table(auth, gen_table)
         cls._assert_master_sub_config_valid(gen_table)

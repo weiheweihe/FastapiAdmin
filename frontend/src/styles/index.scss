@@ -152,6 +152,17 @@
   background-color: var(--el-color-primary-light-9) !important;
 }
 
+// ==================== 侧边栏激活项「右侧竖杠」指示条 ====================
+// 仅作用于左侧布局、混合布局左侧侧栏（避免影响顶部菜单与弹层菜单）
+.layout__sidebar,
+.layout__sidebar--left {
+  .el-menu--vertical {
+    .el-menu-item.is-active {
+      box-shadow: inset -3px 0 0 0 var(--menu-active-indicator, var(--el-color-primary));
+    }
+  }
+}
+
 // 经典蓝：激活项背景不使用偏白色，改为蓝系轻色差背景
 html.sidebar-color-blue {
   .el-menu--vertical .el-menu-item.is-active,
@@ -216,5 +227,40 @@ html.sidebar-color-blue .el-menu--popup {
         display: none !important;
       }
     }
+  }
+}
+
+// 代码生成：写入本地确认 — 随内容变宽（不超过视口），路径单行、列表区内横向滚动
+.el-message-box.gencode-write-confirm-box {
+  --gencode-write-confirm-max: min(1100px, calc(100vw - 32px));
+
+  --el-messagebox-width: var(--gencode-write-confirm-max);
+  box-sizing: border-box;
+  width: fit-content !important;
+  min-width: min(360px, calc(100vw - 32px));
+  max-width: var(--gencode-write-confirm-max) !important;
+  padding-bottom: 8px;
+
+  .el-message-box__message {
+    box-sizing: border-box;
+    max-width: 100%;
+    padding-top: 4px;
+  }
+
+  .gencode-write-confirm-body {
+    min-width: 0;
+    max-width: 100%;
+  }
+
+  .gencode-write-path-list-wrap {
+    max-height: 44vh;
+    overflow: auto;
+    border: 1px solid var(--el-border-color-lighter);
+    border-radius: 8px;
+    box-shadow: 0 1px 2px rgb(0 0 0 / 4%);
+  }
+
+  .gencode-write-path-row:last-child {
+    border-bottom: none !important;
   }
 }

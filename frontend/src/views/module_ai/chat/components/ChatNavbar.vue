@@ -98,8 +98,8 @@ const toggleSidebar = () => {
       width: 32px;
       height: 32px;
       padding: 0;
-      cursor: pointer;
       color: var(--el-text-color-regular);
+      cursor: pointer;
       background: transparent;
       border: none;
       border-radius: 4px;

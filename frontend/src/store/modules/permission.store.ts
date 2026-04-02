@@ -41,6 +41,25 @@ export interface RouteVO {
   redirect?: string;
 }
 
+/**
+ * 后端常把「模块目录」与「其下功能菜单」写成同一绝对 route_path（如均为 /module_xxx/demo02）。
+ * Vue Router 嵌套子路由应使用空 path 挂到父 path 下，否则重复绝对路径会导致匹配异常。
+ */
+function normalizeMenuNestedPaths(items: MenuTable[], parentAbsolutePath?: string): MenuTable[] {
+  return items.map((node) => {
+    const raw = (node.route_path ?? "").trim();
+    let routePath: string | null | undefined = node.route_path;
+    if (parentAbsolutePath && raw && raw === parentAbsolutePath) {
+      routePath = "";
+    }
+    const canonical = raw.startsWith("/") ? raw : parentAbsolutePath;
+    const children = node.children?.length
+      ? normalizeMenuNestedPaths(node.children, canonical)
+      : undefined;
+    return { ...node, route_path: routePath, children };
+  });
+}
+
 export const generator = (routers: MenuTable[]): RouteVO[] => {
   return routers.map((item) => {
     const currentRouter: RouteVO = {
@@ -88,7 +107,7 @@ export const usePermissionStore = defineStore("permission", () => {
         await userStore.getUserInfo();
       }
 
-      const data = generator(userStore.routeList);
+      const data = generator(normalizeMenuNestedPaths(userStore.routeList));
 
       // 解析动态路由
       const dynamicRoutes = transformRoutes(data);

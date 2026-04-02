@@ -1,6 +1,6 @@
 import request from "@/utils/request";
 
-const API_PATH = "/example/demo/demo01";
+const API_PATH = "/example/demo01";
 
 const Demo01API = {
   getDemo01List(query: Demo01PageQuery) {

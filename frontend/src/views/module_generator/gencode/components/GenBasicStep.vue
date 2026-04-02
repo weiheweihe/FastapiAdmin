@@ -1,44 +1,11 @@
 <template>
   <el-form ref="formRef" class="gen-basic-step" :model="info" :rules="rules" label-width="120px">
-    <!-- 顶部：对照 + 生成回显（各一块） -->
+    <!-- 顶部：生成回显 -->
     <el-row :gutter="12" class="mb-3">
-      <el-col :span="8">
-        <el-card shadow="never" class="gen-compare-card">
-          <div class="gen-compare-card__title">对照（写入本地时）</div>
-          <div class="gen-compare-card__body">
-            <div class="gen-compare-row">
-              <div class="gen-compare-row__k">有上级</div>
-              <div class="gen-compare-row__v">侧栏：上级 → 短包名 → 菜单 → 按钮</div>
-            </div>
-            <div class="gen-compare-row">
-              <div class="gen-compare-row__k">路由</div>
-              <div class="gen-compare-row__v"><code>/包名/模块/业务?</code></div>
-            </div>
-            <div class="gen-compare-row">
-              <div class="gen-compare-row__k">API</div>
-              <div class="gen-compare-row__v">
-                <code>{{ apiPathPreview }}</code>
-              </div>
-            </div>
-          </div>
-        </el-card>
-      </el-col>
-      <el-col :span="16">
+      <el-col :span="24">
         <el-card shadow="never" class="gen-echo-card">
           <div class="gen-echo-card__title">生成回显 / 生成文件路径</div>
           <div class="gen-echo-grid">
-            <div class="gen-echo-item">
-              <div class="gen-echo-item__k">后端目录</div>
-              <code class="gen-echo-item__v">{{ backendDirPreview }}</code>
-            </div>
-            <div class="gen-echo-item">
-              <div class="gen-echo-item__k">API</div>
-              <code class="gen-echo-item__v">{{ apiPathPreview }}</code>
-            </div>
-            <div class="gen-echo-item">
-              <div class="gen-echo-item__k">权限前缀</div>
-              <code class="gen-echo-item__v">{{ permissionPrefixPreview }}</code>
-            </div>
             <div class="gen-echo-item">
               <div class="gen-echo-item__k">后端路径</div>
               <code class="gen-echo-item__v">{{ backendModuleDirPreview }}</code>
@@ -50,6 +17,18 @@
             <div class="gen-echo-item">
               <div class="gen-echo-item__k">前端 API 文件</div>
               <code class="gen-echo-item__v">{{ frontendApiFilePreview }}</code>
+            </div>
+            <div class="gen-echo-item">
+              <div class="gen-echo-item__k gen-echo-item__k--with-tip">
+                权限
+                <el-tooltip
+                  content="前两段为包名、模块名；第三段为操作类型（与接口/按钮一致）：query、detail、create、update、delete、patch、export、import、download。"
+                  placement="top"
+                >
+                  <el-icon class="gen-echo-item__tip"><QuestionFilled /></el-icon>
+                </el-tooltip>
+              </div>
+              <code class="gen-echo-item__v">{{ permissionPreview }}</code>
             </div>
           </div>
           <div
@@ -105,14 +84,6 @@
                     placeholder="例如 module_example"
                     clearable
                   />
-                  <el-tooltip
-                    content="优先用模块名生成 module_模块名；未填模块名时按表名推导（去掉 gen_/tb_ 前缀后转合法目录名）"
-                    placement="top"
-                  >
-                    <el-button type="primary" plain @click="applySuggestedPackageName">
-                      生成包名
-                    </el-button>
-                  </el-tooltip>
                 </div>
               </el-form-item>
             </el-col>
@@ -251,7 +222,7 @@
 
 <script setup lang="ts">
 import { computed, inject, onUnmounted, ref, watch } from "vue";
-import { ElMessage, type FormInstance, type FormRules } from "element-plus";
+import type { FormInstance, FormRules } from "element-plus";
 import { QuestionFilled } from "@element-plus/icons-vue";
 import type { GenTableSchema } from "@/api/module_generator/gencode";
 import { GENCODE_BASIC_FORM_KEY } from "../gencodeInjectionKeys";
@@ -264,70 +235,58 @@ const props = defineProps<{
   menuOptions: OptionType[];
 }>();
 
-type GenMode = "example" | "legacy";
-
-const genMode = computed<GenMode>(() => {
-  const pkg = (props.info.package_name || "").trim();
-  const mod = (props.info.module_name || "").trim();
-  if (pkg.startsWith("module_") && mod && !mod.startsWith("module_")) return "example";
-  return "legacy";
-});
-
-function apiRoutePrefix(name: string): string {
-  const n = (name || "").trim();
-  if (!n) return "";
-  return n.startsWith("module_") ? n.slice(7) : n;
+function findOptionByValue(options: OptionType[], value: number | string): any | null {
+  for (const opt of options) {
+    if (String(opt.value) === String(value)) return opt as any;
+    if (opt.children?.length) {
+      const hit = findOptionByValue(opt.children, value);
+      if (hit) return hit;
+    }
+  }
+  return null;
 }
 
-const backendDirPreview = computed(() => {
-  const pkg = (props.info.package_name || "").trim();
-  const mod = (props.info.module_name || "").trim();
-  const biz = (props.info.business_name || "").trim();
-  if (genMode.value === "example")
-    return `backend/app/plugin/${pkg}/${mod}${biz ? `/${biz}` : ""}/`;
-  return `backend/app/plugin/${mod}/${biz}/`;
+function inferPackageNameFromParentMenu(): string | null {
+  const pid = props.info.parent_menu_id;
+  if (pid == null) return null;
+  const node = findOptionByValue(props.menuOptions || [], pid);
+  const routePath = (node?.route_path ?? "").toString().trim();
+  if (!routePath) return null;
+  const seg = routePath.replace(/^\/+/, "").split("/", 1)[0]?.trim();
+  if (!seg) return null;
+  return seg.startsWith("module_") ? seg : `module_${seg}`;
+}
+
+const effectivePackageName = computed(() => {
+  return inferPackageNameFromParentMenu() || (props.info.package_name || "").trim();
 });
 
-const apiPathPreview = computed(() => {
-  const pkg = (props.info.package_name || "").trim();
+const permissionPreview = computed(() => {
+  const pkg = effectivePackageName.value;
   const mod = (props.info.module_name || "").trim();
-  const biz = (props.info.business_name || "").trim();
-  if (genMode.value === "example")
-    return `/${apiRoutePrefix(pkg)}/${mod}${biz ? `/${biz.toLowerCase()}` : ""}`;
-  return `/${apiRoutePrefix(mod)}/${biz.toLowerCase()}`;
-});
-
-const permissionPrefixPreview = computed(() => {
-  const pkg = (props.info.package_name || "").trim();
-  const mod = (props.info.module_name || "").trim();
-  const biz = (props.info.business_name || "").trim();
-  if (genMode.value === "example") {
-    const segs = [pkg, mod, ...biz.split("/").filter(Boolean)];
-    return segs.filter(Boolean).join(":");
-  }
-  const b = biz.replaceAll("/", ":");
-  return b ? `${mod}:${b}` : mod;
+  if (!pkg || !mod) return "<module_xxx>:<module>:<操作>";
+  // 与后端 permission_prefix + 模板一致；第三段为操作类型，示例用 query
+  return `${pkg}:${mod}:query`;
 });
 
 const backendModuleDirPreview = computed(() => {
-  const pkg = (props.info.package_name || "").trim();
+  const pkg = effectivePackageName.value;
   const mod = (props.info.module_name || "").trim();
-  const biz = (props.info.business_name || "").trim();
-  return `backend/app/plugin/${pkg}/${mod}${biz ? `/${biz}` : ""}/`;
+  if (!pkg || !mod) return "backend/app/plugin/<module_xxx>/<module>/";
+  return `backend/app/plugin/${pkg}/${mod}/`;
 });
 
 const frontendViewDirPreview = computed(() => {
-  const pkg = (props.info.package_name || "").trim();
+  const pkg = effectivePackageName.value;
   const mod = (props.info.module_name || "").trim();
-  const biz = (props.info.business_name || "").trim();
-  return `frontend/src/views/${pkg}/${mod}${biz ? `/${biz}` : ""}/`;
+  if (!pkg || !mod) return "frontend/src/views/<module_xxx>/<module>/";
+  return `frontend/src/views/${pkg}/${mod}/`;
 });
 
 const frontendApiFilePreview = computed(() => {
-  const pkg = (props.info.package_name || "").trim();
+  const pkg = effectivePackageName.value;
   const mod = (props.info.module_name || "").trim();
-  const biz = (props.info.business_name || "").trim();
-  if (biz) return `frontend/src/api/${pkg}/${biz}/${biz}.ts`;
+  if (!pkg || !mod) return "frontend/src/api/<module_xxx>/<module>.ts";
   return `frontend/src/api/${pkg}/${mod}.ts`;
 });
 
@@ -352,33 +311,22 @@ function slugFromTableName(table: string): string {
   return s || "table";
 }
 
-/** 生成包名：有模块名 → module_模块名；否则 → module_<表名推导> */
-function suggestedPackageName(): string {
-  const mod = (props.info.module_name || "").trim();
-  if (mod) return mod.startsWith("module_") ? mod : `module_${mod}`;
-  const tn = (props.info.table_name || "").trim();
-  if (!tn) return "";
-  const slug = slugFromTableName(tn);
-  return slug ? `module_${slug}` : "";
-}
-
-function applySuggestedPackageName() {
-  const next = suggestedPackageName();
-  if (next) {
-    props.info.package_name = next;
-    ElMessage.success("已填入包名");
-  } else {
-    ElMessage.warning("请先填写模块名或表名称");
-  }
-}
-
 watch(
   () => [props.info.parent_menu_id, props.info.module_name, props.info.table_name] as const,
   () => {
     if (props.info.parent_menu_id != null) return;
     const current = (props.info.package_name || "").trim();
     if (current && current !== "gencode" && current !== "module_gencode") return;
-    const next = suggestedPackageName();
+    const mod = (props.info.module_name || "").trim();
+    const tn = (props.info.table_name || "").trim();
+    const slug = tn ? slugFromTableName(tn) : "";
+    const next = mod
+      ? mod.startsWith("module_")
+        ? mod
+        : `module_${mod}`
+      : slug
+        ? `module_${slug}`
+        : "";
     if (next) props.info.package_name = next;
   },
   { immediate: true }
@@ -399,9 +347,9 @@ onUnmounted(() => {
 
 <style scoped lang="scss">
 .gen-basic-step {
+  box-sizing: border-box;
   width: 100%;
   min-width: 0;
-  box-sizing: border-box;
 }
 
 .gen-basic-step :deep(.el-col) {
@@ -414,14 +362,14 @@ onUnmounted(() => {
 
 .gen-basic-step :deep(.el-input-group) {
   width: 100%;
-  max-width: 100%;
   min-width: 0;
+  max-width: 100%;
 }
 
 .gen-package-row {
   display: flex;
-  align-items: center;
   gap: 8px;
+  align-items: center;
   width: 100%;
   min-width: 0;
 }
@@ -444,8 +392,8 @@ onUnmounted(() => {
 }
 
 .gen-form-card {
-  border: 1px solid var(--el-border-color-lighter);
   overflow-x: hidden;
+  border: 1px solid var(--el-border-color-lighter);
 }
 
 .gen-form-card :deep(.el-card__body) {
@@ -454,9 +402,9 @@ onUnmounted(() => {
 
 .gen-form-card__header {
   display: flex;
+  gap: 12px;
   align-items: baseline;
   justify-content: space-between;
-  gap: 12px;
 }
 
 .gen-form-card__hint {
@@ -465,71 +413,67 @@ onUnmounted(() => {
   white-space: nowrap;
 }
 
-.gen-compare-card,
 .gen-echo-card {
   border: 1px solid var(--el-border-color-lighter);
 }
 
-.gen-compare-card__title,
 .gen-echo-card__title {
   padding: 6px 8px;
   font-size: 11px;
   font-weight: 600;
-  border-bottom: 1px solid var(--el-border-color-lighter);
   background: var(--el-fill-color-light);
+  border-bottom: 1px solid var(--el-border-color-lighter);
 }
 
-.gen-compare-card__body,
 .gen-echo-card :deep(.el-card__body) {
   padding: 6px 8px;
 }
 
-.gen-compare-row {
-  display: grid;
-  grid-template-columns: 52px 1fr;
-  gap: 8px;
-  font-size: 11px;
-  margin-bottom: 4px;
-}
-
-.gen-compare-row:last-child {
-  margin-bottom: 0;
-}
-
-.gen-compare-row__k {
-  color: var(--el-text-color-secondary);
-  white-space: nowrap;
-}
-
-.gen-compare-row__v {
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-}
-
 .gen-echo-grid {
   display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
-  gap: 8px;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 8px 12px;
   padding: 6px 8px;
 }
 
+.gen-echo-item {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+  min-width: 0;
+}
+
 .gen-echo-item__k {
+  flex: 0 0 auto;
+  margin-bottom: 0;
   font-size: 11px;
   color: var(--el-text-color-secondary);
-  margin-bottom: 2px;
   white-space: nowrap;
+}
+
+.gen-echo-item__k--with-tip {
+  display: inline-flex;
+  gap: 4px;
+  align-items: center;
+}
+
+.gen-echo-item__tip {
+  font-size: 12px;
+  color: var(--el-text-color-placeholder);
+  cursor: help;
 }
 
 .gen-echo-item__v {
   display: block;
-  font-size: 11px;
+  flex: 1;
+  min-width: 0;
   padding: 1px 6px;
-  border-radius: 3px;
-  background: var(--el-fill-color);
   overflow: hidden;
   text-overflow: ellipsis;
+  font-size: 11px;
   white-space: nowrap;
+  background: var(--el-fill-color);
+  border-radius: 3px;
 }
 
 .gen-echo-warn {

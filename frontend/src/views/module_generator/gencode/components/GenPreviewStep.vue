@@ -12,9 +12,6 @@
     </el-col>
     <template v-else>
       <el-col :span="24" class="mb-2">
-        <p class="gencode-preview-meta-tip">
-          以下为内存渲染；侧栏与浏览器路由以「基础配置」中的规则为准（写入本地后生效）。
-        </p>
         <div class="flex-y-center gap-3">
           <span class="text-sm color-#909399">预览范围</span>
           <el-radio-group v-model="previewScope" size="small">
@@ -40,7 +37,9 @@
           >
             <template #default="{ data }">
               <div :class="`i-svg:${getFileTreeNodeIcon(data.label)}`" />
-              <span class="ml-1">{{ data.label }}</span>
+              <span class="ml-1" :title="data.full_path || data.label">
+                {{ data.label }}
+              </span>
             </template>
           </el-tree>
         </el-scrollbar>

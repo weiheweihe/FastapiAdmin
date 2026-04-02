@@ -3,7 +3,7 @@ from collections.abc import Sequence
 from typing import TYPE_CHECKING, Any, Generic, TypeVar
 
 from pydantic import BaseModel
-from sqlalchemy import Select, asc, delete, desc, func, select, update
+from sqlalchemy import Select, asc, delete, desc, false, func, select, update
 from sqlalchemy import inspect as sa_inspect
 from sqlalchemy.orm import selectinload
 from sqlalchemy.sql.elements import ColumnElement
@@ -397,8 +397,14 @@ class CRUDBase(Generic[ModelType, CreateSchemaType, UpdateSchemaType]):
                     conditions.append(func.date_format(attr, "%Y-%m") == val)
                 elif seq == "like" and val:
                     conditions.append(attr.like(f"%{val}%"))
-                elif seq == "in" and val:
-                    conditions.append(attr.in_(val))
+                elif seq == "in":
+                    # 通用约定：("in", []) 应当返回空集（恒假），不能跳过条件导致查询退化成全量（仅权限过滤）
+                    if val is None:
+                        continue
+                    if isinstance(val, (list, tuple, set)) and len(val) == 0:
+                        conditions.append(false())
+                    else:
+                        conditions.append(attr.in_(val))
                 elif seq == "between" and isinstance(val, (list, tuple)) and len(val) == 2:
                     conditions.append(attr.between(val[0], val[1]))
                 elif seq == "!=" or (seq == "ne" and val):

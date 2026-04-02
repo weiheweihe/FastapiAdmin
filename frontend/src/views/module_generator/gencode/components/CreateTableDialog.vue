@@ -39,12 +39,6 @@
               <el-dropdown-item command="single-postgres">单表 · PostgreSQL</el-dropdown-item>
               <el-dropdown-item command="master-mysql" divided>主子表 · MySQL</el-dropdown-item>
               <el-dropdown-item command="master-postgres">主子表 · PostgreSQL</el-dropdown-item>
-              <el-dropdown-item command="legacy-mysql" divided>
-                旧版 · MySQL（需 sys_user）
-              </el-dropdown-item>
-              <el-dropdown-item command="legacy-postgres">
-                旧版 · PostgreSQL（需 sys_user）
-              </el-dropdown-item>
             </el-dropdown-menu>
           </template>
         </el-dropdown>
@@ -199,8 +193,6 @@ import {
 import {
   getExampleFromPresetMasterSub,
   getExampleFromPresetSingle,
-  LEGACY_MYSQL_WITH_USER_FK,
-  LEGACY_POSTGRES_WITH_USER_FK,
 } from "../utils/createTableSqlExamples";
 
 defineOptions({ name: "CreateTableDialog" });
@@ -358,12 +350,6 @@ function onSqlPresetCommand(cmd: string) {
       break;
     case "master-postgres":
       loadPresetSql("masterSub", "postgres");
-      break;
-    case "legacy-mysql":
-      sqlText.value = LEGACY_MYSQL_WITH_USER_FK;
-      break;
-    case "legacy-postgres":
-      sqlText.value = LEGACY_POSTGRES_WITH_USER_FK;
       break;
     default:
       break;

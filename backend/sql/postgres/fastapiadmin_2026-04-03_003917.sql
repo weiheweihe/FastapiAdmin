@@ -2,7 +2,7 @@
 -- PostgreSQL database dump
 --
 
-\restrict XtHgo6tsQhuEdNKh15hA2RTTBSfxiXqx9DJbJFNHFfxtyyZ8jR5tz7beQUpdNxG
+\restrict ZPSb5Q9rvfnfbn6VdXJ2edWyHcIou9jw4hZaoDETBqBWj7T0xI08ijcpb6b4BKi
 
 -- Dumped from database version 17.5 (ServBay)
 -- Dumped by pg_dump version 18.2
@@ -138,7 +138,7 @@ COMMENT ON COLUMN public.app_myapp.uuid IS 'UUID全局唯一标识';
 -- Name: COLUMN app_myapp.status; Type: COMMENT; Schema: public; Owner: root
 --
 
-COMMENT ON COLUMN public.app_myapp.status IS '是否启用(0:启用 1:禁用)';
+COMMENT ON COLUMN public.app_myapp.status IS '状态(0:正常 1:禁用)';
 
 
 --
@@ -334,7 +334,7 @@ COMMENT ON COLUMN public.gen_demo.uuid IS 'UUID全局唯一标识';
 -- Name: COLUMN gen_demo.status; Type: COMMENT; Schema: public; Owner: root
 --
 
-COMMENT ON COLUMN public.gen_demo.status IS '是否启用(0:启用 1:禁用)';
+COMMENT ON COLUMN public.gen_demo.status IS '状态(0:正常 1:禁用)';
 
 
 --
@@ -370,6 +370,117 @@ COMMENT ON COLUMN public.gen_demo.created_id IS '创建人ID';
 --
 
 COMMENT ON COLUMN public.gen_demo.updated_id IS '更新人ID';
+
+
+--
+-- Name: gen_demo01; Type: TABLE; Schema: public; Owner: root
+--
+
+CREATE TABLE public.gen_demo01 (
+    name character varying(64) NOT NULL,
+    id integer NOT NULL,
+    uuid character varying(64) NOT NULL,
+    status character varying(10) NOT NULL,
+    description text,
+    created_time timestamp without time zone NOT NULL,
+    updated_time timestamp without time zone NOT NULL,
+    created_id integer,
+    updated_id integer
+);
+
+
+ALTER TABLE public.gen_demo01 OWNER TO root;
+
+--
+-- Name: TABLE gen_demo01; Type: COMMENT; Schema: public; Owner: root
+--
+
+COMMENT ON TABLE public.gen_demo01 IS '示例1表';
+
+
+--
+-- Name: COLUMN gen_demo01.name; Type: COMMENT; Schema: public; Owner: root
+--
+
+COMMENT ON COLUMN public.gen_demo01.name IS '名称';
+
+
+--
+-- Name: COLUMN gen_demo01.id; Type: COMMENT; Schema: public; Owner: root
+--
+
+COMMENT ON COLUMN public.gen_demo01.id IS '主键ID';
+
+
+--
+-- Name: COLUMN gen_demo01.uuid; Type: COMMENT; Schema: public; Owner: root
+--
+
+COMMENT ON COLUMN public.gen_demo01.uuid IS 'UUID全局唯一标识';
+
+
+--
+-- Name: COLUMN gen_demo01.status; Type: COMMENT; Schema: public; Owner: root
+--
+
+COMMENT ON COLUMN public.gen_demo01.status IS '状态(0:正常 1:禁用)';
+
+
+--
+-- Name: COLUMN gen_demo01.description; Type: COMMENT; Schema: public; Owner: root
+--
+
+COMMENT ON COLUMN public.gen_demo01.description IS '备注/描述';
+
+
+--
+-- Name: COLUMN gen_demo01.created_time; Type: COMMENT; Schema: public; Owner: root
+--
+
+COMMENT ON COLUMN public.gen_demo01.created_time IS '创建时间';
+
+
+--
+-- Name: COLUMN gen_demo01.updated_time; Type: COMMENT; Schema: public; Owner: root
+--
+
+COMMENT ON COLUMN public.gen_demo01.updated_time IS '更新时间';
+
+
+--
+-- Name: COLUMN gen_demo01.created_id; Type: COMMENT; Schema: public; Owner: root
+--
+
+COMMENT ON COLUMN public.gen_demo01.created_id IS '创建人ID';
+
+
+--
+-- Name: COLUMN gen_demo01.updated_id; Type: COMMENT; Schema: public; Owner: root
+--
+
+COMMENT ON COLUMN public.gen_demo01.updated_id IS '更新人ID';
+
+
+--
+-- Name: gen_demo01_id_seq; Type: SEQUENCE; Schema: public; Owner: root
+--
+
+CREATE SEQUENCE public.gen_demo01_id_seq
+    AS integer
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+ALTER SEQUENCE public.gen_demo01_id_seq OWNER TO root;
+
+--
+-- Name: gen_demo01_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: root
+--
+
+ALTER SEQUENCE public.gen_demo01_id_seq OWNED BY public.gen_demo01.id;
 
 
 --
@@ -517,7 +628,7 @@ COMMENT ON COLUMN public.gen_table.uuid IS 'UUID全局唯一标识';
 -- Name: COLUMN gen_table.status; Type: COMMENT; Schema: public; Owner: root
 --
 
-COMMENT ON COLUMN public.gen_table.status IS '是否启用(0:启用 1:禁用)';
+COMMENT ON COLUMN public.gen_table.status IS '状态(0:正常 1:禁用)';
 
 
 --
@@ -758,7 +869,7 @@ COMMENT ON COLUMN public.gen_table_column.uuid IS 'UUID全局唯一标识';
 -- Name: COLUMN gen_table_column.status; Type: COMMENT; Schema: public; Owner: root
 --
 
-COMMENT ON COLUMN public.gen_table_column.status IS '是否启用(0:启用 1:禁用)';
+COMMENT ON COLUMN public.gen_table_column.status IS '状态(0:正常 1:禁用)';
 
 
 --
@@ -937,7 +1048,7 @@ COMMENT ON COLUMN public.sys_dept.uuid IS 'UUID全局唯一标识';
 -- Name: COLUMN sys_dept.status; Type: COMMENT; Schema: public; Owner: root
 --
 
-COMMENT ON COLUMN public.sys_dept.status IS '是否启用(0:启用 1:禁用)';
+COMMENT ON COLUMN public.sys_dept.status IS '状态(0:正常 1:禁用)';
 
 
 --
@@ -1088,7 +1199,7 @@ COMMENT ON COLUMN public.sys_dict_data.uuid IS 'UUID全局唯一标识';
 -- Name: COLUMN sys_dict_data.status; Type: COMMENT; Schema: public; Owner: root
 --
 
-COMMENT ON COLUMN public.sys_dict_data.status IS '是否启用(0:启用 1:禁用)';
+COMMENT ON COLUMN public.sys_dict_data.status IS '状态(0:正常 1:禁用)';
 
 
 --
@@ -1191,7 +1302,7 @@ COMMENT ON COLUMN public.sys_dict_type.uuid IS 'UUID全局唯一标识';
 -- Name: COLUMN sys_dict_type.status; Type: COMMENT; Schema: public; Owner: root
 --
 
-COMMENT ON COLUMN public.sys_dict_type.status IS '是否启用(0:启用 1:禁用)';
+COMMENT ON COLUMN public.sys_dict_type.status IS '状态(0:正常 1:禁用)';
 
 
 --
@@ -1368,7 +1479,7 @@ COMMENT ON COLUMN public.sys_log.uuid IS 'UUID全局唯一标识';
 -- Name: COLUMN sys_log.status; Type: COMMENT; Schema: public; Owner: root
 --
 
-COMMENT ON COLUMN public.sys_log.status IS '是否启用(0:启用 1:禁用)';
+COMMENT ON COLUMN public.sys_log.status IS '状态(0:正常 1:禁用)';
 
 
 --
@@ -1597,7 +1708,7 @@ COMMENT ON COLUMN public.sys_menu.uuid IS 'UUID全局唯一标识';
 -- Name: COLUMN sys_menu.status; Type: COMMENT; Schema: public; Owner: root
 --
 
-COMMENT ON COLUMN public.sys_menu.status IS '是否启用(0:启用 1:禁用)';
+COMMENT ON COLUMN public.sys_menu.status IS '状态(0:正常 1:禁用)';
 
 
 --
@@ -1710,7 +1821,7 @@ COMMENT ON COLUMN public.sys_notice.uuid IS 'UUID全局唯一标识';
 -- Name: COLUMN sys_notice.status; Type: COMMENT; Schema: public; Owner: root
 --
 
-COMMENT ON COLUMN public.sys_notice.status IS '是否启用(0:启用 1:禁用)';
+COMMENT ON COLUMN public.sys_notice.status IS '状态(0:正常 1:禁用)';
 
 
 --
@@ -1843,7 +1954,7 @@ COMMENT ON COLUMN public.sys_param.uuid IS 'UUID全局唯一标识';
 -- Name: COLUMN sys_param.status; Type: COMMENT; Schema: public; Owner: root
 --
 
-COMMENT ON COLUMN public.sys_param.status IS '是否启用(0:启用 1:禁用)';
+COMMENT ON COLUMN public.sys_param.status IS '状态(0:正常 1:禁用)';
 
 
 --
@@ -1948,7 +2059,7 @@ COMMENT ON COLUMN public.sys_position.uuid IS 'UUID全局唯一标识';
 -- Name: COLUMN sys_position.status; Type: COMMENT; Schema: public; Owner: root
 --
 
-COMMENT ON COLUMN public.sys_position.status IS '是否启用(0:启用 1:禁用)';
+COMMENT ON COLUMN public.sys_position.status IS '状态(0:正常 1:禁用)';
 
 
 --
@@ -2081,7 +2192,7 @@ COMMENT ON COLUMN public.sys_role.uuid IS 'UUID全局唯一标识';
 -- Name: COLUMN sys_role.status; Type: COMMENT; Schema: public; Owner: root
 --
 
-COMMENT ON COLUMN public.sys_role.status IS '是否启用(0:启用 1:禁用)';
+COMMENT ON COLUMN public.sys_role.status IS '状态(0:正常 1:禁用)';
 
 
 --
@@ -2348,7 +2459,7 @@ COMMENT ON COLUMN public.sys_user.uuid IS 'UUID全局唯一标识';
 -- Name: COLUMN sys_user.status; Type: COMMENT; Schema: public; Owner: root
 --
 
-COMMENT ON COLUMN public.sys_user.status IS '是否启用(0:启用 1:禁用)';
+COMMENT ON COLUMN public.sys_user.status IS '状态(0:正常 1:禁用)';
 
 
 --
@@ -2764,7 +2875,7 @@ COMMENT ON COLUMN public.task_node.uuid IS 'UUID全局唯一标识';
 -- Name: COLUMN task_node.status; Type: COMMENT; Schema: public; Owner: root
 --
 
-COMMENT ON COLUMN public.task_node.status IS '是否启用(0:启用 1:禁用)';
+COMMENT ON COLUMN public.task_node.status IS '状态(0:正常 1:禁用)';
 
 
 --
@@ -2825,6 +2936,316 @@ ALTER SEQUENCE public.task_node_id_seq OWNED BY public.task_node.id;
 
 
 --
+-- Name: task_workflow; Type: TABLE; Schema: public; Owner: root
+--
+
+CREATE TABLE public.task_workflow (
+    name character varying(128) NOT NULL,
+    code character varying(64) NOT NULL,
+    workflow_status character varying(32) NOT NULL,
+    nodes json,
+    edges json,
+    id integer NOT NULL,
+    uuid character varying(64) NOT NULL,
+    status character varying(10) NOT NULL,
+    description text,
+    created_time timestamp without time zone NOT NULL,
+    updated_time timestamp without time zone NOT NULL,
+    created_id integer,
+    updated_id integer
+);
+
+
+ALTER TABLE public.task_workflow OWNER TO root;
+
+--
+-- Name: TABLE task_workflow; Type: COMMENT; Schema: public; Owner: root
+--
+
+COMMENT ON TABLE public.task_workflow IS '工作流定义表';
+
+
+--
+-- Name: COLUMN task_workflow.name; Type: COMMENT; Schema: public; Owner: root
+--
+
+COMMENT ON COLUMN public.task_workflow.name IS '流程名称';
+
+
+--
+-- Name: COLUMN task_workflow.code; Type: COMMENT; Schema: public; Owner: root
+--
+
+COMMENT ON COLUMN public.task_workflow.code IS '流程编码';
+
+
+--
+-- Name: COLUMN task_workflow.workflow_status; Type: COMMENT; Schema: public; Owner: root
+--
+
+COMMENT ON COLUMN public.task_workflow.workflow_status IS '流程状态: draft/published/archived';
+
+
+--
+-- Name: COLUMN task_workflow.nodes; Type: COMMENT; Schema: public; Owner: root
+--
+
+COMMENT ON COLUMN public.task_workflow.nodes IS 'Vue Flow nodes JSON';
+
+
+--
+-- Name: COLUMN task_workflow.edges; Type: COMMENT; Schema: public; Owner: root
+--
+
+COMMENT ON COLUMN public.task_workflow.edges IS 'Vue Flow edges JSON';
+
+
+--
+-- Name: COLUMN task_workflow.id; Type: COMMENT; Schema: public; Owner: root
+--
+
+COMMENT ON COLUMN public.task_workflow.id IS '主键ID';
+
+
+--
+-- Name: COLUMN task_workflow.uuid; Type: COMMENT; Schema: public; Owner: root
+--
+
+COMMENT ON COLUMN public.task_workflow.uuid IS 'UUID全局唯一标识';
+
+
+--
+-- Name: COLUMN task_workflow.status; Type: COMMENT; Schema: public; Owner: root
+--
+
+COMMENT ON COLUMN public.task_workflow.status IS '状态(0:正常 1:禁用)';
+
+
+--
+-- Name: COLUMN task_workflow.description; Type: COMMENT; Schema: public; Owner: root
+--
+
+COMMENT ON COLUMN public.task_workflow.description IS '备注/描述';
+
+
+--
+-- Name: COLUMN task_workflow.created_time; Type: COMMENT; Schema: public; Owner: root
+--
+
+COMMENT ON COLUMN public.task_workflow.created_time IS '创建时间';
+
+
+--
+-- Name: COLUMN task_workflow.updated_time; Type: COMMENT; Schema: public; Owner: root
+--
+
+COMMENT ON COLUMN public.task_workflow.updated_time IS '更新时间';
+
+
+--
+-- Name: COLUMN task_workflow.created_id; Type: COMMENT; Schema: public; Owner: root
+--
+
+COMMENT ON COLUMN public.task_workflow.created_id IS '创建人ID';
+
+
+--
+-- Name: COLUMN task_workflow.updated_id; Type: COMMENT; Schema: public; Owner: root
+--
+
+COMMENT ON COLUMN public.task_workflow.updated_id IS '更新人ID';
+
+
+--
+-- Name: task_workflow_id_seq; Type: SEQUENCE; Schema: public; Owner: root
+--
+
+CREATE SEQUENCE public.task_workflow_id_seq
+    AS integer
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+ALTER SEQUENCE public.task_workflow_id_seq OWNER TO root;
+
+--
+-- Name: task_workflow_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: root
+--
+
+ALTER SEQUENCE public.task_workflow_id_seq OWNED BY public.task_workflow.id;
+
+
+--
+-- Name: task_workflow_node_type; Type: TABLE; Schema: public; Owner: root
+--
+
+CREATE TABLE public.task_workflow_node_type (
+    name character varying(128) NOT NULL,
+    code character varying(64) NOT NULL,
+    category character varying(32) NOT NULL,
+    func text NOT NULL,
+    args text,
+    kwargs text,
+    sort_order integer NOT NULL,
+    is_active boolean NOT NULL,
+    id integer NOT NULL,
+    uuid character varying(64) NOT NULL,
+    status character varying(10) NOT NULL,
+    description text,
+    created_time timestamp without time zone NOT NULL,
+    updated_time timestamp without time zone NOT NULL,
+    created_id integer,
+    updated_id integer
+);
+
+
+ALTER TABLE public.task_workflow_node_type OWNER TO root;
+
+--
+-- Name: TABLE task_workflow_node_type; Type: COMMENT; Schema: public; Owner: root
+--
+
+COMMENT ON TABLE public.task_workflow_node_type IS '工作流编排节点类型（非定时任务节点）';
+
+
+--
+-- Name: COLUMN task_workflow_node_type.name; Type: COMMENT; Schema: public; Owner: root
+--
+
+COMMENT ON COLUMN public.task_workflow_node_type.name IS '显示名称';
+
+
+--
+-- Name: COLUMN task_workflow_node_type.code; Type: COMMENT; Schema: public; Owner: root
+--
+
+COMMENT ON COLUMN public.task_workflow_node_type.code IS '节点编码，对应画布 node.type';
+
+
+--
+-- Name: COLUMN task_workflow_node_type.category; Type: COMMENT; Schema: public; Owner: root
+--
+
+COMMENT ON COLUMN public.task_workflow_node_type.category IS '分类: trigger/action/condition/control';
+
+
+--
+-- Name: COLUMN task_workflow_node_type.func; Type: COMMENT; Schema: public; Owner: root
+--
+
+COMMENT ON COLUMN public.task_workflow_node_type.func IS 'Python 代码块，须定义 handler(*args,**kwargs)';
+
+
+--
+-- Name: COLUMN task_workflow_node_type.args; Type: COMMENT; Schema: public; Owner: root
+--
+
+COMMENT ON COLUMN public.task_workflow_node_type.args IS '默认位置参数，逗号分隔';
+
+
+--
+-- Name: COLUMN task_workflow_node_type.kwargs; Type: COMMENT; Schema: public; Owner: root
+--
+
+COMMENT ON COLUMN public.task_workflow_node_type.kwargs IS '默认关键字参数 JSON';
+
+
+--
+-- Name: COLUMN task_workflow_node_type.sort_order; Type: COMMENT; Schema: public; Owner: root
+--
+
+COMMENT ON COLUMN public.task_workflow_node_type.sort_order IS '排序';
+
+
+--
+-- Name: COLUMN task_workflow_node_type.is_active; Type: COMMENT; Schema: public; Owner: root
+--
+
+COMMENT ON COLUMN public.task_workflow_node_type.is_active IS '是否启用';
+
+
+--
+-- Name: COLUMN task_workflow_node_type.id; Type: COMMENT; Schema: public; Owner: root
+--
+
+COMMENT ON COLUMN public.task_workflow_node_type.id IS '主键ID';
+
+
+--
+-- Name: COLUMN task_workflow_node_type.uuid; Type: COMMENT; Schema: public; Owner: root
+--
+
+COMMENT ON COLUMN public.task_workflow_node_type.uuid IS 'UUID全局唯一标识';
+
+
+--
+-- Name: COLUMN task_workflow_node_type.status; Type: COMMENT; Schema: public; Owner: root
+--
+
+COMMENT ON COLUMN public.task_workflow_node_type.status IS '状态(0:正常 1:禁用)';
+
+
+--
+-- Name: COLUMN task_workflow_node_type.description; Type: COMMENT; Schema: public; Owner: root
+--
+
+COMMENT ON COLUMN public.task_workflow_node_type.description IS '备注/描述';
+
+
+--
+-- Name: COLUMN task_workflow_node_type.created_time; Type: COMMENT; Schema: public; Owner: root
+--
+
+COMMENT ON COLUMN public.task_workflow_node_type.created_time IS '创建时间';
+
+
+--
+-- Name: COLUMN task_workflow_node_type.updated_time; Type: COMMENT; Schema: public; Owner: root
+--
+
+COMMENT ON COLUMN public.task_workflow_node_type.updated_time IS '更新时间';
+
+
+--
+-- Name: COLUMN task_workflow_node_type.created_id; Type: COMMENT; Schema: public; Owner: root
+--
+
+COMMENT ON COLUMN public.task_workflow_node_type.created_id IS '创建人ID';
+
+
+--
+-- Name: COLUMN task_workflow_node_type.updated_id; Type: COMMENT; Schema: public; Owner: root
+--
+
+COMMENT ON COLUMN public.task_workflow_node_type.updated_id IS '更新人ID';
+
+
+--
+-- Name: task_workflow_node_type_id_seq; Type: SEQUENCE; Schema: public; Owner: root
+--
+
+CREATE SEQUENCE public.task_workflow_node_type_id_seq
+    AS integer
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+ALTER SEQUENCE public.task_workflow_node_type_id_seq OWNER TO root;
+
+--
+-- Name: task_workflow_node_type_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: root
+--
+
+ALTER SEQUENCE public.task_workflow_node_type_id_seq OWNED BY public.task_workflow_node_type.id;
+
+
+--
 -- Name: app_myapp id; Type: DEFAULT; Schema: public; Owner: root
 --
 
@@ -2836,6 +3257,13 @@ ALTER TABLE ONLY public.app_myapp ALTER COLUMN id SET DEFAULT nextval('public.ap
 --
 
 ALTER TABLE ONLY public.gen_demo ALTER COLUMN id SET DEFAULT nextval('public.gen_demo_id_seq'::regclass);
+
+
+--
+-- Name: gen_demo01 id; Type: DEFAULT; Schema: public; Owner: root
+--
+
+ALTER TABLE ONLY public.gen_demo01 ALTER COLUMN id SET DEFAULT nextval('public.gen_demo01_id_seq'::regclass);
 
 
 --
@@ -2937,6 +3365,20 @@ ALTER TABLE ONLY public.task_node ALTER COLUMN id SET DEFAULT nextval('public.ta
 
 
 --
+-- Name: task_workflow id; Type: DEFAULT; Schema: public; Owner: root
+--
+
+ALTER TABLE ONLY public.task_workflow ALTER COLUMN id SET DEFAULT nextval('public.task_workflow_id_seq'::regclass);
+
+
+--
+-- Name: task_workflow_node_type id; Type: DEFAULT; Schema: public; Owner: root
+--
+
+ALTER TABLE ONLY public.task_workflow_node_type ALTER COLUMN id SET DEFAULT nextval('public.task_workflow_node_type_id_seq'::regclass);
+
+
+--
 -- Data for Name: agno_schema_versions; Type: TABLE DATA; Schema: ai; Owner: root
 --
 
@@ -2951,9 +3393,10 @@ agno_sessions	2.5.0	2026-03-10T22:38:46.429268	2026-03-10T22:38:46.429268
 
 COPY ai.agno_sessions (session_id, session_type, agent_id, team_id, workflow_id, user_id, session_data, agent_data, team_data, workflow_data, metadata, runs, summary, created_at, updated_at) FROM stdin;
 d0375348-cc9c-4103-a7ce-18d14560a785	team	\N	1	\N	admin	{"session_name": "新对话", "session_state": {}, "session_metrics": {"details": {"model": [{"id": "deepseek-chat", "provider": "OpenAI", "input_tokens": 898, "total_tokens": 915, "output_tokens": 17, "cache_read_tokens": 320}]}, "input_tokens": 898, "total_tokens": 915, "output_tokens": 17, "cache_read_tokens": 320}}	\N	null	\N	null	[{"input": {"input_content": "你好"}, "model": "deepseek-chat", "tools": [], "run_id": "44f0df2a-aaff-403f-bbb7-de1081d45580", "status": "COMPLETED", "content": "你好！我是你的AI助手，很高兴为你服务。有什么我可以帮助你的吗？", "metrics": {"details": {"model": [{"id": "deepseek-chat", "provider": "OpenAI", "input_tokens": 898, "total_tokens": 915, "output_tokens": 17, "cache_read_tokens": 320}]}, "duration": 2.4872381659988605, "input_tokens": 898, "total_tokens": 915, "output_tokens": 17, "cache_read_tokens": 320, "time_to_first_token": 2.4092763329990703}, "team_id": "1", "user_id": "admin", "messages": [{"id": "6f9ce5a8-ac26-4ca3-ada9-459641e0225c", "role": "system", "content": "You coordinate a team of specialized AI agents to fulfill the user's request. Delegate to members when their expertise or tools are needed. For straightforward requests you can handle directly — including using your own tools — respond without delegating.\\n\\n<team_members>\\n<member id=\\"admin\\" name=\\"fastapiadmin_agent\\">\\n  Role: You are a helpful AI assistant\\n  Description: 你是一个有用的AI助手，可以帮助用户回答问题和提供帮助。\\n</member>\\n</team_members>\\n\\n<how_to_respond>\\nYou operate in coordinate mode. For requests that need member expertise, select the best member(s), delegate with clear task descriptions, and synthesize their outputs into a unified response. For requests you can handle directly — simple questions, using your own tools, or general conversation — respond without delegating.\\n\\nDelegation:\\n- Match each sub-task to the member whose role and tools are the best fit. Delegate to multiple members when the request spans different areas of expertise.\\n- Write task descriptions that are self-contained: state the goal, provide relevant context from the conversation, and describe what a good result looks like.\\n- Use only the member's ID when delegating — do not prefix it with the team ID.\\n\\nAfter receiving member responses:\\n- If a response is incomplete or off-target, re-delegate with clearer instructions or try a different member.\\n- Synthesize all results into a single coherent response. Resolve contradictions, fill gaps with your own reasoning, and add structure — do not simply concatenate member outputs.\\n</how_to_respond>\\n\\n- 保持回答简洁明了\\n- 如果不确定，请说明\\n<additional_information>\\n- Use markdown to format your answers.\\n- The current time is 2026-03-12 23:50:27.983400.\\n</additional_information>\\n\\n<expected_output>\\n中文回答\\n</expected_output>", "created_at": 1773330627, "from_history": false, "stop_after_tool_call": false}, {"id": "9ee3931d-2f8f-439a-8495-28c407e1676a", "role": "user", "content": "你好", "created_at": 1773330627, "from_history": false, "stop_after_tool_call": false}, {"id": "900ca747-7b34-44f4-ae74-e6570804fcd0", "role": "assistant", "content": "你好！我是你的AI助手，很高兴为你服务。有什么我可以帮助你的吗？", "metrics": {"duration": 2.3864872499998455, "input_tokens": 898, "total_tokens": 915, "output_tokens": 17, "cache_read_tokens": 320, "time_to_first_token": 2.3864872499998455}, "created_at": 1773330627, "from_history": false, "provider_data": {"id": "ee4835e4-1a1e-4c33-b079-ec99ae7a1b55", "system_fingerprint": "fp_eaab8d114b_prod0820_fp8_kvcache"}, "stop_after_tool_call": false}], "created_at": 1773330627, "session_id": "d0375348-cc9c-4103-a7ce-18d14560a785", "content_type": "str", "model_provider": "OpenAI", "member_responses": [], "model_provider_data": {"id": "ee4835e4-1a1e-4c33-b079-ec99ae7a1b55", "system_fingerprint": "fp_eaab8d114b_prod0820_fp8_kvcache"}}]	null	1773330627	1773330630
-0e2076c7-0c72-45c0-a97b-c170413720e9	team	\N	1	\N	admin	{"session_name": "你是男的女的", "session_state": {}, "session_metrics": {"details": {"model": [{"id": "deepseek-chat", "provider": "OpenAI", "input_tokens": 2814, "total_tokens": 2903, "output_tokens": 89, "cache_read_tokens": 960}]}, "input_tokens": 2814, "total_tokens": 2903, "output_tokens": 89, "cache_read_tokens": 960}}	\N	null	\N	null	[{"input": {"input_content": "你是男的女的"}, "model": "deepseek-chat", "events": [], "run_id": "99a1fea8-2950-4f2b-a2f4-63212f52c5fb", "status": "COMPLETED", "content": "我是一个AI助手，没有性别之分。我是由代码和算法构成的数字实体，旨在为您提供帮助和回答问题。\\n\\n如果您有其他问题或需要帮助，请随时告诉我！", "metrics": {"details": {"model": [{"id": "deepseek-chat", "provider": "OpenAI", "input_tokens": 901, "total_tokens": 936, "output_tokens": 35, "cache_read_tokens": 320}]}, "duration": 3.824642333000156, "input_tokens": 901, "total_tokens": 936, "output_tokens": 35, "cache_read_tokens": 320, "time_to_first_token": 1.7806427080013236}, "team_id": "1", "user_id": "admin", "messages": [{"id": "8539d5ee-a817-4710-822d-99686642c4df", "role": "system", "content": "You coordinate a team of specialized AI agents to fulfill the user's request. Delegate to members when their expertise or tools are needed. For straightforward requests you can handle directly — including using your own tools — respond without delegating.\\n\\n<team_members>\\n<member id=\\"admin\\" name=\\"fastapiadmin_agent\\">\\n  Role: You are a helpful AI assistant\\n  Description: 你是一个有用的AI助手，可以帮助用户回答问题和提供帮助。\\n</member>\\n</team_members>\\n\\n<how_to_respond>\\nYou operate in coordinate mode. For requests that need member expertise, select the best member(s), delegate with clear task descriptions, and synthesize their outputs into a unified response. For requests you can handle directly — simple questions, using your own tools, or general conversation — respond without delegating.\\n\\nDelegation:\\n- Match each sub-task to the member whose role and tools are the best fit. Delegate to multiple members when the request spans different areas of expertise.\\n- Write task descriptions that are self-contained: state the goal, provide relevant context from the conversation, and describe what a good result looks like.\\n- Use only the member's ID when delegating — do not prefix it with the team ID.\\n\\nAfter receiving member responses:\\n- If a response is incomplete or off-target, re-delegate with clearer instructions or try a different member.\\n- Synthesize all results into a single coherent response. Resolve contradictions, fill gaps with your own reasoning, and add structure — do not simply concatenate member outputs.\\n</how_to_respond>\\n\\n- 保持回答简洁明了\\n- 如果不确定，请说明\\n<additional_information>\\n- Use markdown to format your answers.\\n- The current time is 2026-03-13 00:09:08.236156.\\n</additional_information>\\n\\n<expected_output>\\n中文回答\\n</expected_output>", "created_at": 1773331748, "from_history": false, "stop_after_tool_call": false}, {"id": "18ed9cf5-a2a5-421e-bbb9-946f621d2a2a", "role": "user", "content": "你是男的女的", "created_at": 1773331748, "from_history": false, "stop_after_tool_call": false}, {"id": "7b3a3aa1-1fb8-4f1a-8a2c-298fef38cd7e", "role": "assistant", "content": "我是一个AI助手，没有性别之分。我是由代码和算法构成的数字实体，旨在为您提供帮助和回答问题。\\n\\n如果您有其他问题或需要帮助，请随时告诉我！", "metrics": {"input_tokens": 901, "total_tokens": 936, "output_tokens": 35, "cache_read_tokens": 320, "time_to_first_token": 1.6999175000000832}, "created_at": 1773331748, "from_history": false, "provider_data": {"id": "a1a3e8f4-dad6-45d6-9338-8c33d060f914", "system_fingerprint": "fp_eaab8d114b_prod0820_fp8_kvcache"}, "stop_after_tool_call": false}], "created_at": 1773331748, "session_id": "0e2076c7-0c72-45c0-a97b-c170413720e9", "content_type": "str", "model_provider": "OpenAI", "member_responses": [], "model_provider_data": {"id": "a1a3e8f4-dad6-45d6-9338-8c33d060f914", "system_fingerprint": "fp_eaab8d114b_prod0820_fp8_kvcache"}}, {"input": {"input_content": "好的我知道了"}, "model": "deepseek-chat", "events": [], "run_id": "9bc121c8-78e2-44b9-9ebd-758d33e845f1", "status": "COMPLETED", "content": "好的！如果您有任何其他问题或需要帮助的地方，随时可以告诉我。我很乐意为您提供帮助！", "metrics": {"details": {"model": [{"id": "deepseek-chat", "provider": "OpenAI", "input_tokens": 942, "total_tokens": 964, "output_tokens": 22, "cache_read_tokens": 320}]}, "duration": 2.982405832999575, "input_tokens": 942, "total_tokens": 964, "output_tokens": 22, "cache_read_tokens": 320, "time_to_first_token": 1.466743332999613}, "team_id": "1", "user_id": "admin", "messages": [{"id": "854713e7-3220-44c8-8c04-97eae9e9eb03", "role": "system", "content": "You coordinate a team of specialized AI agents to fulfill the user's request. Delegate to members when their expertise or tools are needed. For straightforward requests you can handle directly — including using your own tools — respond without delegating.\\n\\n<team_members>\\n<member id=\\"admin\\" name=\\"fastapiadmin_agent\\">\\n  Role: You are a helpful AI assistant\\n  Description: 你是一个有用的AI助手，可以帮助用户回答问题和提供帮助。\\n</member>\\n</team_members>\\n\\n<how_to_respond>\\nYou operate in coordinate mode. For requests that need member expertise, select the best member(s), delegate with clear task descriptions, and synthesize their outputs into a unified response. For requests you can handle directly — simple questions, using your own tools, or general conversation — respond without delegating.\\n\\nDelegation:\\n- Match each sub-task to the member whose role and tools are the best fit. Delegate to multiple members when the request spans different areas of expertise.\\n- Write task descriptions that are self-contained: state the goal, provide relevant context from the conversation, and describe what a good result looks like.\\n- Use only the member's ID when delegating — do not prefix it with the team ID.\\n\\nAfter receiving member responses:\\n- If a response is incomplete or off-target, re-delegate with clearer instructions or try a different member.\\n- Synthesize all results into a single coherent response. Resolve contradictions, fill gaps with your own reasoning, and add structure — do not simply concatenate member outputs.\\n</how_to_respond>\\n\\n- 保持回答简洁明了\\n- 如果不确定，请说明\\n<additional_information>\\n- Use markdown to format your answers.\\n- The current time is 2026-03-13 00:11:22.906936.\\n</additional_information>\\n\\n<expected_output>\\n中文回答\\n</expected_output>", "created_at": 1773331882, "from_history": false, "stop_after_tool_call": false}, {"id": "7f39e100-a08f-46b9-ba19-3492e7e9e6bd", "role": "user", "content": "好的我知道了", "created_at": 1773331882, "from_history": false, "stop_after_tool_call": false}, {"id": "318823e2-fb6a-48fd-9692-a5dcb407e77f", "role": "assistant", "content": "好的！如果您有任何其他问题或需要帮助的地方，随时可以告诉我。我很乐意为您提供帮助！", "metrics": {"input_tokens": 942, "total_tokens": 964, "output_tokens": 22, "cache_read_tokens": 320, "time_to_first_token": 1.3560426669992012}, "created_at": 1773331882, "from_history": false, "provider_data": {"id": "d918fcc8-da81-4463-9213-72dcf3109dd8", "system_fingerprint": "fp_eaab8d114b_prod0820_fp8_kvcache"}, "stop_after_tool_call": false}], "created_at": 1773331882, "session_id": "0e2076c7-0c72-45c0-a97b-c170413720e9", "content_type": "str", "model_provider": "OpenAI", "member_responses": [], "model_provider_data": {"id": "d918fcc8-da81-4463-9213-72dcf3109dd8", "system_fingerprint": "fp_eaab8d114b_prod0820_fp8_kvcache"}}, {"input": {"input_content": "以后我再找你"}, "model": "deepseek-chat", "run_id": "5395a65a-f7f6-4c82-b9c3-8e4f75f11312", "status": "COMPLETED", "content": "好的，随时欢迎！我会一直在这里，当您需要帮助、有问题或者想聊天的时候，随时可以回来找我。\\n\\n祝您一切顺利！👋", "metrics": {"details": {"model": [{"id": "deepseek-chat", "provider": "OpenAI", "input_tokens": 971, "total_tokens": 1003, "output_tokens": 32, "cache_read_tokens": 320}]}, "duration": 3.5782694999998057, "input_tokens": 971, "total_tokens": 1003, "output_tokens": 32, "cache_read_tokens": 320, "time_to_first_token": 1.597690667000279}, "team_id": "1", "user_id": "admin", "messages": [{"id": "96f7f716-55d0-450d-946b-2a932e76cbd4", "role": "system", "content": "You coordinate a team of specialized AI agents to fulfill the user's request. Delegate to members when their expertise or tools are needed. For straightforward requests you can handle directly — including using your own tools — respond without delegating.\\n\\n<team_members>\\n<member id=\\"admin\\" name=\\"fastapiadmin_agent\\">\\n  Role: You are a helpful AI assistant\\n  Description: 你是一个有用的AI助手，可以帮助用户回答问题和提供帮助。\\n</member>\\n</team_members>\\n\\n<how_to_respond>\\nYou operate in coordinate mode. For requests that need member expertise, select the best member(s), delegate with clear task descriptions, and synthesize their outputs into a unified response. For requests you can handle directly — simple questions, using your own tools, or general conversation — respond without delegating.\\n\\nDelegation:\\n- Match each sub-task to the member whose role and tools are the best fit. Delegate to multiple members when the request spans different areas of expertise.\\n- Write task descriptions that are self-contained: state the goal, provide relevant context from the conversation, and describe what a good result looks like.\\n- Use only the member's ID when delegating — do not prefix it with the team ID.\\n\\nAfter receiving member responses:\\n- If a response is incomplete or off-target, re-delegate with clearer instructions or try a different member.\\n- Synthesize all results into a single coherent response. Resolve contradictions, fill gaps with your own reasoning, and add structure — do not simply concatenate member outputs.\\n</how_to_respond>\\n\\n- 保持回答简洁明了\\n- 如果不确定，请说明\\n<additional_information>\\n- Use markdown to format your answers.\\n- The current time is 2026-03-13 00:15:15.297981.\\n</additional_information>\\n\\n<expected_output>\\n中文回答\\n</expected_output>", "created_at": 1773332115, "from_history": false, "stop_after_tool_call": false}, {"id": "a38aa282-1009-41ca-b637-5e035d3df1cd", "role": "user", "content": "以后我再找你", "created_at": 1773332115, "from_history": false, "stop_after_tool_call": false}, {"id": "bbfae894-e2d8-4ba6-bd9e-192e8a8f7dba", "role": "assistant", "content": "好的，随时欢迎！我会一直在这里，当您需要帮助、有问题或者想聊天的时候，随时可以回来找我。\\n\\n祝您一切顺利！👋", "metrics": {"input_tokens": 971, "total_tokens": 1003, "output_tokens": 32, "cache_read_tokens": 320, "time_to_first_token": 1.5115680420003628}, "created_at": 1773332115, "from_history": false, "provider_data": {"id": "bf2c9e44-0665-45e8-847f-f1b3d06bde6c", "system_fingerprint": "fp_eaab8d114b_prod0820_fp8_kvcache"}, "stop_after_tool_call": false}], "created_at": 1773332115, "session_id": "0e2076c7-0c72-45c0-a97b-c170413720e9", "content_type": "str", "model_provider": "OpenAI", "member_responses": [], "model_provider_data": {"id": "bf2c9e44-0665-45e8-847f-f1b3d06bde6c", "system_fingerprint": "fp_eaab8d114b_prod0820_fp8_kvcache"}}]	null	1773331748	1773332118
 70f63e6b-f073-4486-8b17-a98cb4a5f4fa	team	\N	1	\N	admin	{"session_name": "在吗", "session_state": {}, "session_metrics": {"details": {"model": [{"id": "deepseek-chat", "provider": "OpenAI", "input_tokens": 1811, "total_tokens": 1842, "output_tokens": 31, "cache_read_tokens": 640}]}, "input_tokens": 1811, "total_tokens": 1842, "output_tokens": 31, "cache_read_tokens": 640}}	\N	null	\N	null	[{"input": {"input_content": "在吗"}, "model": "deepseek-chat", "events": [], "run_id": "bffc5320-8369-471d-814b-ca66a474f358", "status": "COMPLETED", "content": "我在的！有什么可以帮助您的吗？", "metrics": {"details": {"model": [{"id": "deepseek-chat", "provider": "OpenAI", "input_tokens": 899, "total_tokens": 907, "output_tokens": 8, "cache_read_tokens": 320}]}, "duration": 2.5330075420006324, "input_tokens": 899, "total_tokens": 907, "output_tokens": 8, "cache_read_tokens": 320, "time_to_first_token": 1.714065957999992}, "team_id": "1", "user_id": "admin", "messages": [{"id": "7a9e0dfd-3750-4dac-913f-bb07ad2e7b20", "role": "system", "content": "You coordinate a team of specialized AI agents to fulfill the user's request. Delegate to members when their expertise or tools are needed. For straightforward requests you can handle directly — including using your own tools — respond without delegating.\\n\\n<team_members>\\n<member id=\\"admin\\" name=\\"fastapiadmin_agent\\">\\n  Role: You are a helpful AI assistant\\n  Description: 你是一个有用的AI助手，可以帮助用户回答问题和提供帮助。\\n</member>\\n</team_members>\\n\\n<how_to_respond>\\nYou operate in coordinate mode. For requests that need member expertise, select the best member(s), delegate with clear task descriptions, and synthesize their outputs into a unified response. For requests you can handle directly — simple questions, using your own tools, or general conversation — respond without delegating.\\n\\nDelegation:\\n- Match each sub-task to the member whose role and tools are the best fit. Delegate to multiple members when the request spans different areas of expertise.\\n- Write task descriptions that are self-contained: state the goal, provide relevant context from the conversation, and describe what a good result looks like.\\n- Use only the member's ID when delegating — do not prefix it with the team ID.\\n\\nAfter receiving member responses:\\n- If a response is incomplete or off-target, re-delegate with clearer instructions or try a different member.\\n- Synthesize all results into a single coherent response. Resolve contradictions, fill gaps with your own reasoning, and add structure — do not simply concatenate member outputs.\\n</how_to_respond>\\n\\n- 保持回答简洁明了\\n- 如果不确定，请说明\\n<additional_information>\\n- Use markdown to format your answers.\\n- The current time is 2026-03-12 23:26:49.742737.\\n</additional_information>\\n\\n<expected_output>\\n中文回答\\n</expected_output>", "created_at": 1773329209, "from_history": false, "stop_after_tool_call": false}, {"id": "04fdabb1-9f2c-4e9b-b133-b834a3d05ab8", "role": "user", "content": "在吗", "created_at": 1773329209, "from_history": false, "stop_after_tool_call": false}, {"id": "711208f2-81e3-4cd6-94a5-042e75f6cf08", "role": "assistant", "content": "我在的！有什么可以帮助您的吗？", "metrics": {"input_tokens": 899, "total_tokens": 907, "output_tokens": 8, "cache_read_tokens": 320, "time_to_first_token": 1.6393582500004413}, "created_at": 1773329209, "from_history": false, "provider_data": {"id": "8f1c6ef1-d4f3-413b-ba35-575a5f02bcde", "system_fingerprint": "fp_eaab8d114b_prod0820_fp8_kvcache"}, "stop_after_tool_call": false}], "created_at": 1773329209, "session_id": "70f63e6b-f073-4486-8b17-a98cb4a5f4fa", "content_type": "str", "model_provider": "OpenAI", "member_responses": [], "model_provider_data": {"id": "8f1c6ef1-d4f3-413b-ba35-575a5f02bcde", "system_fingerprint": "fp_eaab8d114b_prod0820_fp8_kvcache"}}, {"input": {"input_content": "你是谁"}, "model": "deepseek-chat", "run_id": "2636867a-f6e4-4eca-b201-68f5d0a12ffa", "status": "COMPLETED", "content": "我是您的AI助手，可以帮助您回答问题、提供信息或协助处理各种任务。有什么需要我帮忙的吗？", "metrics": {"details": {"model": [{"id": "deepseek-chat", "provider": "OpenAI", "input_tokens": 912, "total_tokens": 935, "output_tokens": 23, "cache_read_tokens": 320}]}, "duration": 3.5702720829995087, "input_tokens": 912, "total_tokens": 935, "output_tokens": 23, "cache_read_tokens": 320, "time_to_first_token": 1.6412430000000313}, "team_id": "1", "user_id": "admin", "messages": [{"id": "0c9fc707-6fec-4487-8475-838a7ee9e31b", "role": "system", "content": "You coordinate a team of specialized AI agents to fulfill the user's request. Delegate to members when their expertise or tools are needed. For straightforward requests you can handle directly — including using your own tools — respond without delegating.\\n\\n<team_members>\\n<member id=\\"admin\\" name=\\"fastapiadmin_agent\\">\\n  Role: You are a helpful AI assistant\\n  Description: 你是一个有用的AI助手，可以帮助用户回答问题和提供帮助。\\n</member>\\n</team_members>\\n\\n<how_to_respond>\\nYou operate in coordinate mode. For requests that need member expertise, select the best member(s), delegate with clear task descriptions, and synthesize their outputs into a unified response. For requests you can handle directly — simple questions, using your own tools, or general conversation — respond without delegating.\\n\\nDelegation:\\n- Match each sub-task to the member whose role and tools are the best fit. Delegate to multiple members when the request spans different areas of expertise.\\n- Write task descriptions that are self-contained: state the goal, provide relevant context from the conversation, and describe what a good result looks like.\\n- Use only the member's ID when delegating — do not prefix it with the team ID.\\n\\nAfter receiving member responses:\\n- If a response is incomplete or off-target, re-delegate with clearer instructions or try a different member.\\n- Synthesize all results into a single coherent response. Resolve contradictions, fill gaps with your own reasoning, and add structure — do not simply concatenate member outputs.\\n</how_to_respond>\\n\\n- 保持回答简洁明了\\n- 如果不确定，请说明\\n<additional_information>\\n- Use markdown to format your answers.\\n- The current time is 2026-03-13 00:19:14.591494.\\n</additional_information>\\n\\n<expected_output>\\n中文回答\\n</expected_output>", "created_at": 1773332354, "from_history": false, "stop_after_tool_call": false}, {"id": "f6c48ec9-213b-4e73-a056-c241b5b9a88e", "role": "user", "content": "你是谁", "created_at": 1773332354, "from_history": false, "stop_after_tool_call": false}, {"id": "c4b61a03-4789-4227-81a6-0ce10c32251b", "role": "assistant", "content": "我是您的AI助手，可以帮助您回答问题、提供信息或协助处理各种任务。有什么需要我帮忙的吗？", "metrics": {"input_tokens": 912, "total_tokens": 935, "output_tokens": 23, "cache_read_tokens": 320, "time_to_first_token": 1.5480335829997784}, "created_at": 1773332354, "from_history": false, "provider_data": {"id": "988b5a84-e099-44a0-99c8-9f5eff841b7a", "system_fingerprint": "fp_eaab8d114b_prod0820_fp8_kvcache"}, "stop_after_tool_call": false}], "created_at": 1773332354, "session_id": "70f63e6b-f073-4486-8b17-a98cb4a5f4fa", "content_type": "str", "model_provider": "OpenAI", "member_responses": [], "model_provider_data": {"id": "988b5a84-e099-44a0-99c8-9f5eff841b7a", "system_fingerprint": "fp_eaab8d114b_prod0820_fp8_kvcache"}}]	null	1773329209	1773332358
 8e21f309-8b73-45b9-966a-37220a628620	team	\N	1	\N	admin	{"session_name": "你是谁", "session_state": {}, "session_metrics": {"details": {"model": [{"id": "deepseek-chat", "provider": "OpenAI", "input_tokens": 898, "total_tokens": 931, "output_tokens": 33, "cache_read_tokens": 320}]}, "input_tokens": 898, "total_tokens": 931, "output_tokens": 33, "cache_read_tokens": 320}}	\N	null	\N	null	[{"input": {"input_content": "你是谁"}, "model": "deepseek-chat", "run_id": "973da0dc-6842-4030-bf31-dba0bf305fb8", "status": "COMPLETED", "content": "我是您的AI助手，可以帮助您回答问题和提供帮助。我可以协调一个专门团队来处理各种任务，也可以直接回答简单的问题。\\n\\n有什么我可以为您做的吗？", "metrics": {"details": {"model": [{"id": "deepseek-chat", "provider": "OpenAI", "input_tokens": 898, "total_tokens": 931, "output_tokens": 33, "cache_read_tokens": 320}]}, "duration": 3.7604397920003976, "input_tokens": 898, "total_tokens": 931, "output_tokens": 33, "cache_read_tokens": 320, "time_to_first_token": 1.9425657499996305}, "team_id": "1", "user_id": "admin", "messages": [{"id": "380b9750-36aa-4af2-a44a-457f9c0ed717", "role": "system", "content": "You coordinate a team of specialized AI agents to fulfill the user's request. Delegate to members when their expertise or tools are needed. For straightforward requests you can handle directly — including using your own tools — respond without delegating.\\n\\n<team_members>\\n<member id=\\"admin\\" name=\\"fastapiadmin_agent\\">\\n  Role: You are a helpful AI assistant\\n  Description: 你是一个有用的AI助手，可以帮助用户回答问题和提供帮助。\\n</member>\\n</team_members>\\n\\n<how_to_respond>\\nYou operate in coordinate mode. For requests that need member expertise, select the best member(s), delegate with clear task descriptions, and synthesize their outputs into a unified response. For requests you can handle directly — simple questions, using your own tools, or general conversation — respond without delegating.\\n\\nDelegation:\\n- Match each sub-task to the member whose role and tools are the best fit. Delegate to multiple members when the request spans different areas of expertise.\\n- Write task descriptions that are self-contained: state the goal, provide relevant context from the conversation, and describe what a good result looks like.\\n- Use only the member's ID when delegating — do not prefix it with the team ID.\\n\\nAfter receiving member responses:\\n- If a response is incomplete or off-target, re-delegate with clearer instructions or try a different member.\\n- Synthesize all results into a single coherent response. Resolve contradictions, fill gaps with your own reasoning, and add structure — do not simply concatenate member outputs.\\n</how_to_respond>\\n\\n- 保持回答简洁明了\\n- 如果不确定，请说明\\n<additional_information>\\n- Use markdown to format your answers.\\n- The current time is 2026-03-12 23:42:23.352241.\\n</additional_information>\\n\\n<expected_output>\\n中文回答\\n</expected_output>", "created_at": 1773330143, "from_history": false, "stop_after_tool_call": false}, {"id": "b159f3aa-a036-44c2-b1d6-e6bfe44acbef", "role": "user", "content": "你是谁", "created_at": 1773330143, "from_history": false, "stop_after_tool_call": false}, {"id": "692d4bf2-aaae-4fa1-85cd-8a87fae2e7ac", "role": "assistant", "content": "我是您的AI助手，可以帮助您回答问题和提供帮助。我可以协调一个专门团队来处理各种任务，也可以直接回答简单的问题。\\n\\n有什么我可以为您做的吗？", "metrics": {"input_tokens": 898, "total_tokens": 931, "output_tokens": 33, "cache_read_tokens": 320, "time_to_first_token": 1.8599242089985637}, "created_at": 1773330143, "from_history": false, "provider_data": {"id": "f0a17d67-7f1e-48de-b34b-96a3dec94f4c", "system_fingerprint": "fp_eaab8d114b_prod0820_fp8_kvcache"}, "stop_after_tool_call": false}], "created_at": 1773330143, "session_id": "8e21f309-8b73-45b9-966a-37220a628620", "content_type": "str", "model_provider": "OpenAI", "member_responses": [], "model_provider_data": {"id": "f0a17d67-7f1e-48de-b34b-96a3dec94f4c", "system_fingerprint": "fp_eaab8d114b_prod0820_fp8_kvcache"}}]	null	1773330143	1773330147
+93c0388f-8227-430a-8408-3369b89b0f99	team	\N	1	\N	admin	{"session_name": "你好他", "session_state": {}, "session_metrics": {"details": {"model": [{"id": "deepseek-chat", "provider": "OpenAI", "input_tokens": 899, "total_tokens": 915, "output_tokens": 16}]}, "input_tokens": 899, "total_tokens": 915, "output_tokens": 16}}	\N	null	\N	null	[{"input": {"input_content": "你好他"}, "model": "deepseek-chat", "run_id": "ea68973a-637a-42c3-b4da-7713c21f7b72", "status": "COMPLETED", "content": "你好！我是AI助手，很高兴为您服务。有什么我可以帮助您的吗？", "metrics": {"details": {"model": [{"id": "deepseek-chat", "provider": "OpenAI", "input_tokens": 899, "total_tokens": 915, "output_tokens": 16}]}, "duration": 2.8043415420033853, "input_tokens": 899, "total_tokens": 915, "output_tokens": 16, "time_to_first_token": 1.8211426670022774}, "team_id": "1", "user_id": "admin", "messages": [{"id": "a1b9e77c-9d9e-4973-a0cf-fab8aa0150b1", "role": "system", "content": "You coordinate a team of specialized AI agents to fulfill the user's request. Delegate to members when their expertise or tools are needed. For straightforward requests you can handle directly — including using your own tools — respond without delegating.\\n\\n<team_members>\\n<member id=\\"admin\\" name=\\"fastapiadmin_agent\\">\\n  Role: You are a helpful AI assistant\\n  Description: 你是一个有用的AI助手，可以帮助用户回答问题和提供帮助。\\n</member>\\n</team_members>\\n\\n<how_to_respond>\\nYou operate in coordinate mode. For requests that need member expertise, select the best member(s), delegate with clear task descriptions, and synthesize their outputs into a unified response. For requests you can handle directly — simple questions, using your own tools, or general conversation — respond without delegating.\\n\\nDelegation:\\n- Match each sub-task to the member whose role and tools are the best fit. Delegate to multiple members when the request spans different areas of expertise.\\n- Write task descriptions that are self-contained: state the goal, provide relevant context from the conversation, and describe what a good result looks like.\\n- Use only the member's ID when delegating — do not prefix it with the team ID.\\n\\nAfter receiving member responses:\\n- If a response is incomplete or off-target, re-delegate with clearer instructions or try a different member.\\n- Synthesize all results into a single coherent response. Resolve contradictions, fill gaps with your own reasoning, and add structure — do not simply concatenate member outputs.\\n</how_to_respond>\\n\\n- 保持回答简洁明了\\n- 如果不确定，请说明\\n<additional_information>\\n- Use markdown to format your answers.\\n- The current time is 2026-03-29 20:38:25.231562.\\n</additional_information>\\n\\n<expected_output>\\n中文回答\\n</expected_output>", "created_at": 1774787905, "from_history": false, "stop_after_tool_call": false}, {"id": "456f3a81-3084-49fc-877d-afbe04ffb9b7", "role": "user", "content": "你好他", "created_at": 1774787905, "from_history": false, "stop_after_tool_call": false}, {"id": "7747c421-a7d0-4db8-991e-f69267bdc7c5", "role": "assistant", "content": "你好！我是AI助手，很高兴为您服务。有什么我可以帮助您的吗？", "metrics": {"input_tokens": 899, "total_tokens": 915, "output_tokens": 16, "time_to_first_token": 1.7007297909985937}, "created_at": 1774787905, "from_history": false, "provider_data": {"id": "666d6f63-0b0e-49b0-8df0-6ab39d9039fc", "system_fingerprint": "fp_eaab8d114b_prod0820_fp8_kvcache_new_kvcache"}, "stop_after_tool_call": false}], "created_at": 1774787905, "session_id": "93c0388f-8227-430a-8408-3369b89b0f99", "content_type": "str", "model_provider": "OpenAI", "member_responses": [], "model_provider_data": {"id": "666d6f63-0b0e-49b0-8df0-6ab39d9039fc", "system_fingerprint": "fp_eaab8d114b_prod0820_fp8_kvcache_new_kvcache"}}]	null	1774787904	1774787907
+0e2076c7-0c72-45c0-a97b-c170413720e9	team	\N	1	\N	admin	{"session_name": "你是男的女的", "session_state": {}, "session_metrics": {"details": {"model": [{"id": "deepseek-chat", "provider": "OpenAI", "input_tokens": 5926, "total_tokens": 6293, "output_tokens": 367, "cache_read_tokens": 1600}]}, "input_tokens": 5926, "total_tokens": 6293, "output_tokens": 367, "cache_read_tokens": 1600}}	\N	null	\N	null	[{"input": {"input_content": "你是男的女的"}, "model": "deepseek-chat", "events": [], "run_id": "99a1fea8-2950-4f2b-a2f4-63212f52c5fb", "status": "COMPLETED", "content": "我是一个AI助手，没有性别之分。我是由代码和算法构成的数字实体，旨在为您提供帮助和回答问题。\\n\\n如果您有其他问题或需要帮助，请随时告诉我！", "metrics": {"details": {"model": [{"id": "deepseek-chat", "provider": "OpenAI", "input_tokens": 901, "total_tokens": 936, "output_tokens": 35, "cache_read_tokens": 320}]}, "duration": 3.824642333000156, "input_tokens": 901, "total_tokens": 936, "output_tokens": 35, "cache_read_tokens": 320, "time_to_first_token": 1.7806427080013236}, "team_id": "1", "user_id": "admin", "messages": [{"id": "8539d5ee-a817-4710-822d-99686642c4df", "role": "system", "content": "You coordinate a team of specialized AI agents to fulfill the user's request. Delegate to members when their expertise or tools are needed. For straightforward requests you can handle directly — including using your own tools — respond without delegating.\\n\\n<team_members>\\n<member id=\\"admin\\" name=\\"fastapiadmin_agent\\">\\n  Role: You are a helpful AI assistant\\n  Description: 你是一个有用的AI助手，可以帮助用户回答问题和提供帮助。\\n</member>\\n</team_members>\\n\\n<how_to_respond>\\nYou operate in coordinate mode. For requests that need member expertise, select the best member(s), delegate with clear task descriptions, and synthesize their outputs into a unified response. For requests you can handle directly — simple questions, using your own tools, or general conversation — respond without delegating.\\n\\nDelegation:\\n- Match each sub-task to the member whose role and tools are the best fit. Delegate to multiple members when the request spans different areas of expertise.\\n- Write task descriptions that are self-contained: state the goal, provide relevant context from the conversation, and describe what a good result looks like.\\n- Use only the member's ID when delegating — do not prefix it with the team ID.\\n\\nAfter receiving member responses:\\n- If a response is incomplete or off-target, re-delegate with clearer instructions or try a different member.\\n- Synthesize all results into a single coherent response. Resolve contradictions, fill gaps with your own reasoning, and add structure — do not simply concatenate member outputs.\\n</how_to_respond>\\n\\n- 保持回答简洁明了\\n- 如果不确定，请说明\\n<additional_information>\\n- Use markdown to format your answers.\\n- The current time is 2026-03-13 00:09:08.236156.\\n</additional_information>\\n\\n<expected_output>\\n中文回答\\n</expected_output>", "created_at": 1773331748, "from_history": false, "stop_after_tool_call": false}, {"id": "18ed9cf5-a2a5-421e-bbb9-946f621d2a2a", "role": "user", "content": "你是男的女的", "created_at": 1773331748, "from_history": false, "stop_after_tool_call": false}, {"id": "7b3a3aa1-1fb8-4f1a-8a2c-298fef38cd7e", "role": "assistant", "content": "我是一个AI助手，没有性别之分。我是由代码和算法构成的数字实体，旨在为您提供帮助和回答问题。\\n\\n如果您有其他问题或需要帮助，请随时告诉我！", "metrics": {"input_tokens": 901, "total_tokens": 936, "output_tokens": 35, "cache_read_tokens": 320, "time_to_first_token": 1.6999175000000832}, "created_at": 1773331748, "from_history": false, "provider_data": {"id": "a1a3e8f4-dad6-45d6-9338-8c33d060f914", "system_fingerprint": "fp_eaab8d114b_prod0820_fp8_kvcache"}, "stop_after_tool_call": false}], "created_at": 1773331748, "session_id": "0e2076c7-0c72-45c0-a97b-c170413720e9", "content_type": "str", "model_provider": "OpenAI", "member_responses": [], "model_provider_data": {"id": "a1a3e8f4-dad6-45d6-9338-8c33d060f914", "system_fingerprint": "fp_eaab8d114b_prod0820_fp8_kvcache"}}, {"input": {"input_content": "好的我知道了"}, "model": "deepseek-chat", "events": [], "run_id": "9bc121c8-78e2-44b9-9ebd-758d33e845f1", "status": "COMPLETED", "content": "好的！如果您有任何其他问题或需要帮助的地方，随时可以告诉我。我很乐意为您提供帮助！", "metrics": {"details": {"model": [{"id": "deepseek-chat", "provider": "OpenAI", "input_tokens": 942, "total_tokens": 964, "output_tokens": 22, "cache_read_tokens": 320}]}, "duration": 2.982405832999575, "input_tokens": 942, "total_tokens": 964, "output_tokens": 22, "cache_read_tokens": 320, "time_to_first_token": 1.466743332999613}, "team_id": "1", "user_id": "admin", "messages": [{"id": "854713e7-3220-44c8-8c04-97eae9e9eb03", "role": "system", "content": "You coordinate a team of specialized AI agents to fulfill the user's request. Delegate to members when their expertise or tools are needed. For straightforward requests you can handle directly — including using your own tools — respond without delegating.\\n\\n<team_members>\\n<member id=\\"admin\\" name=\\"fastapiadmin_agent\\">\\n  Role: You are a helpful AI assistant\\n  Description: 你是一个有用的AI助手，可以帮助用户回答问题和提供帮助。\\n</member>\\n</team_members>\\n\\n<how_to_respond>\\nYou operate in coordinate mode. For requests that need member expertise, select the best member(s), delegate with clear task descriptions, and synthesize their outputs into a unified response. For requests you can handle directly — simple questions, using your own tools, or general conversation — respond without delegating.\\n\\nDelegation:\\n- Match each sub-task to the member whose role and tools are the best fit. Delegate to multiple members when the request spans different areas of expertise.\\n- Write task descriptions that are self-contained: state the goal, provide relevant context from the conversation, and describe what a good result looks like.\\n- Use only the member's ID when delegating — do not prefix it with the team ID.\\n\\nAfter receiving member responses:\\n- If a response is incomplete or off-target, re-delegate with clearer instructions or try a different member.\\n- Synthesize all results into a single coherent response. Resolve contradictions, fill gaps with your own reasoning, and add structure — do not simply concatenate member outputs.\\n</how_to_respond>\\n\\n- 保持回答简洁明了\\n- 如果不确定，请说明\\n<additional_information>\\n- Use markdown to format your answers.\\n- The current time is 2026-03-13 00:11:22.906936.\\n</additional_information>\\n\\n<expected_output>\\n中文回答\\n</expected_output>", "created_at": 1773331882, "from_history": false, "stop_after_tool_call": false}, {"id": "7f39e100-a08f-46b9-ba19-3492e7e9e6bd", "role": "user", "content": "好的我知道了", "created_at": 1773331882, "from_history": false, "stop_after_tool_call": false}, {"id": "318823e2-fb6a-48fd-9692-a5dcb407e77f", "role": "assistant", "content": "好的！如果您有任何其他问题或需要帮助的地方，随时可以告诉我。我很乐意为您提供帮助！", "metrics": {"input_tokens": 942, "total_tokens": 964, "output_tokens": 22, "cache_read_tokens": 320, "time_to_first_token": 1.3560426669992012}, "created_at": 1773331882, "from_history": false, "provider_data": {"id": "d918fcc8-da81-4463-9213-72dcf3109dd8", "system_fingerprint": "fp_eaab8d114b_prod0820_fp8_kvcache"}, "stop_after_tool_call": false}], "created_at": 1773331882, "session_id": "0e2076c7-0c72-45c0-a97b-c170413720e9", "content_type": "str", "model_provider": "OpenAI", "member_responses": [], "model_provider_data": {"id": "d918fcc8-da81-4463-9213-72dcf3109dd8", "system_fingerprint": "fp_eaab8d114b_prod0820_fp8_kvcache"}}, {"input": {"input_content": "以后我再找你"}, "model": "deepseek-chat", "events": [], "run_id": "5395a65a-f7f6-4c82-b9c3-8e4f75f11312", "status": "COMPLETED", "content": "好的，随时欢迎！我会一直在这里，当您需要帮助、有问题或者想聊天的时候，随时可以回来找我。\\n\\n祝您一切顺利！👋", "metrics": {"details": {"model": [{"id": "deepseek-chat", "provider": "OpenAI", "input_tokens": 971, "total_tokens": 1003, "output_tokens": 32, "cache_read_tokens": 320}]}, "duration": 3.5782694999998057, "input_tokens": 971, "total_tokens": 1003, "output_tokens": 32, "cache_read_tokens": 320, "time_to_first_token": 1.597690667000279}, "team_id": "1", "user_id": "admin", "messages": [{"id": "96f7f716-55d0-450d-946b-2a932e76cbd4", "role": "system", "content": "You coordinate a team of specialized AI agents to fulfill the user's request. Delegate to members when their expertise or tools are needed. For straightforward requests you can handle directly — including using your own tools — respond without delegating.\\n\\n<team_members>\\n<member id=\\"admin\\" name=\\"fastapiadmin_agent\\">\\n  Role: You are a helpful AI assistant\\n  Description: 你是一个有用的AI助手，可以帮助用户回答问题和提供帮助。\\n</member>\\n</team_members>\\n\\n<how_to_respond>\\nYou operate in coordinate mode. For requests that need member expertise, select the best member(s), delegate with clear task descriptions, and synthesize their outputs into a unified response. For requests you can handle directly — simple questions, using your own tools, or general conversation — respond without delegating.\\n\\nDelegation:\\n- Match each sub-task to the member whose role and tools are the best fit. Delegate to multiple members when the request spans different areas of expertise.\\n- Write task descriptions that are self-contained: state the goal, provide relevant context from the conversation, and describe what a good result looks like.\\n- Use only the member's ID when delegating — do not prefix it with the team ID.\\n\\nAfter receiving member responses:\\n- If a response is incomplete or off-target, re-delegate with clearer instructions or try a different member.\\n- Synthesize all results into a single coherent response. Resolve contradictions, fill gaps with your own reasoning, and add structure — do not simply concatenate member outputs.\\n</how_to_respond>\\n\\n- 保持回答简洁明了\\n- 如果不确定，请说明\\n<additional_information>\\n- Use markdown to format your answers.\\n- The current time is 2026-03-13 00:15:15.297981.\\n</additional_information>\\n\\n<expected_output>\\n中文回答\\n</expected_output>", "created_at": 1773332115, "from_history": false, "stop_after_tool_call": false}, {"id": "a38aa282-1009-41ca-b637-5e035d3df1cd", "role": "user", "content": "以后我再找你", "created_at": 1773332115, "from_history": false, "stop_after_tool_call": false}, {"id": "bbfae894-e2d8-4ba6-bd9e-192e8a8f7dba", "role": "assistant", "content": "好的，随时欢迎！我会一直在这里，当您需要帮助、有问题或者想聊天的时候，随时可以回来找我。\\n\\n祝您一切顺利！👋", "metrics": {"input_tokens": 971, "total_tokens": 1003, "output_tokens": 32, "cache_read_tokens": 320, "time_to_first_token": 1.5115680420003628}, "created_at": 1773332115, "from_history": false, "provider_data": {"id": "bf2c9e44-0665-45e8-847f-f1b3d06bde6c", "system_fingerprint": "fp_eaab8d114b_prod0820_fp8_kvcache"}, "stop_after_tool_call": false}], "created_at": 1773332115, "session_id": "0e2076c7-0c72-45c0-a97b-c170413720e9", "content_type": "str", "model_provider": "OpenAI", "member_responses": [], "model_provider_data": {"id": "bf2c9e44-0665-45e8-847f-f1b3d06bde6c", "system_fingerprint": "fp_eaab8d114b_prod0820_fp8_kvcache"}}, {"input": {"input_content": "在吗"}, "model": "deepseek-chat", "events": [], "run_id": "791d08b1-3a9d-4caa-aaf1-afd7bcf55b71", "status": "COMPLETED", "content": "在的！我一直都在这里。有什么可以帮您的吗？", "metrics": {"details": {"model": [{"id": "deepseek-chat", "provider": "OpenAI", "input_tokens": 1009, "total_tokens": 1022, "output_tokens": 13}]}, "duration": 2.6353677920005794, "input_tokens": 1009, "total_tokens": 1022, "output_tokens": 13, "time_to_first_token": 1.9605698750001466}, "team_id": "1", "user_id": "admin", "messages": [{"id": "6812fc0c-06f4-4e98-b083-1bc3cceef89a", "role": "system", "content": "You coordinate a team of specialized AI agents to fulfill the user's request. Delegate to members when their expertise or tools are needed. For straightforward requests you can handle directly — including using your own tools — respond without delegating.\\n\\n<team_members>\\n<member id=\\"admin\\" name=\\"fastapiadmin_agent\\">\\n  Role: You are a helpful AI assistant\\n  Description: 你是一个有用的AI助手，可以帮助用户回答问题和提供帮助。\\n</member>\\n</team_members>\\n\\n<how_to_respond>\\nYou operate in coordinate mode. For requests that need member expertise, select the best member(s), delegate with clear task descriptions, and synthesize their outputs into a unified response. For requests you can handle directly — simple questions, using your own tools, or general conversation — respond without delegating.\\n\\nDelegation:\\n- Match each sub-task to the member whose role and tools are the best fit. Delegate to multiple members when the request spans different areas of expertise.\\n- Write task descriptions that are self-contained: state the goal, provide relevant context from the conversation, and describe what a good result looks like.\\n- Use only the member's ID when delegating — do not prefix it with the team ID.\\n\\nAfter receiving member responses:\\n- If a response is incomplete or off-target, re-delegate with clearer instructions or try a different member.\\n- Synthesize all results into a single coherent response. Resolve contradictions, fill gaps with your own reasoning, and add structure — do not simply concatenate member outputs.\\n</how_to_respond>\\n\\n- 保持回答简洁明了\\n- 如果不确定，请说明\\n<additional_information>\\n- Use markdown to format your answers.\\n- The current time is 2026-03-23 23:08:13.076824.\\n</additional_information>\\n\\n<expected_output>\\n中文回答\\n</expected_output>", "created_at": 1774278493, "from_history": false, "stop_after_tool_call": false}, {"id": "5f7e5593-d788-44dd-a4f9-81dc8a78df2c", "role": "user", "content": "在吗", "created_at": 1774278493, "from_history": false, "stop_after_tool_call": false}, {"id": "af17b0d7-8cb7-4b78-aff0-96f9e218976e", "role": "assistant", "content": "在的！我一直都在这里。有什么可以帮您的吗？", "metrics": {"input_tokens": 1009, "total_tokens": 1022, "output_tokens": 13, "time_to_first_token": 1.8868432919998668}, "created_at": 1774278493, "from_history": false, "provider_data": {"id": "b75a5129-9af1-4849-9a6a-ca308eef0340", "system_fingerprint": "fp_eaab8d114b_prod0820_fp8_kvcache_new_kvcache"}, "stop_after_tool_call": false}], "created_at": 1774278493, "session_id": "0e2076c7-0c72-45c0-a97b-c170413720e9", "content_type": "str", "model_provider": "OpenAI", "member_responses": [], "model_provider_data": {"id": "b75a5129-9af1-4849-9a6a-ca308eef0340", "system_fingerprint": "fp_eaab8d114b_prod0820_fp8_kvcache_new_kvcache"}}, {"input": {"input_content": "帮我写一个python的hello worl"}, "model": "deepseek-chat", "events": [], "run_id": "9a7cc854-f560-46f2-86f4-0c707883b257", "status": "COMPLETED", "content": "我来帮您写一个Python的\\"Hello World\\"程序。这是一个非常简单的入门程序：\\n\\n```python\\n# 最简单的Hello World程序\\nprint(\\"Hello World\\")\\n\\n# 或者使用变量\\nmessage = \\"Hello World\\"\\nprint(message)\\n\\n# 或者使用函数\\ndef say_hello():\\n    print(\\"Hello World\\")\\n\\nsay_hello()\\n```\\n\\n**运行方法：**\\n1. 将代码保存为 `hello.py` 文件\\n2. 在命令行中运行：`python hello.py`\\n3. 或者直接在Python解释器中运行\\n\\n**输出结果：**\\n```\\nHello World\\n```\\n\\n这是学习Python编程的第一步！您想了解更复杂的Python程序吗？", "metrics": {"details": {"model": [{"id": "deepseek-chat", "provider": "OpenAI", "input_tokens": 991, "total_tokens": 1129, "output_tokens": 138, "cache_read_tokens": 320}]}, "duration": 6.201454957999886, "input_tokens": 991, "total_tokens": 1129, "output_tokens": 138, "cache_read_tokens": 320, "time_to_first_token": 1.4080830000002607}, "team_id": "1", "user_id": "admin", "messages": [{"id": "cc1002e7-82f0-45e2-b8db-160129880afe", "role": "system", "content": "You coordinate a team of specialized AI agents to fulfill the user's request. Delegate to members when their expertise or tools are needed. For straightforward requests you can handle directly — including using your own tools — respond without delegating.\\n\\n<team_members>\\n<member id=\\"admin\\" name=\\"fastapiadmin_agent\\">\\n  Role: You are a helpful AI assistant\\n  Description: 你是一个有用的AI助手，可以帮助用户回答问题和提供帮助。\\n</member>\\n</team_members>\\n\\n<how_to_respond>\\nYou operate in coordinate mode. For requests that need member expertise, select the best member(s), delegate with clear task descriptions, and synthesize their outputs into a unified response. For requests you can handle directly — simple questions, using your own tools, or general conversation — respond without delegating.\\n\\nDelegation:\\n- Match each sub-task to the member whose role and tools are the best fit. Delegate to multiple members when the request spans different areas of expertise.\\n- Write task descriptions that are self-contained: state the goal, provide relevant context from the conversation, and describe what a good result looks like.\\n- Use only the member's ID when delegating — do not prefix it with the team ID.\\n\\nAfter receiving member responses:\\n- If a response is incomplete or off-target, re-delegate with clearer instructions or try a different member.\\n- Synthesize all results into a single coherent response. Resolve contradictions, fill gaps with your own reasoning, and add structure — do not simply concatenate member outputs.\\n</how_to_respond>\\n\\n- 保持回答简洁明了\\n- 如果不确定，请说明\\n<additional_information>\\n- Use markdown to format your answers.\\n- The current time is 2026-03-23 23:08:38.810848.\\n</additional_information>\\n\\n<expected_output>\\n中文回答\\n</expected_output>", "created_at": 1774278518, "from_history": false, "stop_after_tool_call": false}, {"id": "518695f7-e8fd-4ec2-a009-4b9caade1d1d", "role": "user", "content": "帮我写一个python的hello worl", "created_at": 1774278518, "from_history": false, "stop_after_tool_call": false}, {"id": "f140147a-c0c2-44c9-8724-5809db717a55", "role": "assistant", "content": "我来帮您写一个Python的\\"Hello World\\"程序。这是一个非常简单的入门程序：\\n\\n```python\\n# 最简单的Hello World程序\\nprint(\\"Hello World\\")\\n\\n# 或者使用变量\\nmessage = \\"Hello World\\"\\nprint(message)\\n\\n# 或者使用函数\\ndef say_hello():\\n    print(\\"Hello World\\")\\n\\nsay_hello()\\n```\\n\\n**运行方法：**\\n1. 将代码保存为 `hello.py` 文件\\n2. 在命令行中运行：`python hello.py`\\n3. 或者直接在Python解释器中运行\\n\\n**输出结果：**\\n```\\nHello World\\n```\\n\\n这是学习Python编程的第一步！您想了解更复杂的Python程序吗？", "metrics": {"input_tokens": 991, "total_tokens": 1129, "output_tokens": 138, "cache_read_tokens": 320, "time_to_first_token": 1.3087896659999387}, "created_at": 1774278518, "from_history": false, "provider_data": {"id": "5b31910d-6a8e-4ba0-a2f9-dfa6f9317c30", "system_fingerprint": "fp_eaab8d114b_prod0820_fp8_kvcache_new_kvcache"}, "stop_after_tool_call": false}], "created_at": 1774278518, "session_id": "0e2076c7-0c72-45c0-a97b-c170413720e9", "content_type": "str", "model_provider": "OpenAI", "member_responses": [], "model_provider_data": {"id": "5b31910d-6a8e-4ba0-a2f9-dfa6f9317c30", "system_fingerprint": "fp_eaab8d114b_prod0820_fp8_kvcache_new_kvcache"}}, {"input": {"input_content": "请查看我提供的文件内容是什么"}, "model": "deepseek-chat", "run_id": "965fb607-566b-48c0-b4fe-87c10f3874cc", "status": "COMPLETED", "content": "我需要查看您提供的文件内容，但是目前我无法直接访问您本地的文件系统。您可以通过以下几种方式让我帮助您：\\n\\n1. **直接粘贴文件内容**：您可以将文件内容复制粘贴到聊天中\\n2. **描述文件内容**：告诉我文件的大致内容或您想了解什么\\n3. **使用代码片段**：如果是代码文件，可以用代码块格式分享\\n\\n如果您能提供文件内容，我可以帮您：\\n- 分析代码逻辑\\n- 检查语法错误\\n- 解释功能作用\\n- 提供改进建议\\n\\n请分享您想让我查看的文件内容吧！", "metrics": {"details": {"model": [{"id": "deepseek-chat", "provider": "OpenAI", "input_tokens": 1112, "total_tokens": 1239, "output_tokens": 127, "cache_read_tokens": 320}]}, "duration": 5.575905083001999, "input_tokens": 1112, "total_tokens": 1239, "output_tokens": 127, "cache_read_tokens": 320, "time_to_first_token": 1.555008583000017}, "team_id": "1", "user_id": "admin", "messages": [{"id": "87cdc130-8065-47ff-9ece-daab68c73dd7", "role": "system", "content": "You coordinate a team of specialized AI agents to fulfill the user's request. Delegate to members when their expertise or tools are needed. For straightforward requests you can handle directly — including using your own tools — respond without delegating.\\n\\n<team_members>\\n<member id=\\"admin\\" name=\\"fastapiadmin_agent\\">\\n  Role: You are a helpful AI assistant\\n  Description: 你是一个有用的AI助手，可以帮助用户回答问题和提供帮助。\\n</member>\\n</team_members>\\n\\n<how_to_respond>\\nYou operate in coordinate mode. For requests that need member expertise, select the best member(s), delegate with clear task descriptions, and synthesize their outputs into a unified response. For requests you can handle directly — simple questions, using your own tools, or general conversation — respond without delegating.\\n\\nDelegation:\\n- Match each sub-task to the member whose role and tools are the best fit. Delegate to multiple members when the request spans different areas of expertise.\\n- Write task descriptions that are self-contained: state the goal, provide relevant context from the conversation, and describe what a good result looks like.\\n- Use only the member's ID when delegating — do not prefix it with the team ID.\\n\\nAfter receiving member responses:\\n- If a response is incomplete or off-target, re-delegate with clearer instructions or try a different member.\\n- Synthesize all results into a single coherent response. Resolve contradictions, fill gaps with your own reasoning, and add structure — do not simply concatenate member outputs.\\n</how_to_respond>\\n\\n- 保持回答简洁明了\\n- 如果不确定，请说明\\n<additional_information>\\n- Use markdown to format your answers.\\n- The current time is 2026-03-29 20:40:16.570209.\\n</additional_information>\\n\\n<expected_output>\\n中文回答\\n</expected_output>", "created_at": 1774788016, "from_history": false, "stop_after_tool_call": false}, {"id": "b7423fe7-705e-49a3-bf8c-3b406d4b044b", "role": "user", "content": "请查看我提供的文件内容是什么", "created_at": 1774788016, "from_history": false, "stop_after_tool_call": false}, {"id": "96d8afe6-bdb2-482a-a954-691c4800a591", "role": "assistant", "content": "我需要查看您提供的文件内容，但是目前我无法直接访问您本地的文件系统。您可以通过以下几种方式让我帮助您：\\n\\n1. **直接粘贴文件内容**：您可以将文件内容复制粘贴到聊天中\\n2. **描述文件内容**：告诉我文件的大致内容或您想了解什么\\n3. **使用代码片段**：如果是代码文件，可以用代码块格式分享\\n\\n如果您能提供文件内容，我可以帮您：\\n- 分析代码逻辑\\n- 检查语法错误\\n- 解释功能作用\\n- 提供改进建议\\n\\n请分享您想让我查看的文件内容吧！", "metrics": {"input_tokens": 1112, "total_tokens": 1239, "output_tokens": 127, "cache_read_tokens": 320, "time_to_first_token": 1.4296587080025347}, "created_at": 1774788016, "from_history": false, "provider_data": {"id": "26dcc6a5-7ee7-44d3-8543-69328f8bb61f", "system_fingerprint": "fp_eaab8d114b_prod0820_fp8_kvcache_new_kvcache"}, "stop_after_tool_call": false}], "created_at": 1774788016, "session_id": "0e2076c7-0c72-45c0-a97b-c170413720e9", "content_type": "str", "model_provider": "OpenAI", "member_responses": [], "model_provider_data": {"id": "26dcc6a5-7ee7-44d3-8543-69328f8bb61f", "system_fingerprint": "fp_eaab8d114b_prod0820_fp8_kvcache_new_kvcache"}}]	null	1773331748	1774788022
 \.
 
 
@@ -2982,6 +3425,14 @@ COPY public.gen_demo (name, a, b, c, d, e, f, g, h, i, id, uuid, status, descrip
 
 
 --
+-- Data for Name: gen_demo01; Type: TABLE DATA; Schema: public; Owner: root
+--
+
+COPY public.gen_demo01 (name, id, uuid, status, description, created_time, updated_time, created_id, updated_id) FROM stdin;
+\.
+
+
+--
 -- Data for Name: gen_table; Type: TABLE DATA; Schema: public; Owner: root
 --
 
@@ -3002,7 +3453,7 @@ COPY public.gen_table_column (column_name, column_comment, column_type, column_l
 --
 
 COPY public.sys_dept (name, "order", code, leader, phone, email, parent_id, id, uuid, status, description, created_time, updated_time) FROM stdin;
-集团总公司	1	GROUP	部门负责人	1582112620	deptadmin@example.com	\N	1	fca0ba49-0407-4077-bb7a-fef2149b4770	0	集团总公司	2026-03-22 21:43:05.988003	2026-03-22 21:43:05.988004
+集团总公司	1	GROUP	部门负责人	1582112620	deptadmin@example.com	\N	1	4ce37ab1-0966-4ab9-9315-37198a772b40	0	集团总公司	2026-04-03 00:38:22.844742	2026-04-03 00:38:22.844743
 \.
 
 
@@ -3011,40 +3462,40 @@ COPY public.sys_dept (name, "order", code, leader, phone, email, parent_id, id, 
 --
 
 COPY public.sys_dict_data (dict_sort, dict_label, dict_value, css_class, list_class, is_default, dict_type, dict_type_id, id, uuid, status, description, created_time, updated_time) FROM stdin;
-1	男	0	blue	\N	t	sys_user_sex	1	1	5f3455e5-b216-44a3-9b26-a838dfcb536f	0	性别男	2026-03-22 21:43:05.996723	2026-03-22 21:43:05.996725
-2	女	1	pink	\N	f	sys_user_sex	1	2	533a5b46-6833-4df3-a0b4-91253a35dc92	0	性别女	2026-03-22 21:43:05.996728	2026-03-22 21:43:05.996729
-3	未知	2	red	\N	f	sys_user_sex	1	3	c3438d12-0e66-4a40-925b-ded41de26b9a	0	性别未知	2026-03-22 21:43:05.996732	2026-03-22 21:43:05.996732
-1	是	1		primary	t	sys_yes_no	2	4	8b3f19de-819e-495c-a60f-74bc63cb8aad	0	是	2026-03-22 21:43:05.996735	2026-03-22 21:43:05.996735
-2	否	0		danger	f	sys_yes_no	2	5	2efc60ed-3d7a-49ce-9f9a-c1befdb58669	0	否	2026-03-22 21:43:05.996738	2026-03-22 21:43:05.996738
-1	启用	1		primary	f	sys_common_status	3	6	6bde0c27-1ad9-4ee0-b7b4-ac8c5ed182fe	0	启用状态	2026-03-22 21:43:05.996741	2026-03-22 21:43:05.996741
-2	停用	0		danger	f	sys_common_status	3	7	a3001879-db74-4e93-baa3-eb4f815b104c	0	停用状态	2026-03-22 21:43:05.996743	2026-03-22 21:43:05.996744
-1	通知	1	blue	warning	t	sys_notice_type	4	8	98c4e4ce-aaec-44ba-9660-b7810c331c96	0	通知	2026-03-22 21:43:05.996746	2026-03-22 21:43:05.996747
-2	公告	2	orange	success	f	sys_notice_type	4	9	6d82ff6e-b3b0-4ca8-afc4-5ce68ea550d5	0	公告	2026-03-22 21:43:05.996749	2026-03-22 21:43:05.99675
-99	其他	0		info	f	sys_oper_type	5	10	bade7359-9ec9-4fff-ac77-40fa0fe5ca86	0	其他操作	2026-03-22 21:43:05.996752	2026-03-22 21:43:05.996752
-1	新增	1		info	f	sys_oper_type	5	11	8d97a4a6-0fc3-4964-b566-0eb4714db566	0	新增操作	2026-03-22 21:43:05.996755	2026-03-22 21:43:05.996755
-2	修改	2		info	f	sys_oper_type	5	12	ff1c1c36-d447-4e6d-8d5e-65e0a45d79fd	0	修改操作	2026-03-22 21:43:05.996758	2026-03-22 21:43:05.996758
-3	删除	3		danger	f	sys_oper_type	5	13	b3aed89f-33e0-42f9-9371-27cdc62136e3	0	删除操作	2026-03-22 21:43:05.996761	2026-03-22 21:43:05.996761
-4	分配权限	4		primary	f	sys_oper_type	5	14	d8d59718-3390-4b5f-b573-c9a2ed923990	0	授权操作	2026-03-22 21:43:05.996763	2026-03-22 21:43:05.996764
-5	导出	5		warning	f	sys_oper_type	5	15	8d6c98f7-4c39-49ae-91c1-55ae4ce5f66b	0	导出操作	2026-03-22 21:43:05.996766	2026-03-22 21:43:05.996766
-6	导入	6		warning	f	sys_oper_type	5	16	bfab2650-9985-4ac2-a58a-366a04d77550	0	导入操作	2026-03-22 21:43:05.996769	2026-03-22 21:43:05.996769
-7	强退	7		danger	f	sys_oper_type	5	17	aab7e128-f889-45da-ae71-1216e98822fc	0	强退操作	2026-03-22 21:43:05.996772	2026-03-22 21:43:05.996772
-8	生成代码	8		warning	f	sys_oper_type	5	18	4b68bd5a-97f5-4b74-aa3c-c38102e975e4	0	生成操作	2026-03-22 21:43:05.996774	2026-03-22 21:43:05.996775
-9	清空数据	9		danger	f	sys_oper_type	5	19	d56f9b46-b500-44e8-8373-f07f58f9659d	0	清空操作	2026-03-22 21:43:05.996777	2026-03-22 21:43:05.996778
-1	默认(Memory)	default		\N	t	sys_job_store	6	20	8d6200ab-4794-4b42-8995-806f8f42e340	0	默认分组	2026-03-22 21:43:05.99678	2026-03-22 21:43:05.99678
-2	数据库(Sqlalchemy)	sqlalchemy		\N	f	sys_job_store	6	21	0e6fb93b-fabd-4b06-aed9-d5151ae8606a	0	数据库分组	2026-03-22 21:43:05.996783	2026-03-22 21:43:05.996783
-3	数据库(Redis)	redis		\N	f	sys_job_store	6	22	e9f5bfd2-3b04-4d8e-a473-92dc00d257db	0	reids分组	2026-03-22 21:43:05.996786	2026-03-22 21:43:05.996786
-1	线程池	default		\N	f	sys_job_executor	7	23	b684ef00-caa3-42c8-a934-874ad8ba81fd	0	线程池	2026-03-22 21:43:05.996789	2026-03-22 21:43:05.996789
-2	进程池	processpool		\N	f	sys_job_executor	7	24	eb8125cc-0600-4258-b5b0-cf16e5776842	0	进程池	2026-03-22 21:43:05.996791	2026-03-22 21:43:05.996792
-1	演示函数	scheduler_test.job		\N	t	sys_job_function	8	25	c1de5c74-81b8-49c9-9106-9df26d210dcb	0	演示函数	2026-03-22 21:43:05.996794	2026-03-22 21:43:05.996794
-1	指定日期(date)	date		\N	t	sys_job_trigger	9	26	ea2e017c-cdd4-4899-9b3a-18a69b5fb6f7	0	指定日期任务触发器	2026-03-22 21:43:05.996797	2026-03-22 21:43:05.996797
-2	间隔触发器(interval)	interval		\N	f	sys_job_trigger	9	27	2829bc17-5f31-4bf5-bc66-1ee1d6c05ebb	0	间隔触发器任务触发器	2026-03-22 21:43:05.9968	2026-03-22 21:43:05.9968
-3	cron表达式	cron		\N	f	sys_job_trigger	9	28	b135e3c7-6e3a-4a9a-be6f-5881e627fd9e	0	间隔触发器任务触发器	2026-03-22 21:43:05.996803	2026-03-22 21:43:05.996803
-1	默认(default)	default		\N	t	sys_list_class	10	29	c7b8a194-b8b6-410d-b2fc-599bd05187e0	0	默认表格回显样式	2026-03-22 21:43:05.996805	2026-03-22 21:43:05.996806
-2	主要(primary)	primary		\N	f	sys_list_class	10	30	10ffae69-4fef-4d7b-b617-091496667c74	0	主要表格回显样式	2026-03-22 21:43:05.996808	2026-03-22 21:43:05.996808
-3	成功(success)	success		\N	f	sys_list_class	10	31	c9235e14-5c78-4e59-a7f4-87b21f5ae681	0	成功表格回显样式	2026-03-22 21:43:05.996811	2026-03-22 21:43:05.996811
-4	信息(info)	info		\N	f	sys_list_class	10	32	3e7616d5-8b42-41ad-bf21-6c92a000d1a5	0	信息表格回显样式	2026-03-22 21:43:05.996814	2026-03-22 21:43:05.996814
-5	警告(warning)	warning		\N	f	sys_list_class	10	33	a2a6ac17-9683-47cb-8167-3f2088d1eb75	0	警告表格回显样式	2026-03-22 21:43:05.996816	2026-03-22 21:43:05.996817
-6	危险(danger)	danger		\N	f	sys_list_class	10	34	7b187b9f-0404-4c59-a4fd-de6ff32322a6	0	危险表格回显样式	2026-03-22 21:43:05.996819	2026-03-22 21:43:05.99682
+1	男	0	blue	\N	t	sys_user_sex	1	1	2de65287-0314-49ed-86ad-e523a1a05873	0	性别男	2026-04-03 00:38:22.855541	2026-04-03 00:38:22.855543
+2	女	1	pink	\N	f	sys_user_sex	1	2	8a9eb506-71a8-48b3-9d3d-5106afdb0fd6	0	性别女	2026-04-03 00:38:22.855546	2026-04-03 00:38:22.855547
+3	未知	2	red	\N	f	sys_user_sex	1	3	90805910-fffb-4127-8abf-64df995af724	0	性别未知	2026-04-03 00:38:22.85555	2026-04-03 00:38:22.85555
+1	是	1		primary	t	sys_yes_no	2	4	c8d485c8-bcf9-46f1-9782-f16b30f10132	0	是	2026-04-03 00:38:22.855553	2026-04-03 00:38:22.855553
+2	否	0		danger	f	sys_yes_no	2	5	d6999f37-270a-46d4-9a55-28c1e832f7d9	0	否	2026-04-03 00:38:22.855556	2026-04-03 00:38:22.855556
+1	启用	1		primary	f	sys_common_status	3	6	0a9d64dd-a6e9-4557-89f6-8ea17d59c273	0	启用状态	2026-04-03 00:38:22.855559	2026-04-03 00:38:22.85556
+2	停用	0		danger	f	sys_common_status	3	7	25981366-37b1-4104-8783-46bbc6026cf7	0	停用状态	2026-04-03 00:38:22.855562	2026-04-03 00:38:22.855563
+1	通知	1	blue	warning	t	sys_notice_type	4	8	8ae2906d-a0fb-445b-95af-bb54325f6bf1	0	通知	2026-04-03 00:38:22.855565	2026-04-03 00:38:22.855566
+2	公告	2	orange	success	f	sys_notice_type	4	9	07351d5a-2b16-482e-8765-673a6a853ab6	0	公告	2026-04-03 00:38:22.855568	2026-04-03 00:38:22.855569
+99	其他	0		info	f	sys_oper_type	5	10	78919d05-b288-473f-81bd-4931eeba7eba	0	其他操作	2026-04-03 00:38:22.855571	2026-04-03 00:38:22.855572
+1	新增	1		info	f	sys_oper_type	5	11	33dcba92-179c-481d-811d-f0c13b1b4843	0	新增操作	2026-04-03 00:38:22.855574	2026-04-03 00:38:22.855575
+2	修改	2		info	f	sys_oper_type	5	12	7d41664f-3276-4d6c-93a1-cb4c42cbf2b5	0	修改操作	2026-04-03 00:38:22.855577	2026-04-03 00:38:22.855578
+3	删除	3		danger	f	sys_oper_type	5	13	c220e753-e8c1-4ea2-88a8-84964538fb38	0	删除操作	2026-04-03 00:38:22.85558	2026-04-03 00:38:22.855581
+4	分配权限	4		primary	f	sys_oper_type	5	14	f4b992dc-e239-4d56-9d1c-523c6a96dd5c	0	授权操作	2026-04-03 00:38:22.855583	2026-04-03 00:38:22.855584
+5	导出	5		warning	f	sys_oper_type	5	15	88b94728-4c39-4377-bc44-cbe659569694	0	导出操作	2026-04-03 00:38:22.855586	2026-04-03 00:38:22.855586
+6	导入	6		warning	f	sys_oper_type	5	16	0ea14b80-4b4a-4d8b-925b-65ba5106ed41	0	导入操作	2026-04-03 00:38:22.855589	2026-04-03 00:38:22.855589
+7	强退	7		danger	f	sys_oper_type	5	17	06074fcf-7e02-42e3-9b8d-5d110ad7f8a1	0	强退操作	2026-04-03 00:38:22.855592	2026-04-03 00:38:22.855592
+8	生成代码	8		warning	f	sys_oper_type	5	18	dcfa6d0d-e6d0-4ff7-9685-9e4c818ec41c	0	生成操作	2026-04-03 00:38:22.855595	2026-04-03 00:38:22.855595
+9	清空数据	9		danger	f	sys_oper_type	5	19	9e29caba-512d-48d1-94aa-85217617daba	0	清空操作	2026-04-03 00:38:22.855598	2026-04-03 00:38:22.855598
+1	默认(Memory)	default		\N	t	sys_job_store	6	20	f83f23f0-ed84-4c31-abf2-e0329fb45c3f	0	默认分组	2026-04-03 00:38:22.855601	2026-04-03 00:38:22.855601
+2	数据库(Sqlalchemy)	sqlalchemy		\N	f	sys_job_store	6	21	e9b18dc9-1570-4ab7-9410-53ecdb6aec61	0	数据库分组	2026-04-03 00:38:22.855604	2026-04-03 00:38:22.855604
+3	数据库(Redis)	redis		\N	f	sys_job_store	6	22	fd1a1ecd-06f6-40a3-ae9d-86d3c93a7570	0	reids分组	2026-04-03 00:38:22.855607	2026-04-03 00:38:22.855607
+1	线程池	default		\N	f	sys_job_executor	7	23	90de71b4-4945-44c9-bc48-835f4c3cf5e2	0	线程池	2026-04-03 00:38:22.85561	2026-04-03 00:38:22.85561
+2	进程池	processpool		\N	f	sys_job_executor	7	24	1d960b89-891e-4fba-bcd4-aa63674277b9	0	进程池	2026-04-03 00:38:22.855613	2026-04-03 00:38:22.855613
+1	演示函数	scheduler_test.job		\N	t	sys_job_function	8	25	a5c9589b-3d42-4cda-975c-5a7f7c7bc7cb	0	演示函数	2026-04-03 00:38:22.855616	2026-04-03 00:38:22.855616
+1	指定日期(date)	date		\N	t	sys_job_trigger	9	26	03f5463e-8ec9-4db6-992a-564d4c12fc23	0	指定日期任务触发器	2026-04-03 00:38:22.855619	2026-04-03 00:38:22.855619
+2	间隔触发器(interval)	interval		\N	f	sys_job_trigger	9	27	800d8bb8-85fd-4831-a7dc-6a9d02f68a29	0	间隔触发器任务触发器	2026-04-03 00:38:22.855623	2026-04-03 00:38:22.855623
+3	cron表达式	cron		\N	f	sys_job_trigger	9	28	8396804b-11d5-4b0f-b1eb-ec75070b534e	0	间隔触发器任务触发器	2026-04-03 00:38:22.855627	2026-04-03 00:38:22.855628
+1	默认(default)	default		\N	t	sys_list_class	10	29	a497ec4e-5f13-4226-9c57-62b49710881c	0	默认表格回显样式	2026-04-03 00:38:22.855631	2026-04-03 00:38:22.855631
+2	主要(primary)	primary		\N	f	sys_list_class	10	30	df379254-54f4-4d89-84ea-02630d1aeda1	0	主要表格回显样式	2026-04-03 00:38:22.855635	2026-04-03 00:38:22.855635
+3	成功(success)	success		\N	f	sys_list_class	10	31	a3cb325b-5fa6-4022-8bab-5281447d88c1	0	成功表格回显样式	2026-04-03 00:38:22.855639	2026-04-03 00:38:22.855639
+4	信息(info)	info		\N	f	sys_list_class	10	32	63c93836-b3f8-4783-a809-30a58b9b13fb	0	信息表格回显样式	2026-04-03 00:38:22.855642	2026-04-03 00:38:22.855643
+5	警告(warning)	warning		\N	f	sys_list_class	10	33	5e4627ec-10d9-4108-807a-407bc5b197b7	0	警告表格回显样式	2026-04-03 00:38:22.855645	2026-04-03 00:38:22.855646
+6	危险(danger)	danger		\N	f	sys_list_class	10	34	5279e91f-c5a1-4a70-b1ac-94d25bf11706	0	危险表格回显样式	2026-04-03 00:38:22.855648	2026-04-03 00:38:22.855649
 \.
 
 
@@ -3053,16 +3504,16 @@ COPY public.sys_dict_data (dict_sort, dict_label, dict_value, css_class, list_cl
 --
 
 COPY public.sys_dict_type (dict_name, dict_type, id, uuid, status, description, created_time, updated_time) FROM stdin;
-用户性别	sys_user_sex	1	4ec3f98f-2f0f-437c-a20e-a409ca77bd1d	0	用户性别列表	2026-03-22 21:43:05.992952	2026-03-22 21:43:05.992953
-系统是否	sys_yes_no	2	1ce66413-f99f-42fe-963c-320de039ab38	0	系统是否列表	2026-03-22 21:43:05.992957	2026-03-22 21:43:05.992957
-系统状态	sys_common_status	3	e313cf3d-a701-403e-9ada-f955d03b0c8f	0	系统状态	2026-03-22 21:43:05.99296	2026-03-22 21:43:05.992961
-通知类型	sys_notice_type	4	cf6b0619-d2ef-43bb-8273-cd1acea01cd7	0	通知类型列表	2026-03-22 21:43:05.992963	2026-03-22 21:43:05.992964
-操作类型	sys_oper_type	5	a50ddb54-b4fb-4764-888b-0420db7b6612	0	操作类型列表	2026-03-22 21:43:05.992966	2026-03-22 21:43:05.992967
-任务存储器	sys_job_store	6	45f96388-b8f1-44d8-be8c-2cad8e5da33c	0	任务分组列表	2026-03-22 21:43:05.992969	2026-03-22 21:43:05.992969
-任务执行器	sys_job_executor	7	99bb30ed-9576-4bc7-8f37-aa404bd334d4	0	任务执行器列表	2026-03-22 21:43:05.992972	2026-03-22 21:43:05.992972
-任务函数	sys_job_function	8	3077c58f-20f0-4c40-b272-7f465f20bb27	0	任务函数列表	2026-03-22 21:43:05.992975	2026-03-22 21:43:05.992975
-任务触发器	sys_job_trigger	9	bb41e39d-0aca-4209-8d3b-f5463a2c80de	0	任务触发器列表	2026-03-22 21:43:05.992978	2026-03-22 21:43:05.992978
-表格回显样式	sys_list_class	10	c9dfde76-2843-4cfd-ac53-c49dab01f8e3	0	表格回显样式列表	2026-03-22 21:43:05.992981	2026-03-22 21:43:05.992981
+用户性别	sys_user_sex	1	80178156-0daa-41ff-8f1a-58fb3936cb4b	0	用户性别列表	2026-04-03 00:38:22.850282	2026-04-03 00:38:22.850282
+系统是否	sys_yes_no	2	c2e8db3d-9514-4756-b8c9-e6d6f324d094	0	系统是否列表	2026-04-03 00:38:22.850286	2026-04-03 00:38:22.850287
+系统状态	sys_common_status	3	3d7e2633-bd39-4ccb-8d0f-2dcdb503dc5d	0	系统状态	2026-04-03 00:38:22.85029	2026-04-03 00:38:22.85029
+通知类型	sys_notice_type	4	7583d888-d458-48db-a44d-1a53372bb2e8	0	通知类型列表	2026-04-03 00:38:22.850293	2026-04-03 00:38:22.850293
+操作类型	sys_oper_type	5	111c581d-924b-4211-ba72-d757b43d1cdc	0	操作类型列表	2026-04-03 00:38:22.850296	2026-04-03 00:38:22.850296
+任务存储器	sys_job_store	6	bd889b21-f488-48ac-b326-6938ea00d287	0	任务分组列表	2026-04-03 00:38:22.850299	2026-04-03 00:38:22.8503
+任务执行器	sys_job_executor	7	6ceb3045-a032-47e3-bfeb-b24ecad85ac2	0	任务执行器列表	2026-04-03 00:38:22.850302	2026-04-03 00:38:22.850303
+任务函数	sys_job_function	8	aa5d6274-5692-41d3-8d58-4f15999d805f	0	任务函数列表	2026-04-03 00:38:22.850305	2026-04-03 00:38:22.850306
+任务触发器	sys_job_trigger	9	4c0bdef2-afe1-4b7f-9192-004e28fb2a40	0	任务触发器列表	2026-04-03 00:38:22.850308	2026-04-03 00:38:22.850309
+表格回显样式	sys_list_class	10	40bb4e53-e343-4120-8338-b0538321e44f	0	表格回显样式列表	2026-04-03 00:38:22.850312	2026-04-03 00:38:22.850312
 \.
 
 
@@ -3079,161 +3530,187 @@ COPY public.sys_log (type, request_path, request_method, request_payload, reques
 --
 
 COPY public.sys_menu (name, type, "order", permission, icon, route_name, route_path, component_path, redirect, hidden, keep_alive, always_show, title, params, affix, parent_id, id, uuid, status, description, created_time, updated_time) FROM stdin;
-仪表盘	1	1		client	Dashboard	/dashboard	\N	/dashboard/workplace	f	t	t	仪表盘	null	f	\N	1	77723425-e6bb-4118-a50d-ef8a9293a13e	0	初始化数据	2026-03-22 21:43:05.965721	2026-03-22 21:43:05.965725
-系统管理	1	2	\N	system	System	/system	\N	/system/menu	f	t	f	系统管理	null	f	\N	2	f75cff57-378a-48d0-8ac2-5710a62b97f4	0	初始化数据	2026-03-22 21:43:05.965729	2026-03-22 21:43:05.96573
-监控管理	1	3	\N	monitor	Monitor	/monitor	\N	/monitor/online	f	t	f	监控管理	null	f	\N	3	388d3140-64f3-49eb-b5c0-74b82d0d01f1	0	初始化数据	2026-03-22 21:43:05.965733	2026-03-22 21:43:05.965733
-接口管理	1	4	\N	document	Common	/common	\N	/common/docs	f	t	f	接口管理	null	f	\N	4	0813310b-7718-48f3-89e0-a8171a3623ec	0	初始化数据	2026-03-22 21:43:05.965736	2026-03-22 21:43:05.965737
-代码管理	1	5	\N	code	Generator	/generator	\N	/generator/gencode	f	t	f	代码管理	null	f	\N	5	6d824a7d-974f-49c3-a709-37a0794ce029	0	代码管理	2026-03-22 21:43:05.965739	2026-03-22 21:43:05.96574
-应用管理	1	6	\N	el-icon-ShoppingBag	Application	/application	\N	/application/myapp	f	t	f	应用管理	null	f	\N	6	9555cc91-c8c9-4cec-853d-096af37c3b18	0	初始化数据	2026-03-22 21:43:05.965742	2026-03-22 21:43:05.965743
-AI管理	1	7	\N	el-icon-ChatLineSquare	AI	/ai	\N	/ai/chat	f	t	f	AI管理	null	f	\N	7	b69d17ec-8a82-4484-a5d1-3ebd78541eff	0	AI管理	2026-03-22 21:43:05.965745	2026-03-22 21:43:05.965746
-任务管理	1	8	\N	el-icon-SetUp	Task	/task	\N	/task/job	f	t	f	任务管理	null	f	\N	8	d721c68d-c0fd-4dba-93cd-5e8b2d7c9032	0	任务管理	2026-03-22 21:43:05.965748	2026-03-22 21:43:05.965749
-案例管理	1	9	\N	menu	Example	/example	\N	/example/demo	f	t	f	案例管理	null	f	\N	9	8fcfaf12-40b4-4915-a989-1aeb1d86b134	0	案例管理	2026-03-22 21:43:05.965751	2026-03-22 21:43:05.965751
-工作台	2	1	dashboard:workplace:query	el-icon-PieChart	Workplace	/dashboard/workplace	dashboard/workplace	\N	f	t	f	工作台	null	f	1	10	3d081637-bf84-4425-9fdc-134b33b9750c	0	初始化数据	2026-03-22 21:43:05.972053	2026-03-22 21:43:05.972055
-菜单管理	2	1	module_system:menu:query	menu	Menu	/system/menu	module_system/menu/index	\N	f	t	f	菜单管理	null	f	2	11	9ddbc906-97fd-484d-8782-9f41fdf674c2	0	初始化数据	2026-03-22 21:43:05.972059	2026-03-22 21:43:05.972059
-部门管理	2	2	module_system:dept:query	tree	Dept	/system/dept	module_system/dept/index	\N	f	t	f	部门管理	null	f	2	12	3b17db1a-b573-488d-b9cf-4e454930e513	0	初始化数据	2026-03-22 21:43:05.972063	2026-03-22 21:43:05.972063
-岗位管理	2	3	module_system:position:query	el-icon-Coordinate	Position	/system/position	module_system/position/index	\N	f	t	f	岗位管理	null	f	2	13	4c2cd467-67ef-41ca-b553-9ac5e1d348c6	0	初始化数据	2026-03-22 21:43:05.972066	2026-03-22 21:43:05.972066
-角色管理	2	4	module_system:role:query	role	Role	/system/role	module_system/role/index	\N	f	t	f	角色管理	null	f	2	14	b0c423bc-035c-4fce-ba39-efb128060003	0	初始化数据	2026-03-22 21:43:05.972069	2026-03-22 21:43:05.97207
-用户管理	2	5	module_system:user:query	el-icon-User	User	/system/user	module_system/user/index	\N	f	t	f	用户管理	null	f	2	15	50ec2857-1aee-4c46-acd4-d4ca0a19a30b	0	初始化数据	2026-03-22 21:43:05.972073	2026-03-22 21:43:05.972073
-日志管理	2	6	module_system:log:query	el-icon-Aim	Log	/system/log	module_system/log/index	\N	f	t	f	日志管理	null	f	2	16	fe19b3c4-0eef-4500-8f2d-f9e706fb45b7	0	初始化数据	2026-03-22 21:43:05.972077	2026-03-22 21:43:05.972078
-公告管理	2	7	module_system:notice:query	bell	Notice	/system/notice	module_system/notice/index	\N	f	t	f	公告管理	null	f	2	17	b34813fa-e2db-4d2a-8402-547ea9028250	0	初始化数据	2026-03-22 21:43:05.972082	2026-03-22 21:43:05.972082
-参数管理	2	8	module_system:param:query	setting	Params	/system/param	module_system/param/index	\N	f	t	f	参数管理	null	f	2	18	8fba626f-6ea3-4381-947c-d1bab1e55234	0	初始化数据	2026-03-22 21:43:05.972086	2026-03-22 21:43:05.972086
-字典管理	2	9	module_system:dict_type:query	dict	Dict	/system/dict	module_system/dict/index	\N	f	t	f	字典管理	null	f	2	19	a170500c-9463-47d3-8673-062da44499fd	0	初始化数据	2026-03-22 21:43:05.97209	2026-03-22 21:43:05.972091
-在线用户	2	1	module_monitor:online:query	el-icon-Headset	MonitorOnline	/monitor/online	module_monitor/online/index	\N	f	t	f	在线用户	null	f	3	20	e2972f11-447f-43f2-9652-718dd64379eb	0	初始化数据	2026-03-22 21:43:05.972094	2026-03-22 21:43:05.972095
-服务器监控	2	2	module_monitor:server:query	el-icon-Odometer	MonitorServer	/monitor/server	module_monitor/server/index	\N	f	t	f	服务器监控	null	f	3	21	7f2af927-9713-4da4-b785-e762c24003fb	0	初始化数据	2026-03-22 21:43:05.972098	2026-03-22 21:43:05.972098
-缓存监控	2	3	module_monitor:cache:query	el-icon-Stopwatch	MonitorCache	/monitor/cache	module_monitor/cache/index	\N	f	t	f	缓存监控	null	f	3	22	a1a98702-ffef-4d8b-b09e-b93cba357f07	0	初始化数据	2026-03-22 21:43:05.972101	2026-03-22 21:43:05.972102
-文件管理	2	4	module_monitor:resource:query	el-icon-Files	Resource	/monitor/resource	module_monitor/resource/index	\N	f	t	f	文件管理	null	f	3	23	eac4916d-5789-4527-bfc9-5483e9eb05ea	0	初始化数据	2026-03-22 21:43:05.972105	2026-03-22 21:43:05.972105
-Swagger文档	4	1	module_common:docs:query	api	Docs	/common/docs	module_common/docs/index	\N	f	t	f	Swagger文档	null	f	4	24	71d2e1f4-6284-40b4-b261-67f36ab5449c	0	初始化数据	2026-03-22 21:43:05.972108	2026-03-22 21:43:05.972108
-Redoc文档	4	2	module_common:redoc:query	el-icon-Document	Redoc	/common/redoc	module_common/redoc/index	\N	f	t	f	Redoc文档	null	f	4	25	bab8e1ec-00ab-4c1d-afc1-feea1ea82b27	0	初始化数据	2026-03-22 21:43:05.972111	2026-03-22 21:43:05.972112
-LangJin文档	4	3	module_common:ljdoc:query	el-icon-Document	Ljdoc	/common/ljdoc	module_common/ljdoc/index	\N	f	t	f	LangJin文档	null	f	4	26	490caaf1-87d5-4767-950e-a2cadafb66fa	0	初始化数据	2026-03-22 21:43:05.972114	2026-03-22 21:43:05.972115
-代码生成	2	1	module_generator:gencode:query	code	GenCode	/generator/gencode	module_generator/gencode/index	\N	f	t	f	代码生成	null	f	5	27	432c00b5-1be3-4f67-b25f-ee455b39db70	0	代码生成	2026-03-22 21:43:05.972118	2026-03-22 21:43:05.972118
-我的应用	2	1	module_application:myapp:query	el-icon-ShoppingCartFull	MYAPP	/application/myapp	module_application/myapp/index	\N	f	t	f	我的应用	null	f	6	28	bc73934c-d8cc-48a1-99e1-1391f3c8b6b5	0	初始化数据	2026-03-22 21:43:05.972121	2026-03-22 21:43:05.972121
-AI智能助手	2	1	module_ai:chat:query	el-icon-ChatDotRound	Chat	/ai/chat	module_ai/chat/index	\N	f	t	f	AI智能助手	null	f	7	29	7cc17587-77a5-4579-b5c1-dd437be68bff	0	AI智能助手	2026-03-22 21:43:05.972124	2026-03-22 21:43:05.972124
-会话记忆	2	2	module_ai:chat:query	el-icon-ChatLineSquare	Memory	/ai/memory	module_ai/memory/index	\N	f	t	f	会话记忆	null	f	7	30	53c4f9f9-67ec-41b6-8d3b-55f033951c6d	0	会话记忆管理	2026-03-22 21:43:05.972127	2026-03-22 21:43:05.972127
-调度器监控	2	1	module_task:job:query	el-icon-DataLine	Job	/task/job	module_task/job/index	\N	f	t	f	调度器监控	null	f	8	31	e6c7b026-c097-4743-a39d-57638dbaeb8e	0	调度器监控	2026-03-22 21:43:05.97213	2026-03-22 21:43:05.972131
-节点管理	2	2	module_task:node:query	el-icon-Postcard	Node	/task/node	module_task/node/index	\N	f	t	f	节点管理	null	f	8	32	7eb72189-1bca-4165-9063-23b79f990b4f	0	节点管理	2026-03-22 21:43:05.972133	2026-03-22 21:43:05.972134
-示例管理	2	1	module_example:demo:query	menu	Demo	/example/demo	module_example/demo/index	\N	f	t	f	示例管理	null	f	9	33	944e0375-5c7a-48f9-a776-aa3d5cbd6d62	0	示例管理	2026-03-22 21:43:05.972137	2026-03-22 21:43:05.972137
-创建菜单	3	1	module_system:menu:create	\N	\N	\N	\N	\N	f	t	f	创建菜单	null	f	11	34	092c4360-94be-4b10-97f6-57afbe72101b	0	初始化数据	2026-03-22 21:43:05.976755	2026-03-22 21:43:05.976756
-修改菜单	3	2	module_system:menu:update	\N	\N	\N	\N	\N	f	t	f	修改菜单	null	f	11	35	32a7208c-73ba-4bc4-90fd-0dde46285ac6	0	初始化数据	2026-03-22 21:43:05.97676	2026-03-22 21:43:05.976761
-删除菜单	3	3	module_system:menu:delete	\N	\N	\N	\N	\N	f	t	f	删除菜单	null	f	11	36	acc2578e-4595-4c19-9bfc-315e616cc83b	0	初始化数据	2026-03-22 21:43:05.976764	2026-03-22 21:43:05.976764
-批量修改菜单状态	3	4	module_system:menu:patch	\N	\N	\N	\N	\N	f	t	f	批量修改菜单状态	null	f	11	37	ea0e3e7f-f7b9-4380-8bdc-caceafea4887	0	初始化数据	2026-03-22 21:43:05.976767	2026-03-22 21:43:05.976767
-详情菜单	3	5	module_system:menu:detail	\N	\N	\N	\N	\N	f	t	f	详情菜单	null	f	11	38	bec696d9-c9f7-4f2a-b18f-2c7dddb5d031	0	初始化数据	2026-03-22 21:43:05.97677	2026-03-22 21:43:05.97677
-查询菜单	3	6	module_system:menu:query	\N	\N	\N	\N	\N	f	t	f	查询菜单	null	f	11	39	9ff85b96-2dab-490b-9a93-e6158badd17b	0	初始化数据	2026-03-22 21:43:05.976772	2026-03-22 21:43:05.976773
-创建部门	3	1	module_system:dept:create	\N	\N	\N	\N	\N	f	t	f	创建部门	null	f	12	40	714758bc-5323-4dc4-b8c4-2b5502d54501	0	初始化数据	2026-03-22 21:43:05.976775	2026-03-22 21:43:05.976776
-修改部门	3	2	module_system:dept:update	\N	\N	\N	\N	\N	f	t	f	修改部门	null	f	12	41	ca1efe58-d28a-4bce-b850-9710ce2d7b5b	0	初始化数据	2026-03-22 21:43:05.976778	2026-03-22 21:43:05.976778
-删除部门	3	3	module_system:dept:delete	\N	\N	\N	\N	\N	f	t	f	删除部门	null	f	12	42	394d42d0-3323-431a-9fcf-1c435eb51651	0	初始化数据	2026-03-22 21:43:05.976781	2026-03-22 21:43:05.976781
-批量修改部门状态	3	4	module_system:dept:patch	\N	\N	\N	\N	\N	f	t	f	批量修改部门状态	null	f	12	43	eaf51d88-190d-426b-a359-00d8090f895f	0	初始化数据	2026-03-22 21:43:05.976784	2026-03-22 21:43:05.976784
-详情部门	3	5	module_system:dept:detail	\N	\N	\N	\N	\N	f	t	f	详情部门	null	f	12	44	aedb848a-c8ba-4158-bf75-0f2349a3daba	0	初始化数据	2026-03-22 21:43:05.976787	2026-03-22 21:43:05.976787
-查询部门	3	6	module_system:dept:query	\N	\N	\N	\N	\N	f	t	f	查询部门	null	f	12	45	3cc97ab4-e1db-4432-9efe-7eed02d7cc45	0	初始化数据	2026-03-22 21:43:05.97679	2026-03-22 21:43:05.97679
-创建岗位	3	1	module_system:position:create	\N	\N	\N	\N	\N	f	t	f	创建岗位	null	f	13	46	c0fa5fcb-54e1-47fa-9dbb-d4a5ac7c2304	0	初始化数据	2026-03-22 21:43:05.976792	2026-03-22 21:43:05.976793
-修改岗位	3	2	module_system:position:update	\N	\N	\N	\N	\N	f	t	f	修改岗位	null	f	13	47	78d5beb2-8eb9-4ae8-9c1b-752b6498f6e8	0	初始化数据	2026-03-22 21:43:05.976795	2026-03-22 21:43:05.976795
-删除岗位	3	3	module_system:position:delete	\N	\N	\N	\N	\N	f	t	f	修改岗位	null	f	13	48	f6b9e93f-bc21-4207-a8ca-09ac09f862f3	0	初始化数据	2026-03-22 21:43:05.976798	2026-03-22 21:43:05.976798
-批量修改岗位状态	3	4	module_system:position:patch	\N	\N	\N	\N	\N	f	t	f	批量修改岗位状态	null	f	13	49	d5a24b74-becc-4b1d-89a6-2a36b83458ca	0	初始化数据	2026-03-22 21:43:05.976801	2026-03-22 21:43:05.976801
-岗位导出	3	5	module_system:position:export	\N	\N	\N	\N	\N	f	t	f	岗位导出	null	f	13	50	66d8166b-da43-40bf-8b8c-0db05d71cbb7	0	初始化数据	2026-03-22 21:43:05.976803	2026-03-22 21:43:05.976804
-详情岗位	3	6	module_system:position:detail	\N	\N	\N	\N	\N	f	t	f	详情岗位	null	f	13	51	a0e7096e-df2c-4a0b-b3bd-7ed47edf4eba	0	初始化数据	2026-03-22 21:43:05.976806	2026-03-22 21:43:05.976807
-查询岗位	3	7	module_system:position:query	\N	\N	\N	\N	\N	f	t	f	查询岗位	null	f	13	52	965cd675-63b6-45bf-9703-531b9dd35153	0	初始化数据	2026-03-22 21:43:05.976809	2026-03-22 21:43:05.976809
-创建角色	3	1	module_system:role:create	\N	\N	\N	\N	\N	f	t	f	创建角色	null	f	14	53	06612c78-e297-4b30-91d2-4a556a4731d0	0	初始化数据	2026-03-22 21:43:05.976812	2026-03-22 21:43:05.976812
-修改角色	3	2	module_system:role:update	\N	\N	\N	\N	\N	f	t	f	修改角色	null	f	14	54	d15ababf-3cf4-467f-94fd-638a8c98f838	0	初始化数据	2026-03-22 21:43:05.976815	2026-03-22 21:43:05.976815
-删除角色	3	3	module_system:role:delete	\N	\N	\N	\N	\N	f	t	f	删除角色	null	f	14	55	65a2a301-623f-48cd-b9b8-76830361e785	0	初始化数据	2026-03-22 21:43:05.976818	2026-03-22 21:43:05.976818
-批量修改角色状态	3	4	module_system:role:patch	\N	\N	\N	\N	\N	f	t	f	批量修改角色状态	null	f	14	56	a38a5cd9-ebc8-4ae2-b24d-3bc31796fe13	0	初始化数据	2026-03-22 21:43:05.97682	2026-03-22 21:43:05.976821
-角色导出	3	5	module_system:role:export	\N	\N	\N	\N	\N	f	t	f	角色导出	null	f	14	57	1e0a6876-bce6-4e20-92dc-42d7442c97fb	0	初始化数据	2026-03-22 21:43:05.976823	2026-03-22 21:43:05.976824
-详情角色	3	6	module_system:role:detail	\N	\N	\N	\N	\N	f	t	f	详情角色	null	f	14	58	59926ee1-3677-4055-9162-4013c756c189	0	初始化数据	2026-03-22 21:43:05.976826	2026-03-22 21:43:05.976826
-查询角色	3	7	module_system:role:query	\N	\N	\N	\N	\N	f	t	f	查询角色	null	f	14	59	332cc688-2141-49bb-9802-9815ca551613	0	初始化数据	2026-03-22 21:43:05.976829	2026-03-22 21:43:05.976829
-分配权限	3	8	module_system:role:permission	\N	\N	\N	\N	\N	f	t	f	分配权限	null	f	14	60	a1827623-7931-45ea-979b-734830ec7758	0	初始化数据	2026-03-22 21:43:05.976831	2026-03-22 21:43:05.976832
-创建用户	3	1	module_system:user:create	\N	\N	\N	\N	\N	f	t	f	创建用户	null	f	15	61	78418cd8-eb93-4e2e-b3ac-d678555cf492	0	初始化数据	2026-03-22 21:43:05.976834	2026-03-22 21:43:05.976835
-修改用户	3	2	module_system:user:update	\N	\N	\N	\N	\N	f	t	f	修改用户	null	f	15	62	f5496bc0-39f6-48b4-8f46-0eefabd6dfb3	0	初始化数据	2026-03-22 21:43:05.976837	2026-03-22 21:43:05.976837
-删除用户	3	3	module_system:user:delete	\N	\N	\N	\N	\N	f	t	f	删除用户	null	f	15	63	46c63c3b-d721-43ea-92ea-d555e3f955e4	0	初始化数据	2026-03-22 21:43:05.97684	2026-03-22 21:43:05.97684
-批量修改用户状态	3	4	module_system:user:patch	\N	\N	\N	\N	\N	f	t	f	批量修改用户状态	null	f	15	64	0b6e5450-da73-4c5e-9068-de4d1f375e1f	0	初始化数据	2026-03-22 21:43:05.976843	2026-03-22 21:43:05.976843
-导出用户	3	5	module_system:user:export	\N	\N	\N	\N	\N	f	t	f	导出用户	null	f	15	65	45441a14-4010-4268-8ddf-b8e829f739ee	0	初始化数据	2026-03-22 21:43:05.976845	2026-03-22 21:43:05.976846
-导入用户	3	6	module_system:user:import	\N	\N	\N	\N	\N	f	t	f	导入用户	null	f	15	66	3bcef7ed-6691-421c-b120-9f3163511bc3	0	初始化数据	2026-03-22 21:43:05.976848	2026-03-22 21:43:05.976849
-下载用户导入模板	3	7	module_system:user:download	\N	\N	\N	\N	\N	f	t	f	下载用户导入模板	null	f	15	67	5d6b259f-c2bc-4d85-a5a9-60554f885514	0	初始化数据	2026-03-22 21:43:05.976851	2026-03-22 21:43:05.976851
-详情用户	3	8	module_system:user:detail	\N	\N	\N	\N	\N	f	t	f	详情用户	null	f	15	68	559147fd-0e35-42f9-a915-5ff9debeb568	0	初始化数据	2026-03-22 21:43:05.976854	2026-03-22 21:43:05.976854
-查询用户	3	9	module_system:user:query	\N	\N	\N	\N	\N	f	t	f	查询用户	null	f	15	69	93b4f2ae-3576-4a2d-9410-02e057686360	0	初始化数据	2026-03-22 21:43:05.976857	2026-03-22 21:43:05.976857
-日志删除	3	1	module_system:log:delete	\N	\N	\N	\N	\N	f	t	f	日志删除	null	f	16	70	b4068c18-186e-4eb0-8f92-7ae820c27d3d	0	初始化数据	2026-03-22 21:43:05.97686	2026-03-22 21:43:05.97686
-日志导出	3	2	module_system:log:export	\N	\N	\N	\N	\N	f	t	f	日志导出	null	f	16	71	404093ed-1651-4e19-955d-3b28f56c1dcd	0	初始化数据	2026-03-22 21:43:05.976862	2026-03-22 21:43:05.976863
-日志详情	3	3	module_system:log:detail	\N	\N	\N	\N	\N	f	t	f	日志详情	null	f	16	72	edcb0dbd-929e-4782-8733-604fd0d6c49d	0	初始化数据	2026-03-22 21:43:05.976865	2026-03-22 21:43:05.976865
-查询日志	3	4	module_system:log:query	\N	\N	\N	\N	\N	f	t	f	查询日志	null	f	16	73	ca921544-aa68-4da3-b96e-ca7425f387ec	0	初始化数据	2026-03-22 21:43:05.976868	2026-03-22 21:43:05.976868
-公告创建	3	1	module_system:notice:create	\N	\N	\N	\N	\N	f	t	f	公告创建	null	f	17	74	87ec6a4c-e1c6-4396-b566-6fb75335f986	0	初始化数据	2026-03-22 21:43:05.976871	2026-03-22 21:43:05.976871
-公告修改	3	2	module_system:notice:update	\N	\N	\N	\N	\N	f	t	f	修改用户	null	f	17	75	09820fb3-e7dc-4cf1-b2f1-f75a20752a80	0	初始化数据	2026-03-22 21:43:05.976874	2026-03-22 21:43:05.976874
-公告删除	3	3	module_system:notice:delete	\N	\N	\N	\N	\N	f	t	f	公告删除	null	f	17	76	fd25b986-26a3-4dda-a117-ecc90ac75cbc	0	初始化数据	2026-03-22 21:43:05.976876	2026-03-22 21:43:05.976877
-公告导出	3	4	module_system:notice:export	\N	\N	\N	\N	\N	f	t	f	公告导出	null	f	17	77	70d53a34-a3e6-49bc-aa0b-755eac643e5f	0	初始化数据	2026-03-22 21:43:05.976879	2026-03-22 21:43:05.976879
-公告批量修改状态	3	5	module_system:notice:patch	\N	\N	\N	\N	\N	f	t	f	公告批量修改状态	null	f	17	78	3512224d-7d64-4085-ad1f-f976fbcaf782	0	初始化数据	2026-03-22 21:43:05.976882	2026-03-22 21:43:05.976882
-公告详情	3	6	module_system:notice:detail	\N	\N	\N	\N	\N	f	t	f	公告详情	null	f	17	79	d6e9c490-6181-44cf-a554-c81c89e88fa0	0	初始化数据	2026-03-22 21:43:05.976884	2026-03-22 21:43:05.976885
-查询公告	3	5	module_system:notice:query	\N	\N	\N	\N	\N	f	t	f	查询公告	null	f	17	80	31000118-1fae-422c-b3a9-609bf65094cd	0	初始化数据	2026-03-22 21:43:05.976887	2026-03-22 21:43:05.976888
-创建参数	3	1	module_system:param:create	\N	\N	\N	\N	\N	f	t	f	创建参数	null	f	18	81	7e943782-03ed-4773-9033-7e8ab14a2af1	0	初始化数据	2026-03-22 21:43:05.97689	2026-03-22 21:43:05.97689
-修改参数	3	2	module_system:param:update	\N	\N	\N	\N	\N	f	t	f	修改参数	null	f	18	82	15550ee4-8772-46a3-96a3-7d1ad975959b	0	初始化数据	2026-03-22 21:43:05.976893	2026-03-22 21:43:05.976893
-删除参数	3	3	module_system:param:delete	\N	\N	\N	\N	\N	f	t	f	删除参数	null	f	18	83	8756caea-c1e4-42bf-bd15-444f5a0c68ce	0	初始化数据	2026-03-22 21:43:05.976898	2026-03-22 21:43:05.976898
-导出参数	3	4	module_system:param:export	\N	\N	\N	\N	\N	f	t	f	导出参数	null	f	18	84	ebbc32c4-0237-4beb-9f50-8a80d25c1848	0	初始化数据	2026-03-22 21:43:05.976901	2026-03-22 21:43:05.976901
-参数上传	3	5	module_system:param:upload	\N	\N	\N	\N	\N	f	t	f	参数上传	null	f	18	85	dd9a7466-433d-40f4-8720-4f50345ae717	0	初始化数据	2026-03-22 21:43:05.976904	2026-03-22 21:43:05.976904
-参数详情	3	6	module_system:param:detail	\N	\N	\N	\N	\N	f	t	f	参数详情	null	f	18	86	477bb50d-d87f-4698-9cf9-3d90a90a625e	0	初始化数据	2026-03-22 21:43:05.976907	2026-03-22 21:43:05.976907
-查询参数	3	7	module_system:param:query	\N	\N	\N	\N	\N	f	t	f	查询参数	null	f	18	87	6101f458-4786-40ce-879f-ea8ace435687	0	初始化数据	2026-03-22 21:43:05.97691	2026-03-22 21:43:05.97691
-创建字典类型	3	1	module_system:dict_type:create	\N	\N	\N	\N	\N	f	t	f	创建字典类型	null	f	19	88	a09b9442-9a29-4130-af0f-c33b305c9788	0	初始化数据	2026-03-22 21:43:05.976912	2026-03-22 21:43:05.976913
-修改字典类型	3	2	module_system:dict_type:update	\N	\N	\N	\N	\N	f	t	f	修改字典类型	null	f	19	89	ec2420d2-2436-4110-80ec-07d5cf9740c8	0	初始化数据	2026-03-22 21:43:05.976915	2026-03-22 21:43:05.976915
-删除字典类型	3	3	module_system:dict_type:delete	\N	\N	\N	\N	\N	f	t	f	删除字典类型	null	f	19	90	6e1205aa-7aa3-473f-aded-c7f824891695	0	初始化数据	2026-03-22 21:43:05.976918	2026-03-22 21:43:05.976918
-导出字典类型	3	4	module_system:dict_type:export	\N	\N	\N	\N	\N	f	t	f	导出字典类型	null	f	19	91	419ebcef-c163-4f30-96be-ca6f4efe6722	0	初始化数据	2026-03-22 21:43:05.976921	2026-03-22 21:43:05.976921
-批量修改字典状态	3	5	module_system:dict_type:patch	\N	\N	\N	\N	\N	f	t	f	导出字典类型	null	f	19	92	60c226c8-d535-4e53-8a59-fff1b871a26a	0	初始化数据	2026-03-22 21:43:05.976923	2026-03-22 21:43:05.976924
-字典数据查询	3	6	module_system:dict_data:query	\N	\N	\N	\N	\N	f	t	f	字典数据查询	null	f	19	93	0d624a1c-5258-4a1e-9a62-448bdd8452df	0	初始化数据	2026-03-22 21:43:05.976926	2026-03-22 21:43:05.976927
-创建字典数据	3	7	module_system:dict_data:create	\N	\N	\N	\N	\N	f	t	f	创建字典数据	null	f	19	94	4d682e2f-4491-4a98-b2b7-8aa868f9ca29	0	初始化数据	2026-03-22 21:43:05.976929	2026-03-22 21:43:05.976929
-修改字典数据	3	8	module_system:dict_data:update	\N	\N	\N	\N	\N	f	t	f	修改字典数据	null	f	19	95	e96a932d-f0b9-408b-b608-ea0f6918dfd4	0	初始化数据	2026-03-22 21:43:05.976932	2026-03-22 21:43:05.976932
-删除字典数据	3	9	module_system:dict_data:delete	\N	\N	\N	\N	\N	f	t	f	删除字典数据	null	f	19	96	c93e2f49-1858-4240-bd1d-e94a6e1081d6	0	初始化数据	2026-03-22 21:43:05.976935	2026-03-22 21:43:05.976935
-导出字典数据	3	10	module_system:dict_data:export	\N	\N	\N	\N	\N	f	t	f	导出字典数据	null	f	19	97	8e3c461c-f6ff-45e1-8174-8c304720e915	0	初始化数据	2026-03-22 21:43:05.976937	2026-03-22 21:43:05.976938
-批量修改字典数据状态	3	11	module_system:dict_data:patch	\N	\N	\N	\N	\N	f	t	f	批量修改字典数据状态	null	f	19	98	9060a8ab-05e1-45b9-8622-1bc296ce2700	0	初始化数据	2026-03-22 21:43:05.97694	2026-03-22 21:43:05.97694
-详情字典类型	3	12	module_system:dict_type:detail	\N	\N	\N	\N	\N	f	t	f	详情字典类型	null	f	19	99	224043af-2899-436d-9cb0-c9775a9f6f61	0	初始化数据	2026-03-22 21:43:05.976943	2026-03-22 21:43:05.976943
-查询字典类型	3	13	module_system:dict_type:query	\N	\N	\N	\N	\N	f	t	f	查询字典类型	null	f	19	100	081f9089-c5c6-4cd1-ad2b-29533c095075	0	初始化数据	2026-03-22 21:43:05.976946	2026-03-22 21:43:05.976946
-详情字典数据	3	14	module_system:dict_data:detail	\N	\N	\N	\N	\N	f	t	f	详情字典数据	null	f	19	101	cf05c9c8-95b5-402f-944d-f09123f6af8f	0	初始化数据	2026-03-22 21:43:05.976948	2026-03-22 21:43:05.976949
-在线用户强制下线	3	1	module_monitor:online:delete	\N	\N	\N	\N	\N	f	t	f	在线用户强制下线	null	f	20	102	7a25dacc-d525-4896-bba4-1090020596c2	0	初始化数据	2026-03-22 21:43:05.976951	2026-03-22 21:43:05.976951
-清除缓存	3	1	module_monitor:cache:delete	\N	\N	\N	\N	\N	f	t	f	清除缓存	null	f	22	103	32cf7e60-b6ce-4822-9c2c-cdf74a21e99e	0	初始化数据	2026-03-22 21:43:05.976954	2026-03-22 21:43:05.976954
-文件上传	3	1	module_monitor:resource:upload	\N	\N	\N	\N	\N	f	t	f	文件上传	null	f	23	104	618b8aab-2c09-4c12-bf0c-32e7d05c8aa0	0	初始化数据	2026-03-22 21:43:05.976957	2026-03-22 21:43:05.976957
-文件下载	3	2	module_monitor:resource:download	\N	\N	\N	\N	\N	f	t	f	文件下载	null	f	23	105	b9dffa25-bdc1-4d9e-a51a-60e54c0995dc	0	初始化数据	2026-03-22 21:43:05.976959	2026-03-22 21:43:05.97696
-文件删除	3	3	module_monitor:resource:delete	\N	\N	\N	\N	\N	f	t	f	文件删除	null	f	23	106	c888a1ea-f756-4415-b1eb-e855192e53fb	0	初始化数据	2026-03-22 21:43:05.976962	2026-03-22 21:43:05.976962
-文件移动	3	4	module_monitor:resource:move	\N	\N	\N	\N	\N	f	t	f	文件移动	null	f	23	107	5b116c0d-9c5e-4bf4-a022-9701b71b201a	0	初始化数据	2026-03-22 21:43:05.976965	2026-03-22 21:43:05.976965
-文件复制	3	5	module_monitor:resource:copy	\N	\N	\N	\N	\N	f	t	f	文件复制	null	f	23	108	c13a04ff-632d-4833-9acc-f09dbcf520c4	0	初始化数据	2026-03-22 21:43:05.976968	2026-03-22 21:43:05.976968
-文件重命名	3	6	module_monitor:resource:rename	\N	\N	\N	\N	\N	f	t	f	文件重命名	null	f	23	109	68698867-586b-4323-ad82-af3c7f9d4d72	0	初始化数据	2026-03-22 21:43:05.97697	2026-03-22 21:43:05.976971
-创建目录	3	7	module_monitor:resource:create_dir	\N	\N	\N	\N	\N	f	t	f	创建目录	null	f	23	110	30fc3f17-26b7-4867-878c-52a4f8a34f13	0	初始化数据	2026-03-22 21:43:05.976973	2026-03-22 21:43:05.976974
-导出文件列表	3	9	module_monitor:resource:export	\N	\N	\N	\N	\N	f	t	f	导出文件列表	null	f	23	111	42548be7-1942-48e2-8dec-d31d8f119c54	0	初始化数据	2026-03-22 21:43:05.976976	2026-03-22 21:43:05.976976
-查询代码生成业务表列表	3	1	module_generator:gencode:query	\N	\N	\N	\N	\N	f	t	f	查询代码生成业务表列表	null	f	27	112	434b35f7-9f4a-4343-bd42-ec863705a13c	0	查询代码生成业务表列表	2026-03-22 21:43:05.976979	2026-03-22 21:43:05.976979
-创建表结构	3	2	module_generator:gencode:create	\N	\N	\N	\N	\N	f	t	f	创建表结构	null	f	27	113	ace26951-0126-429e-90e7-d3205587f0e0	0	创建表结构	2026-03-22 21:43:05.976982	2026-03-22 21:43:05.976982
-编辑业务表信息	3	3	module_generator:gencode:update	\N	\N	\N	\N	\N	f	t	f	编辑业务表信息	null	f	27	114	c283f18e-2f04-4912-a4a2-b06e0330a343	0	编辑业务表信息	2026-03-22 21:43:05.976984	2026-03-22 21:43:05.976985
-删除业务表信息	3	4	module_generator:gencode:delete	\N	\N	\N	\N	\N	f	t	f	删除业务表信息	null	f	27	115	5700dccd-dfd6-4645-b734-1cd2558d575f	0	删除业务表信息	2026-03-22 21:43:05.976987	2026-03-22 21:43:05.976987
-导入表结构	3	5	module_generator:gencode:import	\N	\N	\N	\N	\N	f	t	f	导入表结构	null	f	27	116	c0a88b55-b9aa-4016-aae5-51ed1f379bf7	0	导入表结构	2026-03-22 21:43:05.97699	2026-03-22 21:43:05.97699
-批量生成代码	3	6	module_generator:gencode:operate	\N	\N	\N	\N	\N	f	t	f	批量生成代码	null	f	27	117	488d3a39-2e18-4722-a5c6-bc71f2c2ad59	0	批量生成代码	2026-03-22 21:43:05.976993	2026-03-22 21:43:05.976993
-生成代码到指定路径	3	7	module_generator:gencode:code	\N	\N	\N	\N	\N	f	t	f	生成代码到指定路径	null	f	27	118	3b7c84dc-edbe-4d15-9591-b20e975efe94	0	生成代码到指定路径	2026-03-22 21:43:05.976995	2026-03-22 21:43:05.976996
-查询数据库表列表	3	8	module_generator:dblist:query	\N	\N	\N	\N	\N	f	t	f	查询数据库表列表	null	f	27	119	4bee1cc9-8e58-4e47-9c03-14f87fe8b099	0	查询数据库表列表	2026-03-22 21:43:05.976998	2026-03-22 21:43:05.976998
-同步数据库	3	9	module_generator:db:sync	\N	\N	\N	\N	\N	f	t	f	同步数据库	null	f	27	120	d9d7749d-2f50-4247-bb63-7d54670e3561	0	同步数据库	2026-03-22 21:43:05.977001	2026-03-22 21:43:05.977001
-创建应用	3	1	module_application:myapp:create	\N	\N	\N	\N	\N	f	t	f	创建应用	null	f	28	121	bfa004dd-fc2a-40d1-a621-f93e3582d138	0	初始化数据	2026-03-22 21:43:05.977003	2026-03-22 21:43:05.977004
-修改应用	3	2	module_application:myapp:update	\N	\N	\N	\N	\N	f	t	f	修改应用	null	f	28	122	c7bca474-800a-4326-a000-b16efc41abda	0	初始化数据	2026-03-22 21:43:05.977006	2026-03-22 21:43:05.977006
-删除应用	3	3	module_application:myapp:delete	\N	\N	\N	\N	\N	f	t	f	删除应用	null	f	28	123	112ae8b1-eb22-40a0-8036-cd1cf03df48d	0	初始化数据	2026-03-22 21:43:05.977009	2026-03-22 21:43:05.977009
-批量修改应用状态	3	4	module_application:myapp:patch	\N	\N	\N	\N	\N	f	t	f	批量修改应用状态	null	f	28	124	cc01dbb4-1551-42a0-a138-698230cd11bd	0	初始化数据	2026-03-22 21:43:05.977012	2026-03-22 21:43:05.977012
-详情应用	3	5	module_application:myapp:detail	\N	\N	\N	\N	\N	f	t	f	详情应用	null	f	28	125	64317a64-9489-4bca-9342-fb3df8079dfc	0	初始化数据	2026-03-22 21:43:05.977014	2026-03-22 21:43:05.977015
-查询应用	3	6	module_application:myapp:query	\N	\N	\N	\N	\N	f	t	f	查询应用	null	f	28	126	177399c4-fa1c-48fd-820d-203201aa71d3	0	初始化数据	2026-03-22 21:43:05.977017	2026-03-22 21:43:05.977018
-AI对话	3	1	module_ai:chat:ws	\N	\N	\N	\N	\N	f	t	f	AI对话	null	f	29	127	d0fdc1d5-ef96-4435-afcc-7e50e887bad2	0	AI对话	2026-03-22 21:43:05.97702	2026-03-22 21:43:05.97702
-查询会话	3	2	module_ai:chat:query	\N	\N	\N	\N	\N	f	t	f	查询会话	null	f	29	128	83cc1124-3f2c-4347-b4a8-43a02c2ec9b1	0	查询会话	2026-03-22 21:43:05.977024	2026-03-22 21:43:05.977024
-会话详情	3	3	module_ai:chat:detail	\N	\N	\N	\N	\N	f	t	f	会话详情	null	f	29	129	a9f784c6-b58e-4f9d-aedb-afd723c9e7a9	0	会话详情	2026-03-22 21:43:05.977027	2026-03-22 21:43:05.977027
-创建会话	3	4	module_ai:chat:create	\N	\N	\N	\N	\N	f	t	f	创建会话	null	f	29	130	fbf44da6-6945-485a-899c-de712b508394	0	创建会话	2026-03-22 21:43:05.97703	2026-03-22 21:43:05.97703
-更新会话	3	5	module_ai:chat:update	\N	\N	\N	\N	\N	f	t	f	更新会话	null	f	29	131	0449e59f-bb96-46fa-bb2a-3851697b157e	0	更新会话	2026-03-22 21:43:05.977033	2026-03-22 21:43:05.977033
-删除会话	3	6	module_ai:chat:delete	\N	\N	\N	\N	\N	f	t	f	删除会话	null	f	29	132	e83b2210-1139-41bc-b45e-3368f7734d69	0	删除会话	2026-03-22 21:43:05.977035	2026-03-22 21:43:05.977036
-查询会话记忆	3	1	module_ai:chat:query	\N	\N	\N	\N	\N	f	t	f	查询会话记忆	null	f	30	133	931463e9-d38b-4d49-96a2-ec06e7cfe79c	0	查询会话记忆	2026-03-22 21:43:05.977038	2026-03-22 21:43:05.977038
-会话记忆详情	3	2	module_ai:chat:detail	\N	\N	\N	\N	\N	f	t	f	会话记忆详情	null	f	30	134	ff91ccd5-84dd-44ce-b2c0-664412616095	0	会话记忆详情	2026-03-22 21:43:05.977041	2026-03-22 21:43:05.977041
-删除会话记忆	3	3	module_ai:chat:delete	\N	\N	\N	\N	\N	f	t	f	删除会话记忆	null	f	30	135	1fa7cf63-4fb7-443c-bc59-cd1745145125	0	删除会话记忆	2026-03-22 21:43:05.977044	2026-03-22 21:43:05.977045
-查询调度器	3	1	module_task:job:query	\N	\N	\N	\N	\N	f	t	f	查询调度器	null	f	31	136	eb3ab1fa-7e68-472e-86f0-7cc2bdee00f9	0	查询调度器	2026-03-22 21:43:05.977048	2026-03-22 21:43:05.977048
-控制调度器	3	2	module_task:job:scheduler	\N	\N	\N	\N	\N	f	t	f	控制调度器	null	f	31	137	82ee54e1-3447-4015-980e-f665a66f8b6b	0	控制调度器	2026-03-22 21:43:05.977052	2026-03-22 21:43:05.977052
-操作任务	3	3	module_task:job:task	\N	\N	\N	\N	\N	f	t	f	操作任务	null	f	31	138	5f116a2a-a065-4b1d-9f64-15c5d52f13d4	0	操作任务	2026-03-22 21:43:05.977055	2026-03-22 21:43:05.977056
-删除执行日志	3	4	module_task:job:delete	\N	\N	\N	\N	\N	f	t	f	删除执行日志	null	f	31	139	b8ab9f65-7494-461b-a069-402148e859f0	0	删除执行日志	2026-03-22 21:43:05.977059	2026-03-22 21:43:05.97706
-详情执行日志	3	5	module_task:job:detail	\N	\N	\N	\N	\N	f	t	f	详情执行日志	null	f	31	140	39c1ae87-e1e8-4b4d-8937-2041c510ecc9	0	详情执行日志	2026-03-22 21:43:05.977063	2026-03-22 21:43:05.977063
-创建节点	3	1	module_task:node:create	\N	\N	\N	\N	\N	f	t	f	创建节点	null	f	32	141	7798a653-f4b1-4192-add2-f28fdc77ca33	0	创建节点	2026-03-22 21:43:05.977066	2026-03-22 21:43:05.977066
-调试节点	3	2	module_task:node:execute	\N	\N	\N	\N	\N	f	t	f	调试节点	null	f	32	142	72c0de5c-6914-44c9-8c2b-6f6328bbd37c	0	调试节点	2026-03-22 21:43:05.977069	2026-03-22 21:43:05.977069
-修改节点	3	3	module_task:node:update	\N	\N	\N	\N	\N	f	t	f	修改节点	null	f	32	143	27b1b5eb-f5ce-4aa2-afd2-c54cd34995b5	0	修改节点	2026-03-22 21:43:05.977072	2026-03-22 21:43:05.977072
-删除节点	3	4	module_task:node:delete	\N	\N	\N	\N	\N	f	t	f	删除节点	null	f	32	144	1f56d598-9ba1-4da7-8666-fa66c6abc10d	0	删除节点	2026-03-22 21:43:05.977075	2026-03-22 21:43:05.977075
-详情节点	3	5	module_task:node:detail	\N	\N	\N	\N	\N	f	t	f	详情节点	null	f	32	145	d3afaabe-41d9-4137-b9dc-6bb51b11a774	0	详情节点	2026-03-22 21:43:05.977078	2026-03-22 21:43:05.977078
-查询节点	3	6	module_task:node:query	\N	\N	\N	\N	\N	f	t	f	查询节点	null	f	32	146	84c251c9-e0ff-4e69-a5c2-1ddf6f4f79be	0	查询节点	2026-03-22 21:43:05.977081	2026-03-22 21:43:05.977081
-创建示例	3	1	module_example:demo:create	\N	\N	\N	\N	\N	f	t	f	创建示例	null	f	33	147	90bc5b22-7ddd-4125-8030-ce6eedf73d83	0	初始化数据	2026-03-22 21:43:05.977084	2026-03-22 21:43:05.977084
-更新示例	3	2	module_example:demo:update	\N	\N	\N	\N	\N	f	t	f	更新示例	null	f	33	148	0dd2d3d0-dc33-4df7-8b13-95bf3a3279e3	0	初始化数据	2026-03-22 21:43:05.977086	2026-03-22 21:43:05.977087
-删除示例	3	3	module_example:demo:delete	\N	\N	\N	\N	\N	f	t	f	删除示例	null	f	33	149	8dc86a99-4473-4538-9f68-36852339f783	0	初始化数据	2026-03-22 21:43:05.977089	2026-03-22 21:43:05.97709
-批量修改示例状态	3	4	module_example:demo:patch	\N	\N	\N	\N	\N	f	t	f	批量修改示例状态	null	f	33	150	fdb72e46-1492-47da-ab1b-a62e927ce1a2	0	初始化数据	2026-03-22 21:43:05.977092	2026-03-22 21:43:05.977093
-导出示例	3	5	module_example:demo:export	\N	\N	\N	\N	\N	f	t	f	导出示例	null	f	33	151	9f1b0f95-3d23-4e0c-aa8f-761650d2e660	0	初始化数据	2026-03-22 21:43:05.977096	2026-03-22 21:43:05.977096
-导入示例	3	6	module_example:demo:import	\N	\N	\N	\N	\N	f	t	f	导入示例	null	f	33	152	dcdd1979-2137-4503-be2c-3aa0abb679d8	0	初始化数据	2026-03-22 21:43:05.9771	2026-03-22 21:43:05.9771
-下载导入示例模版	3	7	module_example:demo:download	\N	\N	\N	\N	\N	f	t	f	下载导入示例模版	null	f	33	153	63f39f2c-78cb-4613-8e2a-bc5198bd2ef5	0	初始化数据	2026-03-22 21:43:05.977104	2026-03-22 21:43:05.977104
-详情示例	3	8	module_example:demo:detail	\N	\N	\N	\N	\N	f	t	f	详情示例	null	f	33	154	8afdf1dc-8604-46f3-a0e5-32a616f8a234	0	初始化数据	2026-03-22 21:43:05.977108	2026-03-22 21:43:05.977108
-查询示例	3	9	module_example:demo:query	\N	\N	\N	\N	\N	f	t	f	查询示例	null	f	33	155	65c286ec-cfe1-4ea2-b888-d1cc2c6f3537	0	初始化数据	2026-03-22 21:43:05.977112	2026-03-22 21:43:05.977112
+仪表盘	1	1		client	Dashboard	/dashboard	\N	/dashboard/workplace	f	t	t	仪表盘	null	f	\N	1	62e2998b-f3c9-4005-a266-7215a6b94e44	0	初始化数据	2026-04-03 00:38:22.817306	2026-04-03 00:38:22.81731
+系统管理	1	2	\N	system	System	/system	\N	/system/menu	f	t	f	系统管理	null	f	\N	2	f61df8e1-4466-4924-8121-bf69edfb0be1	0	初始化数据	2026-04-03 00:38:22.817314	2026-04-03 00:38:22.817315
+监控管理	1	3	\N	monitor	Monitor	/monitor	\N	/monitor/online	f	t	f	监控管理	null	f	\N	3	4816879f-27cb-4c96-9ba9-881a15122d9e	0	初始化数据	2026-04-03 00:38:22.817318	2026-04-03 00:38:22.817319
+接口管理	1	4	\N	document	Common	/common	\N	/common/docs	f	t	f	接口管理	null	f	\N	4	b37e67a0-8a3a-4a4e-a403-e4badbfd5eb9	0	初始化数据	2026-04-03 00:38:22.817322	2026-04-03 00:38:22.817322
+代码管理	1	5	\N	code	Generator	/generator	\N	/generator/gencode	f	t	f	代码管理	null	f	\N	5	b36e0598-bd9c-463c-85e7-6247fa3e341a	0	代码管理	2026-04-03 00:38:22.817325	2026-04-03 00:38:22.817325
+应用管理	1	6	\N	el-icon-ShoppingBag	Application	/application	\N	/application/myapp	f	t	f	应用管理	null	f	\N	6	2b2a350b-0077-4a45-ab9f-c50c8bb61db0	0	初始化数据	2026-04-03 00:38:22.817328	2026-04-03 00:38:22.817329
+AI管理	1	7	\N	el-icon-ChatLineSquare	AI	/ai	\N	/ai/chat	f	t	f	AI管理	null	f	\N	7	bcab7edb-1443-4aa9-82ba-f0f7d4525f02	0	AI管理	2026-04-03 00:38:22.817331	2026-04-03 00:38:22.817332
+任务管理	1	8	\N	el-icon-SetUp	Task	/task	\N	/task/cronjob/job	f	t	f	任务管理	null	f	\N	8	a1d7a7de-17a6-4cf6-afaf-5e5b560d16a7	0	任务管理	2026-04-03 00:38:22.817335	2026-04-03 00:38:22.817335
+案例管理	1	9	\N	menu	Example	/example	\N	/example/demo	f	t	f	案例管理	null	f	\N	9	125fc329-5fbf-4a27-91c6-388678f810af	0	案例管理	2026-04-03 00:38:22.817338	2026-04-03 00:38:22.817338
+工作台	2	1	dashboard:workplace:query	el-icon-PieChart	Workplace	/dashboard/workplace	dashboard/workplace	\N	f	t	f	工作台	null	f	1	10	e30e9f48-9523-4ad0-82d4-bee5a587200b	0	初始化数据	2026-04-03 00:38:22.822468	2026-04-03 00:38:22.82247
+菜单管理	2	1	module_system:menu:query	menu	Menu	/system/menu	module_system/menu/index	\N	f	t	f	菜单管理	null	f	2	11	40726a03-aa01-4a0d-a273-6a4bdd31aa58	0	初始化数据	2026-04-03 00:38:22.822473	2026-04-03 00:38:22.822474
+部门管理	2	2	module_system:dept:query	tree	Dept	/system/dept	module_system/dept/index	\N	f	t	f	部门管理	null	f	2	12	aaece50f-9f79-41b6-9bf8-a8d345453df6	0	初始化数据	2026-04-03 00:38:22.822477	2026-04-03 00:38:22.822477
+岗位管理	2	3	module_system:position:query	el-icon-Coordinate	Position	/system/position	module_system/position/index	\N	f	t	f	岗位管理	null	f	2	13	08cffe04-d509-4b67-80fc-69c700d6b50e	0	初始化数据	2026-04-03 00:38:22.82248	2026-04-03 00:38:22.822481
+角色管理	2	4	module_system:role:query	role	Role	/system/role	module_system/role/index	\N	f	t	f	角色管理	null	f	2	14	b7a19818-5ae4-4a3e-b7e4-12392d3eb5c0	0	初始化数据	2026-04-03 00:38:22.822483	2026-04-03 00:38:22.822484
+用户管理	2	5	module_system:user:query	el-icon-User	User	/system/user	module_system/user/index	\N	f	t	f	用户管理	null	f	2	15	0faee004-c5a8-4ff2-b3dc-3fb7ba59c58f	0	初始化数据	2026-04-03 00:38:22.822487	2026-04-03 00:38:22.822487
+日志管理	2	6	module_system:log:query	el-icon-Aim	Log	/system/log	module_system/log/index	\N	f	t	f	日志管理	null	f	2	16	2b140cb7-9d28-4f56-843a-882fac22268b	0	初始化数据	2026-04-03 00:38:22.82249	2026-04-03 00:38:22.82249
+公告管理	2	7	module_system:notice:query	bell	Notice	/system/notice	module_system/notice/index	\N	f	t	f	公告管理	null	f	2	17	744c99c7-6159-4877-a1a8-91adbf2a4c79	0	初始化数据	2026-04-03 00:38:22.822493	2026-04-03 00:38:22.822493
+参数管理	2	8	module_system:param:query	setting	Params	/system/param	module_system/param/index	\N	f	t	f	参数管理	null	f	2	18	71cf75d0-9fc6-42df-ba23-2789bf2e6b78	0	初始化数据	2026-04-03 00:38:22.822496	2026-04-03 00:38:22.822496
+字典管理	2	9	module_system:dict_type:query	dict	Dict	/system/dict	module_system/dict/index	\N	f	t	f	字典管理	null	f	2	19	755836fa-6aee-4a9c-81fa-786e6ff73727	0	初始化数据	2026-04-03 00:38:22.822499	2026-04-03 00:38:22.822499
+在线用户	2	1	module_monitor:online:query	el-icon-Headset	MonitorOnline	/monitor/online	module_monitor/online/index	\N	f	t	f	在线用户	null	f	3	20	9475cec0-51cd-48e6-84d3-44aaddd30917	0	初始化数据	2026-04-03 00:38:22.822502	2026-04-03 00:38:22.822502
+服务器监控	2	2	module_monitor:server:query	el-icon-Odometer	MonitorServer	/monitor/server	module_monitor/server/index	\N	f	t	f	服务器监控	null	f	3	21	fe5010f2-c9a4-4dbf-8ea1-1096af70f64c	0	初始化数据	2026-04-03 00:38:22.822505	2026-04-03 00:38:22.822505
+缓存监控	2	3	module_monitor:cache:query	el-icon-Stopwatch	MonitorCache	/monitor/cache	module_monitor/cache/index	\N	f	t	f	缓存监控	null	f	3	22	c30e09d8-c001-4963-bb72-7032f6eb54b5	0	初始化数据	2026-04-03 00:38:22.822508	2026-04-03 00:38:22.822508
+文件管理	2	4	module_monitor:resource:query	el-icon-Files	Resource	/monitor/resource	module_monitor/resource/index	\N	f	t	f	文件管理	null	f	3	23	0b4de750-79bb-4da1-826a-35b6d2acfd5c	0	初始化数据	2026-04-03 00:38:22.822511	2026-04-03 00:38:22.822511
+Swagger文档	4	1	module_common:docs:query	api	Docs	/common/docs	module_common/docs/index	\N	f	t	f	Swagger文档	null	f	4	24	fe1ef1c7-bbb7-4a90-82c9-774d1d64a7ca	0	初始化数据	2026-04-03 00:38:22.822514	2026-04-03 00:38:22.822514
+Redoc文档	4	2	module_common:redoc:query	el-icon-Document	Redoc	/common/redoc	module_common/redoc/index	\N	f	t	f	Redoc文档	null	f	4	25	f718f039-ec0a-4ea8-9cec-d2e1baba56d5	0	初始化数据	2026-04-03 00:38:22.822517	2026-04-03 00:38:22.822517
+LangJin文档	4	3	module_common:ljdoc:query	el-icon-Document	Ljdoc	/common/ljdoc	module_common/ljdoc/index	\N	f	t	f	LangJin文档	null	f	4	26	dcc3452a-19f4-44aa-8c58-d4cd70a0cfc4	0	初始化数据	2026-04-03 00:38:22.822519	2026-04-03 00:38:22.82252
+代码生成	2	1	module_generator:gencode:query	code	GenCode	/generator/gencode	module_generator/gencode/index	\N	f	t	f	代码生成	null	f	5	27	90c87bea-d474-40a2-93d1-0ea8dfcb9bd1	0	代码生成	2026-04-03 00:38:22.822522	2026-04-03 00:38:22.822523
+我的应用	2	1	module_application:myapp:query	el-icon-ShoppingCartFull	MYAPP	/application/myapp	module_application/myapp/index	\N	f	t	f	我的应用	null	f	6	28	78abae79-58d1-4cb6-ae57-9cb573e1e83f	0	初始化数据	2026-04-03 00:38:22.822526	2026-04-03 00:38:22.822526
+AI智能助手	2	1	module_ai:chat:query	el-icon-ChatDotRound	Chat	/ai/chat	module_ai/chat/index	\N	f	t	f	AI智能助手	null	f	7	29	4e871c29-3555-4567-b6d5-074a8131fba8	0	AI智能助手	2026-04-03 00:38:22.82253	2026-04-03 00:38:22.822531
+会话记忆	2	2	module_ai:chat:query	el-icon-ChatLineSquare	Memory	/ai/memory	module_ai/memory/index	\N	f	t	f	会话记忆	null	f	7	30	d149bad8-ff41-422a-a2d6-98ca63e2d5db	0	会话记忆管理	2026-04-03 00:38:22.822534	2026-04-03 00:38:22.822535
+定时任务	1	1	\N	el-icon-Timer	Cronjob	/task/cronjob	\N	/task/cronjob/job	f	t	t	定时任务	null	f	8	31	f250cbe9-d735-4b82-adff-df24fd28a363	0	APScheduler 调度器与任务节点	2026-04-03 00:38:22.822538	2026-04-03 00:38:22.822538
+工作流	1	2	\N	el-icon-SetUp	WorkflowMgr	/task/workflow-mgr	\N	/task/workflow/definition	f	t	t	工作流	null	f	8	32	65c77a59-d4e5-440e-911a-e4add7e030e9	0	流程编排与编排节点类型	2026-04-03 00:38:22.822542	2026-04-03 00:38:22.822542
+示例管理	2	1	module_example:demo:query	menu	Demo	/example/demo	module_example/demo/index	\N	f	t	f	示例管理	null	f	9	33	0c69d14a-c2cc-4e3f-a513-446bf4fd090f	0	示例管理	2026-04-03 00:38:22.822545	2026-04-03 00:38:22.822546
+二级目录	1	2	\N	menu	DemoDir	/example/demo-group	\N	/example/demo-group/demo01	f	t	t	二级目录	null	f	9	34	d29d145a-f1ef-40dd-ac56-1b61417731b8	0	二级目录（含三级菜单）	2026-04-03 00:38:22.822548	2026-04-03 00:38:22.822548
+创建菜单	3	1	module_system:menu:create	\N	\N	\N	\N	\N	f	t	f	创建菜单	null	f	11	35	f0a0706b-bb2c-41b4-82ab-a18eab7ce5c0	0	初始化数据	2026-04-03 00:38:22.828125	2026-04-03 00:38:22.828128
+修改菜单	3	2	module_system:menu:update	\N	\N	\N	\N	\N	f	t	f	修改菜单	null	f	11	36	6207280b-7247-4151-ae86-cfbae36c400f	0	初始化数据	2026-04-03 00:38:22.828133	2026-04-03 00:38:22.828133
+删除菜单	3	3	module_system:menu:delete	\N	\N	\N	\N	\N	f	t	f	删除菜单	null	f	11	37	f13e4b64-6748-4406-80af-cbf4b3eb510f	0	初始化数据	2026-04-03 00:38:22.828137	2026-04-03 00:38:22.828138
+批量修改菜单状态	3	4	module_system:menu:patch	\N	\N	\N	\N	\N	f	t	f	批量修改菜单状态	null	f	11	38	260530e5-c830-4f75-82fd-cb8b3090733c	0	初始化数据	2026-04-03 00:38:22.828141	2026-04-03 00:38:22.828142
+详情菜单	3	5	module_system:menu:detail	\N	\N	\N	\N	\N	f	t	f	详情菜单	null	f	11	39	4fdbff8e-8492-4436-b337-d031575a4461	0	初始化数据	2026-04-03 00:38:22.828146	2026-04-03 00:38:22.828146
+查询菜单	3	6	module_system:menu:query	\N	\N	\N	\N	\N	f	t	f	查询菜单	null	f	11	40	7774e438-0048-40b1-a402-9d483aa468ee	0	初始化数据	2026-04-03 00:38:22.82815	2026-04-03 00:38:22.828151
+创建部门	3	1	module_system:dept:create	\N	\N	\N	\N	\N	f	t	f	创建部门	null	f	12	41	de16c4f6-3cae-4098-9d59-43cce758ac03	0	初始化数据	2026-04-03 00:38:22.828154	2026-04-03 00:38:22.828155
+修改部门	3	2	module_system:dept:update	\N	\N	\N	\N	\N	f	t	f	修改部门	null	f	12	42	4917fc2d-2d92-4300-bf03-7f854f8d05b7	0	初始化数据	2026-04-03 00:38:22.828159	2026-04-03 00:38:22.828159
+删除部门	3	3	module_system:dept:delete	\N	\N	\N	\N	\N	f	t	f	删除部门	null	f	12	43	63bc6057-c59b-4e7c-935b-8e723395d217	0	初始化数据	2026-04-03 00:38:22.828163	2026-04-03 00:38:22.828163
+批量修改部门状态	3	4	module_system:dept:patch	\N	\N	\N	\N	\N	f	t	f	批量修改部门状态	null	f	12	44	6bf2c6c0-1298-426a-9ac4-4e7593f11843	0	初始化数据	2026-04-03 00:38:22.828167	2026-04-03 00:38:22.828167
+详情部门	3	5	module_system:dept:detail	\N	\N	\N	\N	\N	f	t	f	详情部门	null	f	12	45	93555262-a17f-46d1-b49f-36edc04073f6	0	初始化数据	2026-04-03 00:38:22.828171	2026-04-03 00:38:22.828171
+查询部门	3	6	module_system:dept:query	\N	\N	\N	\N	\N	f	t	f	查询部门	null	f	12	46	30146fe7-27cc-463b-8bab-47ea845957a4	0	初始化数据	2026-04-03 00:38:22.828175	2026-04-03 00:38:22.828175
+创建岗位	3	1	module_system:position:create	\N	\N	\N	\N	\N	f	t	f	创建岗位	null	f	13	47	314ecbc0-b699-48c4-a226-4c03e4b96ea5	0	初始化数据	2026-04-03 00:38:22.828178	2026-04-03 00:38:22.828178
+修改岗位	3	2	module_system:position:update	\N	\N	\N	\N	\N	f	t	f	修改岗位	null	f	13	48	aeaa2d03-33fc-465a-ae02-d9307134584b	0	初始化数据	2026-04-03 00:38:22.828181	2026-04-03 00:38:22.828182
+删除岗位	3	3	module_system:position:delete	\N	\N	\N	\N	\N	f	t	f	修改岗位	null	f	13	49	b320a7b3-6b75-4db8-8f51-b2a9ea9d6110	0	初始化数据	2026-04-03 00:38:22.828186	2026-04-03 00:38:22.828187
+批量修改岗位状态	3	4	module_system:position:patch	\N	\N	\N	\N	\N	f	t	f	批量修改岗位状态	null	f	13	50	e8fc484d-9560-4371-a8d0-c89f76a6454a	0	初始化数据	2026-04-03 00:38:22.82819	2026-04-03 00:38:22.828191
+岗位导出	3	5	module_system:position:export	\N	\N	\N	\N	\N	f	t	f	岗位导出	null	f	13	51	30e213cc-0042-4fa0-bc06-00e40248967d	0	初始化数据	2026-04-03 00:38:22.828194	2026-04-03 00:38:22.828194
+详情岗位	3	6	module_system:position:detail	\N	\N	\N	\N	\N	f	t	f	详情岗位	null	f	13	52	35f5891b-060f-4c96-9e47-3f626eac2fb6	0	初始化数据	2026-04-03 00:38:22.828197	2026-04-03 00:38:22.828197
+查询岗位	3	7	module_system:position:query	\N	\N	\N	\N	\N	f	t	f	查询岗位	null	f	13	53	97059be5-b6b3-49f5-a7f6-a5f12352ed34	0	初始化数据	2026-04-03 00:38:22.8282	2026-04-03 00:38:22.8282
+创建角色	3	1	module_system:role:create	\N	\N	\N	\N	\N	f	t	f	创建角色	null	f	14	54	ada3cf3b-421d-4858-801c-914fd4b59893	0	初始化数据	2026-04-03 00:38:22.828204	2026-04-03 00:38:22.828204
+修改角色	3	2	module_system:role:update	\N	\N	\N	\N	\N	f	t	f	修改角色	null	f	14	55	56b2c241-9c5a-4ec1-a49c-ae8e1b3f082a	0	初始化数据	2026-04-03 00:38:22.828207	2026-04-03 00:38:22.828208
+删除角色	3	3	module_system:role:delete	\N	\N	\N	\N	\N	f	t	f	删除角色	null	f	14	56	904f3ce6-d463-49b9-87cd-467c02b1379d	0	初始化数据	2026-04-03 00:38:22.828211	2026-04-03 00:38:22.828212
+批量修改角色状态	3	4	module_system:role:patch	\N	\N	\N	\N	\N	f	t	f	批量修改角色状态	null	f	14	57	e0bd2c6f-634d-435d-8749-b2fc4f9a3d7a	0	初始化数据	2026-04-03 00:38:22.828215	2026-04-03 00:38:22.828216
+角色导出	3	5	module_system:role:export	\N	\N	\N	\N	\N	f	t	f	角色导出	null	f	14	58	5fbc3b2d-795e-4716-99f4-0fdd57230f28	0	初始化数据	2026-04-03 00:38:22.828219	2026-04-03 00:38:22.828219
+详情角色	3	6	module_system:role:detail	\N	\N	\N	\N	\N	f	t	f	详情角色	null	f	14	59	6cbe269e-7f3f-42cf-923c-d2e33ba11236	0	初始化数据	2026-04-03 00:38:22.828223	2026-04-03 00:38:22.828224
+查询角色	3	7	module_system:role:query	\N	\N	\N	\N	\N	f	t	f	查询角色	null	f	14	60	0a9075d2-e7e0-4149-9bd8-42001699d825	0	初始化数据	2026-04-03 00:38:22.828228	2026-04-03 00:38:22.828228
+分配权限	3	8	module_system:role:permission	\N	\N	\N	\N	\N	f	t	f	分配权限	null	f	14	61	e34e93d0-91f3-48f5-a8a8-1d1ec1971c51	0	初始化数据	2026-04-03 00:38:22.828232	2026-04-03 00:38:22.828233
+创建用户	3	1	module_system:user:create	\N	\N	\N	\N	\N	f	t	f	创建用户	null	f	15	62	3029283a-317c-49dd-8096-fe324afe8fc8	0	初始化数据	2026-04-03 00:38:22.828236	2026-04-03 00:38:22.828236
+修改用户	3	2	module_system:user:update	\N	\N	\N	\N	\N	f	t	f	修改用户	null	f	15	63	b2b5de45-2f3e-47f8-89ea-2a77e7a77ff8	0	初始化数据	2026-04-03 00:38:22.82824	2026-04-03 00:38:22.82824
+删除用户	3	3	module_system:user:delete	\N	\N	\N	\N	\N	f	t	f	删除用户	null	f	15	64	1f75168d-b18b-485f-b2e4-9af404773193	0	初始化数据	2026-04-03 00:38:22.828244	2026-04-03 00:38:22.828244
+批量修改用户状态	3	4	module_system:user:patch	\N	\N	\N	\N	\N	f	t	f	批量修改用户状态	null	f	15	65	11d1b540-ee61-4698-8031-6ad5fd41c44a	0	初始化数据	2026-04-03 00:38:22.828247	2026-04-03 00:38:22.828248
+导出用户	3	5	module_system:user:export	\N	\N	\N	\N	\N	f	t	f	导出用户	null	f	15	66	cbcd0136-4b09-42ec-820c-3f682f38d157	0	初始化数据	2026-04-03 00:38:22.828251	2026-04-03 00:38:22.828251
+导入用户	3	6	module_system:user:import	\N	\N	\N	\N	\N	f	t	f	导入用户	null	f	15	67	92a9485f-7435-4f3d-8c32-773738a74e6a	0	初始化数据	2026-04-03 00:38:22.828254	2026-04-03 00:38:22.828255
+下载用户导入模板	3	7	module_system:user:download	\N	\N	\N	\N	\N	f	t	f	下载用户导入模板	null	f	15	68	88c5f60f-682a-4129-83a2-213951723505	0	初始化数据	2026-04-03 00:38:22.828258	2026-04-03 00:38:22.828259
+详情用户	3	8	module_system:user:detail	\N	\N	\N	\N	\N	f	t	f	详情用户	null	f	15	69	0274f154-b8f9-4878-87d0-d552275d8a9b	0	初始化数据	2026-04-03 00:38:22.828261	2026-04-03 00:38:22.828262
+查询用户	3	9	module_system:user:query	\N	\N	\N	\N	\N	f	t	f	查询用户	null	f	15	70	21ecce2c-3642-44f1-b809-bdedd9869e71	0	初始化数据	2026-04-03 00:38:22.828264	2026-04-03 00:38:22.828265
+日志删除	3	1	module_system:log:delete	\N	\N	\N	\N	\N	f	t	f	日志删除	null	f	16	71	6e991841-c497-4b48-b28a-800769e3af45	0	初始化数据	2026-04-03 00:38:22.828268	2026-04-03 00:38:22.828268
+日志导出	3	2	module_system:log:export	\N	\N	\N	\N	\N	f	t	f	日志导出	null	f	16	72	86f56644-0cb3-4475-94ae-79389175b583	0	初始化数据	2026-04-03 00:38:22.828271	2026-04-03 00:38:22.828271
+日志详情	3	3	module_system:log:detail	\N	\N	\N	\N	\N	f	t	f	日志详情	null	f	16	73	fc1f3405-2471-4b9e-9328-00ca9bb1704a	0	初始化数据	2026-04-03 00:38:22.828273	2026-04-03 00:38:22.828274
+查询日志	3	4	module_system:log:query	\N	\N	\N	\N	\N	f	t	f	查询日志	null	f	16	74	502c326c-36f7-4960-9e43-196ab3a46d78	0	初始化数据	2026-04-03 00:38:22.828276	2026-04-03 00:38:22.828277
+公告创建	3	1	module_system:notice:create	\N	\N	\N	\N	\N	f	t	f	公告创建	null	f	17	75	1cf1cb16-2738-4861-a8c5-63e8075a2a3e	0	初始化数据	2026-04-03 00:38:22.828279	2026-04-03 00:38:22.82828
+公告修改	3	2	module_system:notice:update	\N	\N	\N	\N	\N	f	t	f	修改用户	null	f	17	76	fab7eb1d-179e-4f82-a57c-05ab2c4cc8f5	0	初始化数据	2026-04-03 00:38:22.828282	2026-04-03 00:38:22.828282
+公告删除	3	3	module_system:notice:delete	\N	\N	\N	\N	\N	f	t	f	公告删除	null	f	17	77	db07d84f-5d0e-4d95-ba7d-4fbb93e9b36d	0	初始化数据	2026-04-03 00:38:22.828286	2026-04-03 00:38:22.828286
+公告导出	3	4	module_system:notice:export	\N	\N	\N	\N	\N	f	t	f	公告导出	null	f	17	78	d6a2fe5b-a73e-4100-a5c0-ba8e6b591db6	0	初始化数据	2026-04-03 00:38:22.828289	2026-04-03 00:38:22.828289
+公告批量修改状态	3	5	module_system:notice:patch	\N	\N	\N	\N	\N	f	t	f	公告批量修改状态	null	f	17	79	dea13602-b64e-45a8-b915-fb4ef5c48823	0	初始化数据	2026-04-03 00:38:22.828292	2026-04-03 00:38:22.828292
+公告详情	3	6	module_system:notice:detail	\N	\N	\N	\N	\N	f	t	f	公告详情	null	f	17	80	7bf9840f-52f4-4033-8051-975001a73d87	0	初始化数据	2026-04-03 00:38:22.828295	2026-04-03 00:38:22.828295
+查询公告	3	5	module_system:notice:query	\N	\N	\N	\N	\N	f	t	f	查询公告	null	f	17	81	55dd24e2-0ab0-4ed4-b6bc-e95e56ece696	0	初始化数据	2026-04-03 00:38:22.828298	2026-04-03 00:38:22.828298
+创建参数	3	1	module_system:param:create	\N	\N	\N	\N	\N	f	t	f	创建参数	null	f	18	82	9a7919b6-1685-4c91-810f-f968af6aa78c	0	初始化数据	2026-04-03 00:38:22.828301	2026-04-03 00:38:22.828301
+修改参数	3	2	module_system:param:update	\N	\N	\N	\N	\N	f	t	f	修改参数	null	f	18	83	64764645-ade0-4bde-b45e-5b4cde2fa527	0	初始化数据	2026-04-03 00:38:22.828304	2026-04-03 00:38:22.828304
+删除参数	3	3	module_system:param:delete	\N	\N	\N	\N	\N	f	t	f	删除参数	null	f	18	84	56c25925-f011-4e56-986e-90c61e07a6d8	0	初始化数据	2026-04-03 00:38:22.828307	2026-04-03 00:38:22.828307
+导出参数	3	4	module_system:param:export	\N	\N	\N	\N	\N	f	t	f	导出参数	null	f	18	85	f5173082-51a0-4f4b-be6f-7a2c0470caa4	0	初始化数据	2026-04-03 00:38:22.82831	2026-04-03 00:38:22.82831
+参数上传	3	5	module_system:param:upload	\N	\N	\N	\N	\N	f	t	f	参数上传	null	f	18	86	c21c14f2-0367-4b22-9431-c8bb3ac1b39f	0	初始化数据	2026-04-03 00:38:22.828313	2026-04-03 00:38:22.828313
+参数详情	3	6	module_system:param:detail	\N	\N	\N	\N	\N	f	t	f	参数详情	null	f	18	87	042b4454-36a1-4e4b-91db-2e8af41fbc35	0	初始化数据	2026-04-03 00:38:22.828316	2026-04-03 00:38:22.828316
+查询参数	3	7	module_system:param:query	\N	\N	\N	\N	\N	f	t	f	查询参数	null	f	18	88	e2a2a623-4db9-4694-912d-86b080e78d79	0	初始化数据	2026-04-03 00:38:22.828319	2026-04-03 00:38:22.828319
+创建字典类型	3	1	module_system:dict_type:create	\N	\N	\N	\N	\N	f	t	f	创建字典类型	null	f	19	89	1860b824-5465-414f-98a6-03f4dd31abda	0	初始化数据	2026-04-03 00:38:22.828322	2026-04-03 00:38:22.828322
+修改字典类型	3	2	module_system:dict_type:update	\N	\N	\N	\N	\N	f	t	f	修改字典类型	null	f	19	90	f5ab50f2-327b-469d-a887-5787b8beb334	0	初始化数据	2026-04-03 00:38:22.828324	2026-04-03 00:38:22.828325
+删除字典类型	3	3	module_system:dict_type:delete	\N	\N	\N	\N	\N	f	t	f	删除字典类型	null	f	19	91	5caf8653-d8c4-4f22-8ba4-9435ab600808	0	初始化数据	2026-04-03 00:38:22.828328	2026-04-03 00:38:22.828329
+导出字典类型	3	4	module_system:dict_type:export	\N	\N	\N	\N	\N	f	t	f	导出字典类型	null	f	19	92	9a1a3f53-ee36-48b1-970f-b90877341533	0	初始化数据	2026-04-03 00:38:22.828331	2026-04-03 00:38:22.828332
+批量修改字典状态	3	5	module_system:dict_type:patch	\N	\N	\N	\N	\N	f	t	f	导出字典类型	null	f	19	93	bd15801b-edee-4265-8b8b-ceab5898a49f	0	初始化数据	2026-04-03 00:38:22.828334	2026-04-03 00:38:22.828335
+字典数据查询	3	6	module_system:dict_data:query	\N	\N	\N	\N	\N	f	t	f	字典数据查询	null	f	19	94	93ca3cd4-631e-42a1-a5bc-32c1432c5fe2	0	初始化数据	2026-04-03 00:38:22.828337	2026-04-03 00:38:22.828338
+创建字典数据	3	7	module_system:dict_data:create	\N	\N	\N	\N	\N	f	t	f	创建字典数据	null	f	19	95	bc812b24-97a9-4d1c-ba23-3817ca96e5ac	0	初始化数据	2026-04-03 00:38:22.82834	2026-04-03 00:38:22.82834
+修改字典数据	3	8	module_system:dict_data:update	\N	\N	\N	\N	\N	f	t	f	修改字典数据	null	f	19	96	5fbf8de4-cdcf-4933-ac86-4545efcd122a	0	初始化数据	2026-04-03 00:38:22.828343	2026-04-03 00:38:22.828343
+删除字典数据	3	9	module_system:dict_data:delete	\N	\N	\N	\N	\N	f	t	f	删除字典数据	null	f	19	97	8b4ce977-5913-48f5-b790-d44f234fe9c5	0	初始化数据	2026-04-03 00:38:22.828347	2026-04-03 00:38:22.828347
+导出字典数据	3	10	module_system:dict_data:export	\N	\N	\N	\N	\N	f	t	f	导出字典数据	null	f	19	98	27bf104f-f194-4e7e-ae22-d3a10c08bb75	0	初始化数据	2026-04-03 00:38:22.82835	2026-04-03 00:38:22.82835
+批量修改字典数据状态	3	11	module_system:dict_data:patch	\N	\N	\N	\N	\N	f	t	f	批量修改字典数据状态	null	f	19	99	555b7452-f8fe-4f54-8fb3-347c578110c0	0	初始化数据	2026-04-03 00:38:22.828353	2026-04-03 00:38:22.828353
+详情字典类型	3	12	module_system:dict_type:detail	\N	\N	\N	\N	\N	f	t	f	详情字典类型	null	f	19	100	8410b781-7c89-4568-9c60-392cd3ff6cdd	0	初始化数据	2026-04-03 00:38:22.828356	2026-04-03 00:38:22.828356
+查询字典类型	3	13	module_system:dict_type:query	\N	\N	\N	\N	\N	f	t	f	查询字典类型	null	f	19	101	9f2ec356-e70d-41e1-b9ce-e772b4bd40b5	0	初始化数据	2026-04-03 00:38:22.828359	2026-04-03 00:38:22.828359
+详情字典数据	3	14	module_system:dict_data:detail	\N	\N	\N	\N	\N	f	t	f	详情字典数据	null	f	19	102	a530db11-7f10-4a58-bfe5-f4b5e51a976d	0	初始化数据	2026-04-03 00:38:22.828362	2026-04-03 00:38:22.828362
+在线用户强制下线	3	1	module_monitor:online:delete	\N	\N	\N	\N	\N	f	t	f	在线用户强制下线	null	f	20	103	27ee0026-e2ce-4827-bb1a-0dd4f4a5be1e	0	初始化数据	2026-04-03 00:38:22.828366	2026-04-03 00:38:22.828366
+清除缓存	3	1	module_monitor:cache:delete	\N	\N	\N	\N	\N	f	t	f	清除缓存	null	f	22	104	bfe4eeae-62f3-4067-8d93-0e8e1f186bcb	0	初始化数据	2026-04-03 00:38:22.828369	2026-04-03 00:38:22.828369
+文件上传	3	1	module_monitor:resource:upload	\N	\N	\N	\N	\N	f	t	f	文件上传	null	f	23	105	2d5754a7-441c-441a-9206-25f89281aa0f	0	初始化数据	2026-04-03 00:38:22.828372	2026-04-03 00:38:22.828372
+文件下载	3	2	module_monitor:resource:download	\N	\N	\N	\N	\N	f	t	f	文件下载	null	f	23	106	c6b70a64-9588-4473-b95e-88f73d46a4db	0	初始化数据	2026-04-03 00:38:22.828375	2026-04-03 00:38:22.828375
+文件删除	3	3	module_monitor:resource:delete	\N	\N	\N	\N	\N	f	t	f	文件删除	null	f	23	107	4841ec7a-d6e0-4a29-ae5c-95a46ba80563	0	初始化数据	2026-04-03 00:38:22.828378	2026-04-03 00:38:22.828378
+文件移动	3	4	module_monitor:resource:move	\N	\N	\N	\N	\N	f	t	f	文件移动	null	f	23	108	1c0ed62e-d0e2-4ce6-aea6-a1fbcc9cb3d5	0	初始化数据	2026-04-03 00:38:22.828381	2026-04-03 00:38:22.828381
+文件复制	3	5	module_monitor:resource:copy	\N	\N	\N	\N	\N	f	t	f	文件复制	null	f	23	109	dd50a4a2-c269-4782-8709-f288f35347c6	0	初始化数据	2026-04-03 00:38:22.828384	2026-04-03 00:38:22.828384
+文件重命名	3	6	module_monitor:resource:rename	\N	\N	\N	\N	\N	f	t	f	文件重命名	null	f	23	110	c1bc1e06-7d73-4946-afa0-9e67967ec805	0	初始化数据	2026-04-03 00:38:22.828387	2026-04-03 00:38:22.828387
+创建目录	3	7	module_monitor:resource:create_dir	\N	\N	\N	\N	\N	f	t	f	创建目录	null	f	23	111	c286438d-a96f-4555-91d8-4140c99a3f2f	0	初始化数据	2026-04-03 00:38:22.828389	2026-04-03 00:38:22.82839
+导出文件列表	3	9	module_monitor:resource:export	\N	\N	\N	\N	\N	f	t	f	导出文件列表	null	f	23	112	4642db40-9b02-4ea9-9c32-c5863fe5b5d2	0	初始化数据	2026-04-03 00:38:22.828392	2026-04-03 00:38:22.828393
+查询代码生成业务表列表	3	1	module_generator:gencode:query	\N	\N	\N	\N	\N	f	t	f	查询代码生成业务表列表	null	f	27	113	f04b63dd-8c06-4c25-bcc5-394277c5e60f	0	查询代码生成业务表列表	2026-04-03 00:38:22.828395	2026-04-03 00:38:22.828396
+创建表结构	3	2	module_generator:gencode:create	\N	\N	\N	\N	\N	f	t	f	创建表结构	null	f	27	114	1070449c-dc63-4ff3-850e-53d14d48b542	0	创建表结构	2026-04-03 00:38:22.828398	2026-04-03 00:38:22.828399
+编辑业务表信息	3	3	module_generator:gencode:update	\N	\N	\N	\N	\N	f	t	f	编辑业务表信息	null	f	27	115	3d5680d1-5ab5-4d1f-a672-bb987f77386e	0	编辑业务表信息	2026-04-03 00:38:22.828401	2026-04-03 00:38:22.828402
+删除业务表信息	3	4	module_generator:gencode:delete	\N	\N	\N	\N	\N	f	t	f	删除业务表信息	null	f	27	116	f74f963a-a817-47c4-9177-97b5a42c7202	0	删除业务表信息	2026-04-03 00:38:22.828404	2026-04-03 00:38:22.828405
+导入表结构	3	5	module_generator:gencode:import	\N	\N	\N	\N	\N	f	t	f	导入表结构	null	f	27	117	59cf4c86-290f-43cd-9c46-a503583bb245	0	导入表结构	2026-04-03 00:38:22.828407	2026-04-03 00:38:22.828407
+批量生成代码	3	6	module_generator:gencode:operate	\N	\N	\N	\N	\N	f	t	f	批量生成代码	null	f	27	118	6c6a266b-2832-402f-b165-11007f1a8968	0	批量生成代码	2026-04-03 00:38:22.82841	2026-04-03 00:38:22.82841
+生成代码到指定路径	3	7	module_generator:gencode:code	\N	\N	\N	\N	\N	f	t	f	生成代码到指定路径	null	f	27	119	66c46949-9393-4f60-97fb-1a317c9bf8ed	0	生成代码到指定路径	2026-04-03 00:38:22.828413	2026-04-03 00:38:22.828413
+查询数据库表列表	3	8	module_generator:dblist:query	\N	\N	\N	\N	\N	f	t	f	查询数据库表列表	null	f	27	120	8d933a04-ab62-4a88-9205-ba37dbbe0d3b	0	查询数据库表列表	2026-04-03 00:38:22.828416	2026-04-03 00:38:22.828416
+同步数据库	3	9	module_generator:db:sync	\N	\N	\N	\N	\N	f	t	f	同步数据库	null	f	27	121	338ad22e-76e5-403a-a959-bf068d17ffb0	0	同步数据库	2026-04-03 00:38:22.828419	2026-04-03 00:38:22.828419
+创建应用	3	1	module_application:myapp:create	\N	\N	\N	\N	\N	f	t	f	创建应用	null	f	28	122	a426206a-f6a5-43c9-8c81-b12d7a42c459	0	初始化数据	2026-04-03 00:38:22.828422	2026-04-03 00:38:22.828422
+修改应用	3	2	module_application:myapp:update	\N	\N	\N	\N	\N	f	t	f	修改应用	null	f	28	123	3d1ef840-c0c3-4b3d-95fd-d40d7b4282f4	0	初始化数据	2026-04-03 00:38:22.828425	2026-04-03 00:38:22.828425
+删除应用	3	3	module_application:myapp:delete	\N	\N	\N	\N	\N	f	t	f	删除应用	null	f	28	124	1cb3fbb9-7de9-40f8-bf74-a56511e18e16	0	初始化数据	2026-04-03 00:38:22.828428	2026-04-03 00:38:22.828428
+批量修改应用状态	3	4	module_application:myapp:patch	\N	\N	\N	\N	\N	f	t	f	批量修改应用状态	null	f	28	125	a37f8f69-0f90-4a36-85e3-78cfefd4e9e1	0	初始化数据	2026-04-03 00:38:22.828431	2026-04-03 00:38:22.828431
+详情应用	3	5	module_application:myapp:detail	\N	\N	\N	\N	\N	f	t	f	详情应用	null	f	28	126	52085867-73b2-4ef8-b2b2-839a0a6c4697	0	初始化数据	2026-04-03 00:38:22.828434	2026-04-03 00:38:22.828434
+查询应用	3	6	module_application:myapp:query	\N	\N	\N	\N	\N	f	t	f	查询应用	null	f	28	127	df8b6a73-5041-402d-ac34-0774c229beb1	0	初始化数据	2026-04-03 00:38:22.828437	2026-04-03 00:38:22.828437
+AI对话	3	1	module_ai:chat:ws	\N	\N	\N	\N	\N	f	t	f	AI对话	null	f	29	128	fd9fb4a7-2cd8-4bfd-8a99-781abf4fafed	0	AI对话	2026-04-03 00:38:22.828439	2026-04-03 00:38:22.82844
+查询会话	3	2	module_ai:chat:query	\N	\N	\N	\N	\N	f	t	f	查询会话	null	f	29	129	dd4bc016-4b0c-4fc5-9561-9af61e4120ee	0	查询会话	2026-04-03 00:38:22.828443	2026-04-03 00:38:22.828443
+会话详情	3	3	module_ai:chat:detail	\N	\N	\N	\N	\N	f	t	f	会话详情	null	f	29	130	a82e0084-8fce-4910-8096-fb28fa5bc7ce	0	会话详情	2026-04-03 00:38:22.828446	2026-04-03 00:38:22.828446
+创建会话	3	4	module_ai:chat:create	\N	\N	\N	\N	\N	f	t	f	创建会话	null	f	29	131	51e81c58-f745-49ca-b84a-b266d3a95599	0	创建会话	2026-04-03 00:38:22.828448	2026-04-03 00:38:22.828449
+更新会话	3	5	module_ai:chat:update	\N	\N	\N	\N	\N	f	t	f	更新会话	null	f	29	132	1b5024df-b0b2-4789-a752-f1f147b9baa4	0	更新会话	2026-04-03 00:38:22.828452	2026-04-03 00:38:22.828452
+删除会话	3	6	module_ai:chat:delete	\N	\N	\N	\N	\N	f	t	f	删除会话	null	f	29	133	1fdc8fc7-0343-44fc-983e-a2c1f4534e6f	0	删除会话	2026-04-03 00:38:22.828454	2026-04-03 00:38:22.828455
+查询会话记忆	3	1	module_ai:chat:query	\N	\N	\N	\N	\N	f	t	f	查询会话记忆	null	f	30	134	e2fe36dc-ffbd-407d-b7fc-582af63c1ece	0	查询会话记忆	2026-04-03 00:38:22.828457	2026-04-03 00:38:22.828458
+会话记忆详情	3	2	module_ai:chat:detail	\N	\N	\N	\N	\N	f	t	f	会话记忆详情	null	f	30	135	e23a505a-c098-41ca-bcf4-6c62646882ad	0	会话记忆详情	2026-04-03 00:38:22.82846	2026-04-03 00:38:22.828461
+删除会话记忆	3	3	module_ai:chat:delete	\N	\N	\N	\N	\N	f	t	f	删除会话记忆	null	f	30	136	f4b2ef6f-0d17-47ad-8dcd-74408b559273	0	删除会话记忆	2026-04-03 00:38:22.828463	2026-04-03 00:38:22.828464
+调度器监控	2	1	module_task:cronjob:job:query	el-icon-DataLine	Job	/task/cronjob/job	module_task/cronjob/job/index	\N	f	t	f	调度器监控	null	f	31	137	bcdb67b8-95cf-4a08-a235-b01589911716	0	调度器监控	2026-04-03 00:38:22.828466	2026-04-03 00:38:22.828467
+节点管理	2	2	module_task:cronjob:node:query	el-icon-Postcard	Node	/task/cronjob/node	module_task/cronjob/node/index	\N	f	t	f	节点管理	null	f	31	138	6b61fd50-a1e5-4dee-a89f-1262e76f6a04	0	节点管理	2026-04-03 00:38:22.82847	2026-04-03 00:38:22.828471
+流程编排	2	1	module_task:workflow:definition:query	el-icon-SetUp	Workflow	/task/workflow/definition	module_task/workflow/definition/index	\N	f	t	f	流程编排	null	f	32	139	801ccfbc-c677-4c01-88d8-875002fefcc2	0	Vue Flow 画布与发布执行	2026-04-03 00:38:22.828473	2026-04-03 00:38:22.828474
+编排节点类型	2	2	module_task:workflow:node-type:query	el-icon-Grid	WorkflowNodeType	/task/workflow/node-type	module_task/workflow/node-type/index	\N	f	t	f	编排节点类型	null	f	32	140	b8681195-1acc-4051-b751-1ebb160ebf3f	0	画布节点类型与 Prefect 执行逻辑	2026-04-03 00:38:22.828476	2026-04-03 00:38:22.828476
+创建示例	3	1	module_example:demo:create	\N	\N	\N	\N	\N	f	t	f	创建示例	null	f	33	141	67875dc1-a37c-4b04-91d0-91bf0dae0a0f	0	初始化数据	2026-04-03 00:38:22.828479	2026-04-03 00:38:22.828479
+更新示例	3	2	module_example:demo:update	\N	\N	\N	\N	\N	f	t	f	更新示例	null	f	33	142	20178868-4794-464b-957b-53da5bfc54f1	0	初始化数据	2026-04-03 00:38:22.828482	2026-04-03 00:38:22.828482
+删除示例	3	3	module_example:demo:delete	\N	\N	\N	\N	\N	f	t	f	删除示例	null	f	33	143	59d78bc1-9b03-4639-9ded-30c5752361dc	0	初始化数据	2026-04-03 00:38:22.828485	2026-04-03 00:38:22.828485
+批量修改示例状态	3	4	module_example:demo:patch	\N	\N	\N	\N	\N	f	t	f	批量修改示例状态	null	f	33	144	06b8aaba-cee1-4ccd-a43d-6baeaa9b854c	0	初始化数据	2026-04-03 00:38:22.828488	2026-04-03 00:38:22.828488
+导出示例	3	5	module_example:demo:export	\N	\N	\N	\N	\N	f	t	f	导出示例	null	f	33	145	22697978-eb66-45c6-b954-762dc4c81ac5	0	初始化数据	2026-04-03 00:38:22.828491	2026-04-03 00:38:22.828491
+导入示例	3	6	module_example:demo:import	\N	\N	\N	\N	\N	f	t	f	导入示例	null	f	33	146	233034b2-a921-46f8-8490-7787e46eae4f	0	初始化数据	2026-04-03 00:38:22.828494	2026-04-03 00:38:22.828494
+下载导入示例模版	3	7	module_example:demo:download	\N	\N	\N	\N	\N	f	t	f	下载导入示例模版	null	f	33	147	959afc8a-ecdf-496b-aa61-ab95db2821b7	0	初始化数据	2026-04-03 00:38:22.828497	2026-04-03 00:38:22.828497
+详情示例	3	8	module_example:demo:detail	\N	\N	\N	\N	\N	f	t	f	详情示例	null	f	33	148	47df5b9c-9678-4630-a67a-18d4f39747fa	0	初始化数据	2026-04-03 00:38:22.8285	2026-04-03 00:38:22.8285
+查询示例	3	9	module_example:demo:query	\N	\N	\N	\N	\N	f	t	f	查询示例	null	f	33	149	6e8189e0-0dad-4e1e-b310-3f8921635951	0	初始化数据	2026-04-03 00:38:22.828503	2026-04-03 00:38:22.828503
+三级菜单	2	1	module_example:demo01:query	menu	Demo01	/example/demo-group/demo01	module_example/demo01/index	\N	f	t	f	三级菜单	null	f	34	150	59c4f878-dcbe-44a0-8955-31c9c254104e	0	示例01管理	2026-04-03 00:38:22.828506	2026-04-03 00:38:22.828506
+查询调度器	3	1	module_task:cronjob:job:query	\N	\N	\N	\N	\N	f	t	f	查询调度器	null	f	137	151	61944926-cb21-4929-8c9c-7beebc890d22	0	查询调度器	2026-04-03 00:38:22.834804	2026-04-03 00:38:22.834806
+控制调度器	3	2	module_task:cronjob:job:scheduler	\N	\N	\N	\N	\N	f	t	f	控制调度器	null	f	137	152	95bd91d9-5681-42f6-8b70-2ae0af9d5c79	0	控制调度器	2026-04-03 00:38:22.83481	2026-04-03 00:38:22.834811
+操作任务	3	3	module_task:cronjob:job:task	\N	\N	\N	\N	\N	f	t	f	操作任务	null	f	137	153	bc2813c4-f168-49a0-8a94-817a8e305fab	0	操作任务	2026-04-03 00:38:22.834814	2026-04-03 00:38:22.834814
+删除执行日志	3	4	module_task:cronjob:job:delete	\N	\N	\N	\N	\N	f	t	f	删除执行日志	null	f	137	154	f2172496-bc2f-4385-99c1-4791000468a4	0	删除执行日志	2026-04-03 00:38:22.834817	2026-04-03 00:38:22.834818
+详情执行日志	3	5	module_task:cronjob:job:detail	\N	\N	\N	\N	\N	f	t	f	详情执行日志	null	f	137	155	50701a79-e502-4cef-928f-c91cd03b8915	0	详情执行日志	2026-04-03 00:38:22.834821	2026-04-03 00:38:22.834821
+创建节点	3	1	module_task:cronjob:node:create	\N	\N	\N	\N	\N	f	t	f	创建节点	null	f	138	156	403ebc5e-bb5c-42c1-8c5a-cb6b90702174	0	创建节点	2026-04-03 00:38:22.834824	2026-04-03 00:38:22.834824
+调试节点	3	2	module_task:cronjob:node:execute	\N	\N	\N	\N	\N	f	t	f	调试节点	null	f	138	157	8a62c71d-dd08-4278-a5a2-fc59b645ab25	0	调试节点	2026-04-03 00:38:22.834827	2026-04-03 00:38:22.834828
+修改节点	3	3	module_task:cronjob:node:update	\N	\N	\N	\N	\N	f	t	f	修改节点	null	f	138	158	d14eb6ff-9e68-420b-b5bb-0b6035653b6e	0	修改节点	2026-04-03 00:38:22.83483	2026-04-03 00:38:22.834831
+删除节点	3	4	module_task:cronjob:node:delete	\N	\N	\N	\N	\N	f	t	f	删除节点	null	f	138	159	d777a930-a4a9-435f-98c5-f86e74de18b7	0	删除节点	2026-04-03 00:38:22.834833	2026-04-03 00:38:22.834834
+详情节点	3	5	module_task:cronjob:node:detail	\N	\N	\N	\N	\N	f	t	f	详情节点	null	f	138	160	02a20050-a386-4e89-991f-72abd241a67f	0	详情节点	2026-04-03 00:38:22.834837	2026-04-03 00:38:22.834838
+查询节点	3	6	module_task:cronjob:node:query	\N	\N	\N	\N	\N	f	t	f	查询节点	null	f	138	161	f053043e-33e5-4cbc-a171-75b8621e3b61	0	查询节点	2026-04-03 00:38:22.83484	2026-04-03 00:38:22.834841
+创建流程	3	1	module_task:workflow:definition:create	\N	\N	\N	\N	\N	f	t	f	创建流程	null	f	139	162	42c76534-0cfe-433f-be15-96bf53915ea0	0	创建流程	2026-04-03 00:38:22.834843	2026-04-03 00:38:22.834844
+执行流程	3	2	module_task:workflow:definition:execute	\N	\N	\N	\N	\N	f	t	f	执行流程	null	f	139	163	72ef065a-3751-4df7-a4b8-6bf39c109fd7	0	执行流程	2026-04-03 00:38:22.834846	2026-04-03 00:38:22.834847
+修改流程	3	3	module_task:workflow:definition:update	\N	\N	\N	\N	\N	f	t	f	修改流程	null	f	139	164	f40c9482-5293-44e2-80f9-65322d768d7a	0	修改流程	2026-04-03 00:38:22.83485	2026-04-03 00:38:22.83485
+删除流程	3	4	module_task:workflow:definition:delete	\N	\N	\N	\N	\N	f	t	f	删除流程	null	f	139	165	1a54d0cd-0853-4457-8b53-1db2e3be6ff6	0	删除流程	2026-04-03 00:38:22.834853	2026-04-03 00:38:22.834853
+详情流程	3	5	module_task:workflow:definition:detail	\N	\N	\N	\N	\N	f	t	f	详情流程	null	f	139	166	b75315f7-f00d-4cd2-bfbd-f859cf411565	0	详情流程	2026-04-03 00:38:22.834856	2026-04-03 00:38:22.834856
+查询流程	3	6	module_task:workflow:definition:query	\N	\N	\N	\N	\N	f	t	f	查询流程	null	f	139	167	93bde336-0472-460f-9144-eb327d92eaeb	0	查询流程	2026-04-03 00:38:22.834859	2026-04-03 00:38:22.834859
+创建编排节点类型	3	1	module_task:workflow:node-type:create	\N	\N	\N	\N	\N	f	t	f	创建编排节点类型	null	f	140	168	99ed4d1b-8a4b-4fbd-8b26-c126b1934bf2	0	创建编排节点类型	2026-04-03 00:38:22.834862	2026-04-03 00:38:22.834863
+修改编排节点类型	3	2	module_task:workflow:node-type:update	\N	\N	\N	\N	\N	f	t	f	修改编排节点类型	null	f	140	169	a126b8d0-484a-419a-b811-1ec240ed36ef	0	修改编排节点类型	2026-04-03 00:38:22.834865	2026-04-03 00:38:22.834866
+删除编排节点类型	3	3	module_task:workflow:node-type:delete	\N	\N	\N	\N	\N	f	t	f	删除编排节点类型	null	f	140	170	511ef043-2ee9-40f0-9df4-a316f61e2f53	0	删除编排节点类型	2026-04-03 00:38:22.834869	2026-04-03 00:38:22.834869
+详情编排节点类型	3	4	module_task:workflow:node-type:detail	\N	\N	\N	\N	\N	f	t	f	详情编排节点类型	null	f	140	171	c1c6cbe2-9a82-42cf-9940-c6afa1b75c06	0	详情编排节点类型	2026-04-03 00:38:22.834872	2026-04-03 00:38:22.834872
+查询编排节点类型	3	5	module_task:workflow:node-type:query	\N	\N	\N	\N	\N	f	t	f	查询编排节点类型	null	f	140	172	bc8d7df6-25f1-4f51-9f10-2d5103f423ac	0	查询编排节点类型	2026-04-03 00:38:22.834875	2026-04-03 00:38:22.834875
+创建示例01	3	1	module_example:demo01:create	\N	\N	\N	\N	\N	f	t	f	创建示例01	null	f	150	173	9fc5653a-d558-474a-a548-66f3639063c9	0	初始化数据	2026-04-03 00:38:22.834878	2026-04-03 00:38:22.834878
+更新示例01	3	2	module_example:demo01:update	\N	\N	\N	\N	\N	f	t	f	更新示例01	null	f	150	174	8b9c3417-41c2-4cdf-ac90-8b0bd5377970	0	初始化数据	2026-04-03 00:38:22.834881	2026-04-03 00:38:22.834881
+删除示例01	3	3	module_example:demo01:delete	\N	\N	\N	\N	\N	f	t	f	删除示例01	null	f	150	175	a0014329-1fca-464d-9d35-3932ca151a09	0	初始化数据	2026-04-03 00:38:22.834884	2026-04-03 00:38:22.834884
+批量修改示例01状态	3	4	module_example:demo01:patch	\N	\N	\N	\N	\N	f	t	f	批量修改示例01状态	null	f	150	176	2a6be91a-a713-4c2b-8ca1-b99ef89ebe0b	0	初始化数据	2026-04-03 00:38:22.834887	2026-04-03 00:38:22.834887
+导出示例01	3	5	module_example:demo01:export	\N	\N	\N	\N	\N	f	t	f	导出示例01	null	f	150	177	5d1cbc81-6820-45a4-8347-40c62a18957b	0	初始化数据	2026-04-03 00:38:22.83489	2026-04-03 00:38:22.834891
+导入示例01	3	6	module_example:demo01:import	\N	\N	\N	\N	\N	f	t	f	导入示例01	null	f	150	178	4bd21e9e-285d-4441-9e96-e311a29ef9fc	0	初始化数据	2026-04-03 00:38:22.834894	2026-04-03 00:38:22.834894
+下载导入示例01模版	3	7	module_example:demo01:download	\N	\N	\N	\N	\N	f	t	f	下载导入示例01模版	null	f	150	179	d81dca7c-0c30-4254-b696-f9b0f91cd896	0	初始化数据	2026-04-03 00:38:22.834897	2026-04-03 00:38:22.834897
+详情示例01	3	8	module_example:demo01:detail	\N	\N	\N	\N	\N	f	t	f	详情示例01	null	f	150	180	456c3500-5fb4-49cb-9612-e7905b133142	0	初始化数据	2026-04-03 00:38:22.8349	2026-04-03 00:38:22.8349
+查询示例01	3	9	module_example:demo01:query	\N	\N	\N	\N	\N	f	t	f	查询示例01	null	f	150	181	17a07a9e-8786-434b-95b8-47acfd6ea4e7	0	初始化数据	2026-04-03 00:38:22.834903	2026-04-03 00:38:22.834903
 \.
 
 
@@ -3250,22 +3727,23 @@ COPY public.sys_notice (notice_title, notice_type, notice_content, id, uuid, sta
 --
 
 COPY public.sys_param (config_name, config_key, config_value, config_type, id, uuid, status, description, created_time, updated_time) FROM stdin;
-网站名称	sys_web_title	FastApiAdmin	t	1	0c91ca52-00ff-45d5-8493-30fd630c994e	0	初始化数据	2026-03-22 21:43:05.985228	2026-03-22 21:43:05.98523
-网站描述	sys_web_description	FastApiAdmin 是完全开源的权限管理系统	t	2	9a0ecb98-722e-4f39-babd-940a142b9dc4	0	初始化数据	2026-03-22 21:43:05.985233	2026-03-22 21:43:05.985234
-网页图标	sys_web_favicon	https://service.fastapiadmin.com/api/v1/static/image/favicon.png	t	3	f11dd999-e703-480c-9807-4be22bd867f8	0	初始化数据	2026-03-22 21:43:05.985236	2026-03-22 21:43:05.985237
-网站Logo	sys_web_logo	https://service.fastapiadmin.com/api/v1/static/image/logo.png	t	4	7c312622-9adc-4178-861d-2c893d1404e9	0	初始化数据	2026-03-22 21:43:05.985239	2026-03-22 21:43:05.98524
-登录背景	sys_login_background	https://service.fastapiadmin.com/api/v1/static/image/background.svg	t	5	88161bf0-4f0d-4d54-86fe-e6b0504355a9	0	初始化数据	2026-03-22 21:43:05.985242	2026-03-22 21:43:05.985242
-版权信息	sys_web_copyright	Copyright © 2025-2026 service.fastapiadmin.com 版权所有	t	6	07e4cf74-1e63-4dd0-815d-8e1fab6a0fcf	0	初始化数据	2026-03-22 21:43:05.985245	2026-03-22 21:43:05.985245
-备案信息	sys_keep_record	陕ICP备2025069493号-1	t	7	6de94ed4-03bf-4b99-9914-464f14da00e0	0	初始化数据	2026-03-22 21:43:05.985248	2026-03-22 21:43:05.985248
-帮助文档	sys_help_doc	https://service.fastapiadmin.com	t	8	a580c6f1-6983-4d53-a6de-caff1fa0f8fd	0	初始化数据	2026-03-22 21:43:05.985251	2026-03-22 21:43:05.985251
-隐私政策	sys_web_privacy	https://github.com/fastapiadmin/FastapiAdmin/blob/master/LICENSE	t	9	33e9c62a-52df-41db-8693-e65c761b7862	0	初始化数据	2026-03-22 21:43:05.985253	2026-03-22 21:43:05.985254
-用户协议	sys_web_clause	https://github.com/fastapiadmin/FastapiAdmin/blob/master/LICENSE	t	10	aa44d50f-7b63-4859-ba52-5eab38ee17c6	0	初始化数据	2026-03-22 21:43:05.985256	2026-03-22 21:43:05.985257
-源码代码	sys_git_code	https://github.com/fastapiadmin/FastapiAdmin.git	t	11	45ca17ab-db72-49ee-8897-04168afb7214	0	初始化数据	2026-03-22 21:43:05.985259	2026-03-22 21:43:05.985259
-项目版本	sys_web_version	2.0.0	t	12	a0a6ecc5-01b2-4b20-9ff8-f91d36564d59	0	初始化数据	2026-03-22 21:43:05.985262	2026-03-22 21:43:05.985262
-演示模式启用	demo_enable	false	t	13	20015cde-7e2e-4638-a2ae-a27505cc5adc	0	初始化数据	2026-03-22 21:43:05.985265	2026-03-22 21:43:05.985265
-演示访问IP白名单	ip_white_list	["127.0.0.1"]	t	14	fe102578-d556-4bd7-9a29-c0984b6e9699	0	初始化数据	2026-03-22 21:43:05.985267	2026-03-22 21:43:05.985268
-接口白名单	white_api_list_path	["/api/v1/system/auth/login", "/api/v1/system/auth/token/refresh", "/api/v1/system/auth/captcha/get", "/api/v1/system/auth/logout", "/api/v1/system/config/info", "/api/v1/system/user/current/info", "/api/v1/system/notice/available", "/api/v1/system/auth/auto-login/users", "/api/v1/system/auth/auto-login/token", "/api/v1/system/auth/auto-login"]	t	15	f9d692c5-1eb2-466b-9f73-8a7de2346b0c	0	初始化数据	2026-03-22 21:43:05.98527	2026-03-22 21:43:05.985271
-访问IP黑名单	ip_black_list	[]	t	16	c03ae4f0-e77b-43db-a3c3-1848d7111ff8	0	初始化数据	2026-03-22 21:43:05.985273	2026-03-22 21:43:05.985273
+网站名称	sys_web_title	FastApiAdmin	t	1	832c89cb-d562-4f5f-bb0d-1414d14dbf13	0	初始化数据	2026-04-03 00:38:22.840724	2026-04-03 00:38:22.840725
+网站描述	sys_web_description	FastApiAdmin 是完全开源的权限管理系统	t	2	cb3aa6ca-cd34-4853-a9dc-c8f5359fd737	0	初始化数据	2026-04-03 00:38:22.840729	2026-04-03 00:38:22.840729
+网页图标	sys_web_favicon	https://service.fastapiadmin.com/api/v1/static/image/favicon.png	t	3	af8fb26f-5c11-421d-8866-0abfb3f82ca8	0	初始化数据	2026-04-03 00:38:22.840732	2026-04-03 00:38:22.840732
+网站Logo	sys_web_logo	https://service.fastapiadmin.com/api/v1/static/image/logo.png	t	4	368214e2-f00a-4e63-8eef-c9093902b307	0	初始化数据	2026-04-03 00:38:22.840735	2026-04-03 00:38:22.840736
+登录背景	sys_login_background	https://service.fastapiadmin.com/api/v1/static/image/background.svg	t	5	6331cd2b-33c3-44a1-b2ab-ceec96e00b46	0	初始化数据	2026-04-03 00:38:22.840738	2026-04-03 00:38:22.840739
+版权信息	sys_web_copyright	Copyright © 2025-2026 service.fastapiadmin.com 版权所有	t	6	d893f6fd-cfee-4eae-b616-dc632ac97431	0	初始化数据	2026-04-03 00:38:22.840741	2026-04-03 00:38:22.840742
+备案信息	sys_keep_record	陕ICP备2025069493号-1	t	7	89727f04-6946-4fde-bbb1-569eff9b45ac	0	初始化数据	2026-04-03 00:38:22.840744	2026-04-03 00:38:22.840744
+帮助文档	sys_help_doc	https://service.fastapiadmin.com	t	8	498769ce-dee0-42c6-b933-2de470076272	0	初始化数据	2026-04-03 00:38:22.840747	2026-04-03 00:38:22.840747
+隐私政策	sys_web_privacy	https://github.com/fastapiadmin/FastapiAdmin/blob/master/LICENSE	t	9	d22ccc8c-ddf4-4fe7-82f2-cde2602f6437	0	初始化数据	2026-04-03 00:38:22.84075	2026-04-03 00:38:22.84075
+用户协议	sys_web_clause	https://github.com/fastapiadmin/FastapiAdmin/blob/master/LICENSE	t	10	fedf51ac-7a32-4e77-ae6a-b36992d17327	0	初始化数据	2026-04-03 00:38:22.840753	2026-04-03 00:38:22.840753
+源码代码	sys_git_code	https://github.com/fastapiadmin/FastapiAdmin.git	t	11	8d5c0934-971d-4542-95a2-089961dbcc47	0	初始化数据	2026-04-03 00:38:22.840756	2026-04-03 00:38:22.840756
+项目版本	sys_web_version	2.0.0	t	12	eab70dad-501c-419d-b251-64c5409c4fac	0	初始化数据	2026-04-03 00:38:22.840758	2026-04-03 00:38:22.840759
+演示模式启用	demo_enable	false	t	13	def391b0-7050-4167-8909-17d458b56db8	0	初始化数据	2026-04-03 00:38:22.840761	2026-04-03 00:38:22.840762
+演示访问IP白名单	ip_white_list	["127.0.0.1"]	t	14	8722deeb-2950-4e1d-8275-25da9ca57189	0	初始化数据	2026-04-03 00:38:22.840764	2026-04-03 00:38:22.840765
+接口白名单	white_api_list_path	["/api/v1/system/auth/login", "/api/v1/system/auth/token/refresh", "/api/v1/system/auth/captcha/get", "/api/v1/system/auth/logout", "/api/v1/system/config/info", "/api/v1/system/user/current/info", "/api/v1/system/notice/available", "/api/v1/system/auth/auto-login/users", "/api/v1/system/auth/auto-login/token", "/api/v1/system/auth/auto-login"]	t	15	1c2a8d35-2bb8-4309-940e-8796e90b3c60	0	初始化数据	2026-04-03 00:38:22.840767	2026-04-03 00:38:22.840767
+访问IP黑名单	ip_black_list	[]	t	16	b46b6456-b481-4034-8fa4-bb9b8a750a64	0	初始化数据	2026-04-03 00:38:22.84077	2026-04-03 00:38:22.84077
+调度器状态	scheduler_status	stopped	t	17	e52b6183-8e46-4d75-8b24-e3341c5058ac	0	\N	2026-04-03 00:38:32.994452	2026-04-03 00:38:32.994455
 \.
 
 
@@ -3282,7 +3760,7 @@ COPY public.sys_position (name, "order", id, uuid, status, description, created_
 --
 
 COPY public.sys_role (name, code, "order", data_scope, id, uuid, status, description, created_time, updated_time) FROM stdin;
-管理员角色	ADMIN	1	4	1	7e82ad00-45ea-4e92-a99f-4c70dc223f7e	0	初始化角色	2026-03-22 21:43:05.990438	2026-03-22 21:43:05.990439
+管理员角色	ADMIN	1	4	1	0a3eef5e-7d6e-4e6a-aa0b-3fc4ccb27d6a	0	初始化角色	2026-04-03 00:38:22.847925	2026-04-03 00:38:22.847926
 \.
 
 
@@ -3307,7 +3785,7 @@ COPY public.sys_role_menus (role_id, menu_id) FROM stdin;
 --
 
 COPY public.sys_user (username, password, name, mobile, email, gender, avatar, is_superuser, last_login, gitee_login, github_login, wx_login, qq_login, dept_id, id, uuid, status, description, created_time, updated_time, created_id, updated_id) FROM stdin;
-admin	$2b$12$e2IJgS/cvHgJ0H3G7Xa08OXoXnk6N/NX3IZRtubBDElA0VLZhkNOa	超级管理员	\N	\N	0	https://service.fastapiadmin.com/api/v1/static/image/avatar.png	t	\N	\N	\N	\N	\N	1	1	bfb44036-9422-4d86-9db1-88b44b3cc618	0	超级管理员	2026-03-22 21:43:06.001432	2026-03-22 21:43:06.001432	\N	\N
+admin	$2b$12$e2IJgS/cvHgJ0H3G7Xa08OXoXnk6N/NX3IZRtubBDElA0VLZhkNOa	超级管理员	\N	\N	0	https://service.fastapiadmin.com/api/v1/static/image/avatar.png	t	\N	\N	\N	\N	\N	1	1	98e27ecc-32c6-4c2d-93ca-9cfcf79ab742	0	超级管理员	2026-04-03 00:38:22.863379	2026-04-03 00:38:22.86338	\N	\N
 \.
 
 
@@ -3345,10 +3823,33 @@ COPY public.task_node (name, code, jobstore, executor, trigger, trigger_args, fu
 
 
 --
+-- Data for Name: task_workflow; Type: TABLE DATA; Schema: public; Owner: root
+--
+
+COPY public.task_workflow (name, code, workflow_status, nodes, edges, id, uuid, status, description, created_time, updated_time, created_id, updated_id) FROM stdin;
+\.
+
+
+--
+-- Data for Name: task_workflow_node_type; Type: TABLE DATA; Schema: public; Owner: root
+--
+
+COPY public.task_workflow_node_type (name, code, category, func, args, kwargs, sort_order, is_active, id, uuid, status, description, created_time, updated_time, created_id, updated_id) FROM stdin;
+\.
+
+
+--
 -- Name: app_myapp_id_seq; Type: SEQUENCE SET; Schema: public; Owner: root
 --
 
 SELECT pg_catalog.setval('public.app_myapp_id_seq', 1, false);
+
+
+--
+-- Name: gen_demo01_id_seq; Type: SEQUENCE SET; Schema: public; Owner: root
+--
+
+SELECT pg_catalog.setval('public.gen_demo01_id_seq', 1, false);
 
 
 --
@@ -3404,7 +3905,7 @@ SELECT pg_catalog.setval('public.sys_log_id_seq', 1, false);
 -- Name: sys_menu_id_seq; Type: SEQUENCE SET; Schema: public; Owner: root
 --
 
-SELECT pg_catalog.setval('public.sys_menu_id_seq', 155, true);
+SELECT pg_catalog.setval('public.sys_menu_id_seq', 181, true);
 
 
 --
@@ -3418,7 +3919,7 @@ SELECT pg_catalog.setval('public.sys_notice_id_seq', 1, false);
 -- Name: sys_param_id_seq; Type: SEQUENCE SET; Schema: public; Owner: root
 --
 
-SELECT pg_catalog.setval('public.sys_param_id_seq', 16, true);
+SELECT pg_catalog.setval('public.sys_param_id_seq', 17, true);
 
 
 --
@@ -3457,6 +3958,20 @@ SELECT pg_catalog.setval('public.task_node_id_seq', 1, false);
 
 
 --
+-- Name: task_workflow_id_seq; Type: SEQUENCE SET; Schema: public; Owner: root
+--
+
+SELECT pg_catalog.setval('public.task_workflow_id_seq', 1, false);
+
+
+--
+-- Name: task_workflow_node_type_id_seq; Type: SEQUENCE SET; Schema: public; Owner: root
+--
+
+SELECT pg_catalog.setval('public.task_workflow_node_type_id_seq', 1, false);
+
+
+--
 -- Name: agno_schema_versions agno_schema_versions_pkey; Type: CONSTRAINT; Schema: ai; Owner: root
 --
 
@@ -3486,6 +4001,14 @@ ALTER TABLE ONLY public.app_myapp
 
 ALTER TABLE ONLY public.apscheduler_jobs
     ADD CONSTRAINT apscheduler_jobs_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: gen_demo01 gen_demo01_pkey; Type: CONSTRAINT; Schema: public; Owner: root
+--
+
+ALTER TABLE ONLY public.gen_demo01
+    ADD CONSTRAINT gen_demo01_pkey PRIMARY KEY (id);
 
 
 --
@@ -3681,6 +4204,38 @@ ALTER TABLE ONLY public.task_node
 
 
 --
+-- Name: task_workflow_node_type task_workflow_node_type_code_key; Type: CONSTRAINT; Schema: public; Owner: root
+--
+
+ALTER TABLE ONLY public.task_workflow_node_type
+    ADD CONSTRAINT task_workflow_node_type_code_key UNIQUE (code);
+
+
+--
+-- Name: task_workflow_node_type task_workflow_node_type_pkey; Type: CONSTRAINT; Schema: public; Owner: root
+--
+
+ALTER TABLE ONLY public.task_workflow_node_type
+    ADD CONSTRAINT task_workflow_node_type_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: task_workflow task_workflow_pkey; Type: CONSTRAINT; Schema: public; Owner: root
+--
+
+ALTER TABLE ONLY public.task_workflow
+    ADD CONSTRAINT task_workflow_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: task_workflow uq_task_workflow_code; Type: CONSTRAINT; Schema: public; Owner: root
+--
+
+ALTER TABLE ONLY public.task_workflow
+    ADD CONSTRAINT uq_task_workflow_code UNIQUE (code);
+
+
+--
 -- Name: idx_agno_schema_versions_created_at; Type: INDEX; Schema: ai; Owner: root
 --
 
@@ -3755,6 +4310,55 @@ CREATE UNIQUE INDEX ix_app_myapp_uuid ON public.app_myapp USING btree (uuid);
 --
 
 CREATE INDEX ix_apscheduler_jobs_next_run_time ON public.apscheduler_jobs USING btree (next_run_time);
+
+
+--
+-- Name: ix_gen_demo01_created_id; Type: INDEX; Schema: public; Owner: root
+--
+
+CREATE INDEX ix_gen_demo01_created_id ON public.gen_demo01 USING btree (created_id);
+
+
+--
+-- Name: ix_gen_demo01_created_time; Type: INDEX; Schema: public; Owner: root
+--
+
+CREATE INDEX ix_gen_demo01_created_time ON public.gen_demo01 USING btree (created_time);
+
+
+--
+-- Name: ix_gen_demo01_id; Type: INDEX; Schema: public; Owner: root
+--
+
+CREATE INDEX ix_gen_demo01_id ON public.gen_demo01 USING btree (id);
+
+
+--
+-- Name: ix_gen_demo01_status; Type: INDEX; Schema: public; Owner: root
+--
+
+CREATE INDEX ix_gen_demo01_status ON public.gen_demo01 USING btree (status);
+
+
+--
+-- Name: ix_gen_demo01_updated_id; Type: INDEX; Schema: public; Owner: root
+--
+
+CREATE INDEX ix_gen_demo01_updated_id ON public.gen_demo01 USING btree (updated_id);
+
+
+--
+-- Name: ix_gen_demo01_updated_time; Type: INDEX; Schema: public; Owner: root
+--
+
+CREATE INDEX ix_gen_demo01_updated_time ON public.gen_demo01 USING btree (updated_time);
+
+
+--
+-- Name: ix_gen_demo01_uuid; Type: INDEX; Schema: public; Owner: root
+--
+
+CREATE UNIQUE INDEX ix_gen_demo01_uuid ON public.gen_demo01 USING btree (uuid);
 
 
 --
@@ -4437,6 +5041,104 @@ CREATE UNIQUE INDEX ix_task_node_uuid ON public.task_node USING btree (uuid);
 
 
 --
+-- Name: ix_task_workflow_created_id; Type: INDEX; Schema: public; Owner: root
+--
+
+CREATE INDEX ix_task_workflow_created_id ON public.task_workflow USING btree (created_id);
+
+
+--
+-- Name: ix_task_workflow_created_time; Type: INDEX; Schema: public; Owner: root
+--
+
+CREATE INDEX ix_task_workflow_created_time ON public.task_workflow USING btree (created_time);
+
+
+--
+-- Name: ix_task_workflow_id; Type: INDEX; Schema: public; Owner: root
+--
+
+CREATE INDEX ix_task_workflow_id ON public.task_workflow USING btree (id);
+
+
+--
+-- Name: ix_task_workflow_node_type_created_id; Type: INDEX; Schema: public; Owner: root
+--
+
+CREATE INDEX ix_task_workflow_node_type_created_id ON public.task_workflow_node_type USING btree (created_id);
+
+
+--
+-- Name: ix_task_workflow_node_type_created_time; Type: INDEX; Schema: public; Owner: root
+--
+
+CREATE INDEX ix_task_workflow_node_type_created_time ON public.task_workflow_node_type USING btree (created_time);
+
+
+--
+-- Name: ix_task_workflow_node_type_id; Type: INDEX; Schema: public; Owner: root
+--
+
+CREATE INDEX ix_task_workflow_node_type_id ON public.task_workflow_node_type USING btree (id);
+
+
+--
+-- Name: ix_task_workflow_node_type_status; Type: INDEX; Schema: public; Owner: root
+--
+
+CREATE INDEX ix_task_workflow_node_type_status ON public.task_workflow_node_type USING btree (status);
+
+
+--
+-- Name: ix_task_workflow_node_type_updated_id; Type: INDEX; Schema: public; Owner: root
+--
+
+CREATE INDEX ix_task_workflow_node_type_updated_id ON public.task_workflow_node_type USING btree (updated_id);
+
+
+--
+-- Name: ix_task_workflow_node_type_updated_time; Type: INDEX; Schema: public; Owner: root
+--
+
+CREATE INDEX ix_task_workflow_node_type_updated_time ON public.task_workflow_node_type USING btree (updated_time);
+
+
+--
+-- Name: ix_task_workflow_node_type_uuid; Type: INDEX; Schema: public; Owner: root
+--
+
+CREATE UNIQUE INDEX ix_task_workflow_node_type_uuid ON public.task_workflow_node_type USING btree (uuid);
+
+
+--
+-- Name: ix_task_workflow_status; Type: INDEX; Schema: public; Owner: root
+--
+
+CREATE INDEX ix_task_workflow_status ON public.task_workflow USING btree (status);
+
+
+--
+-- Name: ix_task_workflow_updated_id; Type: INDEX; Schema: public; Owner: root
+--
+
+CREATE INDEX ix_task_workflow_updated_id ON public.task_workflow USING btree (updated_id);
+
+
+--
+-- Name: ix_task_workflow_updated_time; Type: INDEX; Schema: public; Owner: root
+--
+
+CREATE INDEX ix_task_workflow_updated_time ON public.task_workflow USING btree (updated_time);
+
+
+--
+-- Name: ix_task_workflow_uuid; Type: INDEX; Schema: public; Owner: root
+--
+
+CREATE UNIQUE INDEX ix_task_workflow_uuid ON public.task_workflow USING btree (uuid);
+
+
+--
 -- Name: app_myapp app_myapp_created_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: root
 --
 
@@ -4450,6 +5152,22 @@ ALTER TABLE ONLY public.app_myapp
 
 ALTER TABLE ONLY public.app_myapp
     ADD CONSTRAINT app_myapp_updated_id_fkey FOREIGN KEY (updated_id) REFERENCES public.sys_user(id) ON UPDATE CASCADE ON DELETE SET NULL;
+
+
+--
+-- Name: gen_demo01 gen_demo01_created_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: root
+--
+
+ALTER TABLE ONLY public.gen_demo01
+    ADD CONSTRAINT gen_demo01_created_id_fkey FOREIGN KEY (created_id) REFERENCES public.sys_user(id) ON UPDATE CASCADE ON DELETE SET NULL;
+
+
+--
+-- Name: gen_demo01 gen_demo01_updated_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: root
+--
+
+ALTER TABLE ONLY public.gen_demo01
+    ADD CONSTRAINT gen_demo01_updated_id_fkey FOREIGN KEY (updated_id) REFERENCES public.sys_user(id) ON UPDATE CASCADE ON DELETE SET NULL;
 
 
 --
@@ -4685,8 +5403,40 @@ ALTER TABLE ONLY public.task_node
 
 
 --
+-- Name: task_workflow task_workflow_created_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: root
+--
+
+ALTER TABLE ONLY public.task_workflow
+    ADD CONSTRAINT task_workflow_created_id_fkey FOREIGN KEY (created_id) REFERENCES public.sys_user(id) ON UPDATE CASCADE ON DELETE SET NULL;
+
+
+--
+-- Name: task_workflow_node_type task_workflow_node_type_created_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: root
+--
+
+ALTER TABLE ONLY public.task_workflow_node_type
+    ADD CONSTRAINT task_workflow_node_type_created_id_fkey FOREIGN KEY (created_id) REFERENCES public.sys_user(id) ON UPDATE CASCADE ON DELETE SET NULL;
+
+
+--
+-- Name: task_workflow_node_type task_workflow_node_type_updated_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: root
+--
+
+ALTER TABLE ONLY public.task_workflow_node_type
+    ADD CONSTRAINT task_workflow_node_type_updated_id_fkey FOREIGN KEY (updated_id) REFERENCES public.sys_user(id) ON UPDATE CASCADE ON DELETE SET NULL;
+
+
+--
+-- Name: task_workflow task_workflow_updated_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: root
+--
+
+ALTER TABLE ONLY public.task_workflow
+    ADD CONSTRAINT task_workflow_updated_id_fkey FOREIGN KEY (updated_id) REFERENCES public.sys_user(id) ON UPDATE CASCADE ON DELETE SET NULL;
+
+
+--
 -- PostgreSQL database dump complete
 --
 
-\unrestrict XtHgo6tsQhuEdNKh15hA2RTTBSfxiXqx9DJbJFNHFfxtyyZ8jR5tz7beQUpdNxG
+\unrestrict ZPSb5Q9rvfnfbn6VdXJ2edWyHcIou9jw4hZaoDETBqBWj7T0xI08ijcpb6b4BKi
 

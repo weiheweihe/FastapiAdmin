@@ -24,12 +24,32 @@ class GenUtils:
         - None
         """
         gen_table.class_name = cls.convert_class_name(gen_table.table_name or "")
-        # 不再默认 module_gencode（避免误导）。包名/模块名由前端按业务填写：
-        # - 不选上级菜单：包名 = module_{模块名}
-        # - module_example 三段式：包名=module_example，模块名=demo...
+        # 导入时给出“可用默认值”，减少用户点开后看到空表单：
+        # - module_name：从表名推导（去掉 gen_/tb_ 前缀）
+        # - package_name：默认 module_{module_name}（仍可在前端改）
         if gen_table.business_name is None:
             gen_table.business_name = gen_table.table_name
-        gen_table.function_name = re.sub(r"(?:表|测试)", "", gen_table.table_comment or "")
+        if gen_table.module_name is None or not str(gen_table.module_name).strip():
+            tn = (gen_table.table_name or "").strip().lower()
+            if tn.startswith("gen_"):
+                tn = tn[4:]
+            elif tn.startswith("tb_"):
+                tn = tn[3:]
+            tn = re.sub(r"[^a-z0-9_]+", "_", tn)
+            tn = re.sub(r"_+", "_", tn).strip("_") or "module"
+            gen_table.module_name = tn
+
+        if gen_table.package_name is None or not str(gen_table.package_name).strip():
+            mn = (gen_table.module_name or "").strip()
+            if mn:
+                gen_table.package_name = mn if mn.startswith("module_") else f"module_{mn}"
+
+        fn = re.sub(r"(?:表|测试)", "", gen_table.table_comment or "")
+        fn = (fn or "").strip()
+        if not fn:
+            # 表注释为空时：用表名兜底，至少不为空
+            fn = (gen_table.table_name or "").strip()
+        gen_table.function_name = fn
 
     @classmethod
     def init_column_field(cls, column: GenTableColumnSchema, table: GenTableOutSchema) -> None:
@@ -61,75 +81,81 @@ class GenUtils:
             column.column_default = ""
 
         if column.html_type is None:
-            if cls.arrays_contains(GenConstant.COLUMNTYPE_STR, data_type) or cls.arrays_contains(
+            # 先按“字段名语义”推断（优先级高于通用字符串规则）
+            lower_name = column_name.lower()
+            if lower_name.endswith("status"):
+                column.html_type = GenConstant.HTML_RADIO
+            elif lower_name.endswith("type") or lower_name.endswith("sex"):
+                column.html_type = GenConstant.HTML_SELECT
+            elif lower_name.endswith("image"):
+                column.html_type = GenConstant.HTML_IMAGE_UPLOAD
+            elif lower_name.endswith("file"):
+                column.html_type = GenConstant.HTML_FILE_UPLOAD
+            elif lower_name.endswith("content"):
+                column.html_type = GenConstant.HTML_EDITOR
+            # 再按“数据类型”推断
+            elif cls.arrays_contains(GenConstant.COLUMNTYPE_TIME, data_type):
+                column.html_type = GenConstant.HTML_DATETIME
+            elif cls.arrays_contains(GenConstant.COLUMNTYPE_NUMBER, data_type):
+                column.html_type = GenConstant.HTML_INPUT
+            elif cls.arrays_contains(GenConstant.COLUMNTYPE_STR, data_type) or cls.arrays_contains(
                 GenConstant.COLUMNTYPE_TEXT, data_type
             ):
                 # 字符串长度超过500设置为文本域
                 column_length = cls.get_column_length(column.column_type or "")
-                html_type = (
+                column.html_type = (
                     GenConstant.HTML_TEXTAREA
                     if column_length >= 500
                     or cls.arrays_contains(GenConstant.COLUMNTYPE_TEXT, data_type)
                     else GenConstant.HTML_INPUT
                 )
-                column.html_type = html_type
-            elif cls.arrays_contains(GenConstant.COLUMNTYPE_TIME, data_type):
-                column.html_type = GenConstant.HTML_DATETIME
-            elif cls.arrays_contains(GenConstant.COLUMNTYPE_NUMBER, data_type):
-                column.html_type = GenConstant.HTML_INPUT
-            elif column_name.lower().endswith("status"):
-                column.html_type = GenConstant.HTML_RADIO
-            elif column_name.lower().endswith("type") or column_name.lower().endswith("sex"):
-                column.html_type = GenConstant.HTML_SELECT
-            elif column_name.lower().endswith("image"):
-                column.html_type = GenConstant.HTML_IMAGE_UPLOAD
-            elif column_name.lower().endswith("file"):
-                column.html_type = GenConstant.HTML_FILE_UPLOAD
-            elif column_name.lower().endswith("content"):
-                column.html_type = GenConstant.HTML_EDITOR
             else:
                 column.html_type = GenConstant.HTML_INPUT
 
-        # 只有当is_insert为None时才设置插入字段（默认所有字段都需要插入）
-        if column.is_insert:
-            column.is_insert = GenConstant.REQUIRE
+        # 默认新增字段：非主键且不在“新增不展示”黑名单中
+        # 说明：schema 默认值可能为 True/False；仅当调用方未显式配置时才做推断
+        if column.is_insert is None:
+            column.is_insert = bool(
+                (not column.is_pk)
+                and (not cls.arrays_contains(GenConstant.COLUMNNAME_NOT_ADD_SHOW, column_name))
+            )
+
+        # 默认编辑字段：非主键且不在“不编辑”黑名单中
+        if column.is_edit is None:
+            column.is_edit = bool(
+                (not cls.arrays_contains(GenConstant.COLUMNNAME_NOT_EDIT, column_name))
+                and (not column.is_pk)
+            )
+
+        # 默认列表字段：非主键且不在“不列表显示”黑名单中
+        if column.is_list is None:
+            column.is_list = bool(
+                (not cls.arrays_contains(GenConstant.COLUMNNAME_NOT_LIST, column_name))
+                and (not column.is_pk)
+            )
+
+        # 默认查询字段：非主键且不在“不查询”黑名单中
+        if column.is_query is None:
+            column.is_query = bool(
+                (not cls.arrays_contains(GenConstant.COLUMNNAME_NOT_QUERY, column_name))
+                and (not column.is_pk)
+            )
+
+        # 查询类型：仅当开启查询且 query_type 未显式配置时推断
+        if column.is_query:
+            if column.query_type is None:
+                if column_name.lower().endswith("name") or data_type in ["varchar", "char", "text"]:
+                    column.query_type = GenConstant.QUERY_LIKE
+                else:
+                    column.query_type = GenConstant.QUERY_EQ
         else:
+            column.query_type = None
+
+        # 主键强约束：无论默认推断/历史配置如何，主键列不应出现在新增/编辑/列表/查询
+        if bool(column.is_pk):
             column.is_insert = False
-
-        # 只有当is_edit为None时才设置编辑字段
-        if (
-            not cls.arrays_contains(GenConstant.COLUMNNAME_NOT_EDIT, column_name)
-            and not column.is_pk
-        ):
-            column.is_edit = GenConstant.REQUIRE
-        else:
             column.is_edit = False
-
-        # 只有当is_list为None时才设置列表字段
-        if (
-            not cls.arrays_contains(GenConstant.COLUMNNAME_NOT_LIST, column_name)
-            and not column.is_pk
-        ):
-            column.is_list = GenConstant.REQUIRE
-        else:
             column.is_list = False
-
-        # 只有当is_query为None时才设置查询字段
-        if (
-            not cls.arrays_contains(GenConstant.COLUMNNAME_NOT_QUERY, column_name)
-            and not column.is_pk
-        ):
-            column.is_query = GenConstant.REQUIRE
-            # 直接设置查询类型，因为我们已经确定这是一个查询字段
-            if column_name.lower().endswith("name") or data_type in [
-                "varchar",
-                "char",
-                "text",
-            ]:
-                column.query_type = GenConstant.QUERY_LIKE
-            else:
-                column.query_type = GenConstant.QUERY_EQ
-        else:
             column.is_query = False
             column.query_type = None
 
@@ -239,10 +265,15 @@ class GenUtils:
         if "[]" in column_type:
             return "array"
 
-        # 提取基本类型
-        if "(" in column_type:
-            return column_type.split("(")[0]
-        return column_type
+        # 提取基本类型：
+        # - 去掉括号参数：varchar(64) -> varchar
+        # - 去掉空格后的修饰：timestamp without time zone -> timestamp
+        # - 统一小写
+        base = column_type.split("(", 1)[0].strip()
+        if not base:
+            return ""
+        base = base.split(None, 1)[0].strip()
+        return base.lower()
 
     @classmethod
     def get_column_length(cls, column_type: str) -> int:
@@ -255,10 +286,21 @@ class GenUtils:
         返回:
         - int: 字段长度（优先取第一个长度值，无法解析时返回0）。
         """
-        if "(" in column_type:
-            length = len(column_type.split("(")[1].split(")")[0])
-            return length
-        return 0
+        if not column_type:
+            return 0
+        if "(" not in column_type or ")" not in column_type:
+            return 0
+
+        # 形如 varchar(255) / decimal(10,2) / numeric(20, 0)
+        inner = column_type.split("(", 1)[1].split(")", 1)[0].strip()
+        if not inner:
+            return 0
+
+        first = inner.split(",", 1)[0].strip()
+        try:
+            return int(first)
+        except ValueError:
+            return 0
 
     @classmethod
     def split_column_type(cls, column_type: str) -> list[str]:

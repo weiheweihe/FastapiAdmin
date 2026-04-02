@@ -1,4 +1,4 @@
-<!-- {{ function_name }}：PageSearch + PageContent + useCrudList（与项目 CURD 规范一致）；页面路由 /{{ menu_route_first_segment }}{% if is_example_style %}/{{ module_name }}{% if business_name %}/{{ business_name }}{% endif %}{% else %}/{{ business_name }}{% endif %} -->
+<!-- {{ function_name }}：PageSearch + PageContent + useCrudList（与项目 CURD 规范一致）；页面路由 /{{ menu_route_first_segment }}/{{ module_name }} -->
 <template>
   <div class="app-container">
     <PageSearch
@@ -64,7 +64,8 @@
             {% set column_comment = column.column_comment if column.column_comment else '' %}
             {% set parentheseIndex = column_comment.find("（") %}
             {% set comment = column_comment[:parentheseIndex] if parentheseIndex != -1 else column_comment %}
-            {% if column.is_list %}
+            {# 主键列默认不展示在列表（避免 id 混入列表列）；若确需展示请在模板中单独放开 #}
+            {% if column.is_list and column.column_name != pk_column_name %}
             {% if python_field == "status" %}
             <el-table-column
               v-if="contentCols.find((col) => col.prop === 'status')?.show"
@@ -300,7 +301,7 @@ import {{ class_name }}API, {
   {{ class_name }}PageQuery,
   {{ class_name }}Table,
   {{ class_name }}Form,
-} from "{% if is_example_style %}{% if business_name %}@/api/{{ package_name }}/{{ business_name }}/{{ business_name }}{% else %}@/api/{{ package_name }}/{{ module_name }}{% endif %}{% else %}@/api/{{ module_name }}/{{ business_name }}{% endif %}";
+} from "@/api/{{ package_name }}/{{ module_name }}";
 import CrudToolbarLeft from "@/components/CURD/CrudToolbarLeft.vue";
 import CrudToolbarRight from "@/components/CURD/CrudToolbarRight.vue";
 import PageSearch from "@/components/CURD/PageSearch.vue";
@@ -337,7 +338,8 @@ const searchConfig = reactive<ISearchConfig>({
   form: { labelWidth: "auto" },
   formItems: [
     {% for column in columns %}
-    {% if column.is_query %}
+    {# 主键列默认不参与查询（避免 id 混入搜索项）；若确需查询请在模板中单独放开 #}
+    {% if column.is_query and column.column_name != pk_column_name %}
     {% set dict_type = column.dict_type %}
     {% set column_comment = column.column_comment if column.column_comment else '' %}
     {% set parentheseIndex = column_comment.find("（") %}
@@ -451,7 +453,7 @@ const contentCols = reactive<
   { prop: "selection", label: "选择框", show: true },
   { prop: "index", label: "序号", show: true },
   {% for column in columns %}
-  {% if column.is_list %}
+  {% if column.is_list and column.column_name != pk_column_name %}
   { prop: "{{ column.column_name }}", label: "{{ column.column_comment or column.column_name }}", show: true },
   {% endif %}
   {% endfor %}

@@ -87,7 +87,7 @@ class ModelMixin(MappedBase):
         String(10),
         default="0",
         nullable=False,
-        comment="是否启用(0:启用 1:禁用)",
+        comment="状态(0:正常 1:禁用)",
         index=True,
     )
     description: Mapped[str | None] = mapped_column(

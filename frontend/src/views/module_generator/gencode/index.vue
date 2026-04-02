@@ -241,7 +241,6 @@ import GencodeAPI, {
 } from "@/api/module_generator/gencode";
 import MenuAPI, { MenuTable } from "@/api/module_system/menu";
 import DictAPI, { DictTable } from "@/api/module_system/dict";
-import { formatTree } from "@/utils/common";
 import { MenuTypeEnum } from "@/enums";
 import { useSettingsStore } from "@/store";
 import { ThemeMode } from "@/enums/settings/theme.enum";
@@ -271,6 +270,7 @@ interface FileData {
   path: string;
   file_name: string;
   content: string;
+  full_path: string;
 }
 
 const { searchRef, contentRef, handleQueryClick, handleResetClick, refreshList } = useCrudList();
@@ -516,9 +516,10 @@ function buildTree(data: FileData[]): TreeNode {
       currentNode = node;
     });
 
-    // 添加文件节点
+    // 添加文件节点（保持原有目录树展示：文件节点仅显示文件名）
     currentNode.children?.push({
       label: item.file_name,
+      full_path: item.full_path,
       content: item?.content,
     });
   });
@@ -585,10 +586,12 @@ async function handlePreview(row: GenTableSchema): Promise<void> {
         path,
         file_name: fileName,
         content: contentStr,
+        full_path: key,
       } as FileData;
     });
 
     const treeRoot = buildTree(filesData);
+    // 预览树仅展示生成文件树（不额外展示“上级目录：xxx”）
     treeData.value = [treeRoot];
 
     await nextTick();
@@ -638,6 +641,7 @@ async function handleGenTable(targetGenType: string, row?: GenTableSchema): Prom
         loading.value = false;
         return;
       }
+      if (row?.id) await confirmWritePaths(row.id);
       await GencodeAPI.genCodeToPath(tbNames[0]);
       ElMessage.success("已写入项目目录并创建菜单（若尚未存在）");
     } else {
@@ -671,6 +675,56 @@ async function handleGenTable(targetGenType: string, row?: GenTableSchema): Prom
   }
 }
 
+function escapeHtml(s: string) {
+  return s
+    .replaceAll("&", "&amp;")
+    .replaceAll("<", "&lt;")
+    .replaceAll(">", "&gt;")
+    .replaceAll('"', "&quot;")
+    .replaceAll("'", "&#39;");
+}
+
+async function confirmWritePaths(tableId: number) {
+  // 先保存当前抽屉配置，否则 preview 仍基于旧配置，回显会不准确
+  await GencodeAPI.updateTable(info as GenTableSchema, tableId);
+  const previewRes = await GencodeAPI.previewTable(tableId);
+  const raw = previewRes.data?.data as Record<string, unknown> | undefined;
+  const keys = raw && typeof raw === "object" ? Object.keys(raw) : [];
+  const shown = keys.slice(0, 80);
+  const more =
+    keys.length > shown.length
+      ? `<div style="margin-top:10px;padding:8px 12px;border-radius:6px;background:var(--el-fill-color-light);font-size:12px;color:var(--el-text-color-secondary);text-align:center">还有 <b style="color:var(--el-text-color-primary)">${keys.length - shown.length}</b> 个文件未列出</div>`
+      : "";
+  const listRows = shown
+    .map((p, i) => {
+      const bg = i % 2 === 0 ? "var(--el-fill-color-blank)" : "var(--el-fill-color-light)";
+      return `<div class="gencode-write-path-row" style="padding:9px 14px;font-family:ui-monospace,SFMono-Regular,Menlo,Monaco,Consolas,monospace;font-size:12px;line-height:1.45;white-space:nowrap;color:var(--el-text-color-primary);background:${bg};border-bottom:1px solid var(--el-border-color-lighter)">${escapeHtml(p)}</div>`;
+    })
+    .join("");
+  const listHtml = shown.length
+    ? `<div class="gencode-write-path-list-wrap">${listRows}</div>${more}`
+    : `<div style="padding:16px;border-radius:8px;background:var(--el-fill-color-light);color:var(--el-text-color-secondary);font-size:13px;text-align:center">未获取到预览路径，仍将继续写入。</div>`;
+  const tipHtml = `<div style="margin-top:12px;padding-top:10px;border-top:1px solid var(--el-border-color-lighter);font-size:12px;line-height:1.5;color:var(--el-text-color-secondary)">与「代码预览」同源；路径为相对项目根的落盘位置。</div>`;
+  await ElMessageBox.confirm(
+    `<div class="gencode-write-confirm-body" style="font-family:var(--el-font-family);line-height:1.5;color:var(--el-text-color-primary)">
+      <div style="margin-bottom:12px">
+        <div style="font-size:15px;font-weight:600;letter-spacing:0.02em">将写入以下文件</div>
+        <div style="margin-top:4px;font-size:12px;color:var(--el-text-color-secondary)">共 ${keys.length} 项 · 相对项目根目录</div>
+      </div>
+      ${listHtml}
+      ${shown.length ? tipHtml : ""}
+    </div>`,
+    "写入本地确认",
+    {
+      confirmButtonText: "确认写入",
+      cancelButtonText: "取消",
+      type: "warning",
+      dangerouslyUseHTMLString: true,
+      customClass: "gencode-write-confirm-box",
+    }
+  );
+}
+
 /** 同步数据库操作 */
 async function handleSynchDb(row: GenTableSchema): Promise<void> {
   const tableName = row.table_name || "";
@@ -680,21 +734,51 @@ async function handleSynchDb(row: GenTableSchema): Promise<void> {
     return;
   }
 
+  const renderSummary = (p: any) => {
+    const added = p.added?.length ?? 0;
+    const removed = p.removed?.length ?? 0;
+    const changed = p.changed?.length ?? 0;
+    const unchanged = p.unchanged ?? 0;
+    return { added, removed, changed, unchanged };
+  };
+
+  const renderHtml = (title: string, p: any) => {
+    const s = renderSummary(p);
+    const list = (xs: string[]) => (xs?.length ? xs.slice(0, 20).join(", ") : "无");
+    return `
+      <div style="line-height:1.6">
+        <div style="font-weight:600;margin-bottom:6px">${title}</div>
+        <div>新增：<b>${s.added}</b>；删除：<b>${s.removed}</b>；变更：<b>${s.changed}</b>；未变：${s.unchanged}</div>
+        <div style="margin-top:6px">新增列：${list(p.added || [])}</div>
+        <div>删除列：${list(p.removed || [])}</div>
+        <div>变更列：${list((p.changed || []).map((c: any) => c.column_name))}</div>
+        <div style="margin-top:8px;color:var(--el-text-color-secondary)">提示：同步会尽量保留你已配置的 dict/html/query 等生成项，仅以数据库结构为准更新元信息。</div>
+      </div>
+    `;
+  };
+
   try {
-    await ElMessageBox.confirm('确认要强制同步"' + tableName + '"表结构吗？', "确认操作", {
-      confirmButtonText: "确定",
+    loading.value = true;
+    const previewRes = await GencodeAPI.syncDbPreview(tableName);
+    const preview = previewRes.data?.data as any;
+    const mainHtml = renderHtml(`主表：${tableName}`, preview);
+    const subHtml =
+      preview?.sub_table_name && preview?.sub
+        ? renderHtml(`子表：${preview.sub_table_name}`, preview.sub)
+        : "";
+
+    await ElMessageBox.confirm(`${mainHtml}${subHtml}`, "同步差异预览", {
+      confirmButtonText: "确认同步",
       cancelButtonText: "取消",
       type: "warning",
+      dangerouslyUseHTMLString: true,
     });
 
-    loading.value = true;
     await GencodeAPI.syncDb(tableName);
     ElMessage.success("表结构已同步到代码生成配置");
     refreshList();
   } catch (error) {
-    if (error !== "cancel") {
-      console.error("同步表结构失败:", error);
-    }
+    if (error !== "cancel") console.error("同步表结构失败:", error);
   } finally {
     loading.value = false;
   }
@@ -723,6 +807,22 @@ const filterMenuTypes = (nodes: MenuTable[]) => {
     }));
 };
 
+/** 代码生成专用：保留 route_path，便于实时推断分系统 module_xxx */
+function formatMenuTreeWithMeta(nodes: any[]): any[] {
+  return nodes.map((node) => {
+    const formattedNode: any = {
+      value: node.id,
+      label: node.name,
+      disabled: node.status === false || String(node.status) === "false",
+      route_path: node.route_path,
+    };
+    if (node.children && node.children.length > 0) {
+      formattedNode.children = formatMenuTreeWithMeta(node.children);
+    }
+    return formattedNode;
+  });
+}
+
 /** 表格行内「代码生成」：先打开抽屉再拉数据，避免接口慢时误以为点不动 */
 async function handlePreviewTable(row?: GenTableSchema): Promise<void> {
   const selectedTableId = row?.id ?? ids.value[0];
@@ -731,7 +831,23 @@ async function handlePreviewTable(row?: GenTableSchema): Promise<void> {
     return;
   }
 
-  info.table_name = row?.table_name || "";
+  // 先用“列表行数据”把基础信息回显出来（接口慢时不至于看到空表单/旧数据闪烁）
+  Object.assign(info, {
+    id: row?.id ?? selectedTableId,
+    table_name: row?.table_name || info.table_name || "",
+    table_comment: row?.table_comment ?? info.table_comment ?? "",
+    class_name: row?.class_name ?? info.class_name ?? "",
+    package_name: row?.package_name ?? info.package_name ?? "",
+    module_name: row?.module_name ?? info.module_name ?? "",
+    business_name: row?.business_name ?? info.business_name ?? "",
+    function_name: row?.function_name ?? info.function_name ?? "",
+    description: row?.description ?? info.description ?? "",
+    parent_menu_id: row?.parent_menu_id ?? info.parent_menu_id ?? undefined,
+    sub_table_name: row?.sub_table_name ?? info.sub_table_name ?? "",
+    sub_table_fk_name: row?.sub_table_fk_name ?? info.sub_table_fk_name ?? "",
+  } as Partial<GenTableSchema>);
+  // 字段列表以 detail 接口为准，避免上一张表的 columns 残留
+  info.columns = [];
   activeStep.value = 0;
   editVisible.value = true;
 
@@ -749,7 +865,8 @@ async function handlePreviewTable(row?: GenTableSchema): Promise<void> {
       MenuAPI.listMenu(),
       DictAPI.listDictType({ page_no: 1, page_size: 100 }),
     ]);
-    menuOptions.value = formatTree(filterMenuTypes(menu_response.data.data));
+    // 使用代码生成专用格式化：保留 route_path 供「分系统」实时回显
+    menuOptions.value = formatMenuTreeWithMeta(filterMenuTypes(menu_response.data.data));
     dictOptions.value = dict_response.data.data.items;
   } catch (e) {
     console.error("菜单或字典加载失败:", e);
@@ -902,8 +1019,13 @@ onActivated(async () => {
   }
 });
 
-// 表单数据
-const info = reactive<GenTableSchema>({
+// 表单数据（后端返回字段可能含 null，这里做更宽松的承载，避免 TS 因类型收窄报错）
+const info = reactive<
+  GenTableSchema & {
+    sub_table_name?: string | null;
+    sub_table_fk_name?: string | null;
+  }
+>({
   id: undefined,
   table_name: "",
   table_comment: "",
@@ -929,8 +1051,8 @@ const createTableLinkFromGen = computed(() => {
   return {
     table_name: info.table_name,
     table_comment: info.table_comment,
-    sub_table_name: info.sub_table_name,
-    sub_table_fk_name: info.sub_table_fk_name,
+    sub_table_name: info.sub_table_name ?? undefined,
+    sub_table_fk_name: info.sub_table_fk_name ?? undefined,
   };
 });
 
@@ -967,7 +1089,7 @@ function clearMasterSub() {
   });
 }
 
-/** module_example 三段式下业务名可空（如 gen_demo02）；旧模式仍必填 */
+/** module_example 风格下业务名可空；模块名示例见 demo、gen_demo02 */
 function validateBusinessName(_rule: unknown, value: unknown, callback: (e?: Error) => void) {
   const pkg = (info.package_name || "").trim();
   const mod = (info.module_name || "").trim();
@@ -1033,7 +1155,6 @@ async function submitForm(options?: { requireColumns?: boolean }) {
       if (savedColumns && savedColumns.length > 0) {
         info.columns = savedColumns;
       }
-      ElMessage.success("配置已保存");
     }
     return true;
   } catch (error) {
@@ -1131,7 +1252,7 @@ async function loadTableDetail(id: number | string) {
         // 深拷贝确保数据独立性
         info.columns = JSON.parse(JSON.stringify(data.columns));
         // 设置列的选中状态
-        info.columns.forEach((item: any) => {
+        (info.columns ?? []).forEach((item: any) => {
           item.select = true;
         });
       }

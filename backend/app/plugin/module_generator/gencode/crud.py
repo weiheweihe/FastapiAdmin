@@ -186,6 +186,118 @@ class GenTableCRUD(CRUDBase[GenTableModel, GenTableSchema, GenTableSchema]):
 
         return dict_data
 
+    async def get_db_table_page(
+        self,
+        search: GenTableQueryParam | None,
+        offset: int,
+        limit: int,
+    ) -> tuple[list[dict], int]:
+        """数据库侧分页获取物理表列表（用于导入表弹窗）。
+
+        说明：
+        - 旧实现使用 SQLAlchemy Inspector 全量遍历再内存分页，表多时非常慢。
+        - 这里按方言走系统表（MySQL information_schema / Postgres pg_catalog）进行分页与过滤。
+        - 若方言不支持，则回退到旧的全量遍历。
+        """
+        database_name = settings.DATABASE_NAME
+        db_type = (settings.DATABASE_TYPE or "").lower()
+
+        # 解析 like 关键字（GenTableQueryParam 把字段包装成 ("like", value)）
+        name_kw = None
+        comment_kw = None
+        if search:
+            try:
+                if search.table_name and search.table_name[1]:
+                    name_kw = str(search.table_name[1]).strip()
+                if search.table_comment and search.table_comment[1]:
+                    comment_kw = str(search.table_comment[1]).strip()
+            except Exception:
+                # 兜底：参数结构异常时忽略过滤
+                name_kw = None
+                comment_kw = None
+
+        # MySQL / MariaDB
+        if db_type in {"mysql", "mariadb"}:
+            where_sql = "WHERE table_schema = :db AND table_type = 'BASE TABLE'"
+            params: dict = {"db": database_name, "offset": offset, "limit": limit}
+            if name_kw:
+                where_sql += " AND table_name LIKE :name_kw"
+                params["name_kw"] = f"%{name_kw}%"
+            if comment_kw:
+                where_sql += " AND table_comment LIKE :comment_kw"
+                params["comment_kw"] = f"%{comment_kw}%"
+
+            count_sql = text(f"SELECT COUNT(1) AS cnt FROM information_schema.tables {where_sql}")
+            rows_sql = text(
+                "SELECT table_name, table_comment "
+                f"FROM information_schema.tables {where_sql} "
+                "ORDER BY table_name ASC "
+                "LIMIT :limit OFFSET :offset"
+            )
+            total_res = await self.auth.db.execute(count_sql, params)
+            total = int(total_res.scalar() or 0)
+            res = await self.auth.db.execute(rows_sql, params)
+            items: list[dict] = []
+            for r in res.fetchall():
+                # r may be Row/tuple depending on driver
+                table_name = r[0]
+                table_comment = r[1] or ""
+                items.append(
+                    GenDBTableSchema(
+                        database_name=database_name,
+                        table_name=table_name,
+                        table_type=settings.DATABASE_TYPE,
+                        table_comment=table_comment,
+                    ).model_dump()
+                )
+            return items, total
+
+        # PostgreSQL
+        if db_type in {"postgresql", "postgres"}:
+            # pg_description 需要通过 objsubid=0 获取 table comment
+            where_sql = "WHERE n.nspname NOT IN ('pg_catalog','information_schema') AND c.relkind = 'r'"
+            params = {"offset": offset, "limit": limit}
+            if name_kw:
+                where_sql += " AND c.relname ILIKE :name_kw"
+                params["name_kw"] = f"%{name_kw}%"
+            if comment_kw:
+                where_sql += " AND COALESCE(d.description,'') ILIKE :comment_kw"
+                params["comment_kw"] = f"%{comment_kw}%"
+
+            base_from = (
+                "FROM pg_catalog.pg_class c "
+                "JOIN pg_catalog.pg_namespace n ON n.oid = c.relnamespace "
+                "LEFT JOIN pg_catalog.pg_description d ON d.objoid = c.oid AND d.objsubid = 0 "
+            )
+            count_sql = text(f"SELECT COUNT(1) AS cnt {base_from} {where_sql}")
+            rows_sql = text(
+                "SELECT c.relname AS table_name, COALESCE(d.description,'') AS table_comment "
+                f"{base_from} {where_sql} "
+                "ORDER BY c.relname ASC "
+                "LIMIT :limit OFFSET :offset"
+            )
+            total_res = await self.auth.db.execute(count_sql, params)
+            total = int(total_res.scalar() or 0)
+            res = await self.auth.db.execute(rows_sql, params)
+            items = []
+            for r in res.fetchall():
+                table_name = r[0]
+                table_comment = r[1] or ""
+                items.append(
+                    GenDBTableSchema(
+                        database_name=database_name,
+                        table_name=table_name,
+                        table_type=settings.DATABASE_TYPE,
+                        table_comment=table_comment,
+                    ).model_dump()
+                )
+            return items, total
+
+        # Fallback：回退旧逻辑（全量遍历再分页由上层处理）
+        all_items = await self.get_db_table_list(search)
+        total = len(all_items)
+        return all_items[offset : offset + limit], total
+
     async def get_db_table_list_by_names(self, table_names: list[str]) -> list[GenDBTableSchema]:
         """
         根据业务表名称列表获取数据库表信息。
@@ -345,10 +457,10 @@ class GenTableColumnCRUD(CRUDBase[GenTableColumnModel, GenTableColumnSchema, Gen
                 "column_length": column_length or "",
                 "column_default": str(column_default) if column_default is not None else "",
                 "sort": idx + 1,  # 序号从1开始
-                "is_pk": 1 if is_pk else 0,
-                "is_increment": 1 if is_increment else 0,
-                "is_nullable": 1 if is_nullable else 0,
-                "is_unique": 1 if is_unique else 0,
+                "is_pk": bool(is_pk),
+                "is_increment": bool(is_increment),
+                "is_nullable": bool(is_nullable),
+                "is_unique": bool(is_unique),
             }
 
             columns_list.append(column_info)

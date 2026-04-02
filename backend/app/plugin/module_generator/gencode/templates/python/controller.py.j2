@@ -14,11 +14,9 @@ from app.core.base_schema import BatchSetAvailable
 from .service import {{ class_name }}Service
 from .schema import {{ class_name }}CreateSchema, {{ class_name }}UpdateSchema, {{ class_name }}QueryParam
 
-{% if is_example_style %}
-{{ class_name }}Router = APIRouter(prefix='/{{ module_name }}{% if business_name %}/{{ business_name }}{% endif %}', tags=["{{ function_name }}模块"])
-{% else %}
-{{ class_name }}Router = APIRouter(prefix='/{{ business_name }}', tags=["{{ function_name }}模块"])
-{% endif %}
+# 动态路由容器前缀由 module_xxx 决定（discover: module_xxx -> /xxx）
+# 对齐 module_example/demo：业务路由前缀固定为 /{module_name}
+{{ class_name }}Router = APIRouter(prefix='/{{ module_name }}', tags=["{{ function_name }}模块"])
 
 @{{ class_name }}Router.get(
     "/detail/{id}",
