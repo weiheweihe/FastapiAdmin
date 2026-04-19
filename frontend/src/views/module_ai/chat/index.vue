@@ -217,7 +217,6 @@ const handleSendMessage = async (message: string, files?: UploadedFile[]) => {
   } catch {
     messages.value.pop();
     error.value = "发送消息失败，请检查连接状态";
-    ElMessage.error("发送失败");
   } finally {
     sending.value = false;
   }
@@ -235,7 +234,6 @@ const createNewSession = async (firstMessage: string): Promise<boolean> => {
     }
     throw new Error("创建会话失败");
   } catch {
-    ElMessage.error("创建会话失败，请重试");
     return false;
   }
 };
@@ -248,7 +246,6 @@ const handleSelectSession = async (session: ChatSession) => {
   try {
     const response = await AiChatAPI.getSessionDetail(session.id);
     if (response.data?.code !== 0) {
-      ElMessage.error("获取会话详情失败");
       return;
     }
 

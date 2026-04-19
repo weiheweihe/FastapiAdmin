@@ -11,7 +11,7 @@ class NoticeModel(ModelMixin, UserMixin):
 
     __tablename__: str = "sys_notice"
     __table_args__: dict[str, str] = {"comment": "通知公告表"}
-    __loader_options__: list[str] = ["created_by", "updated_by"]
+    __loader_options__: list[str] = ["created_by", "updated_by", "deleted_by"]
 
     notice_title: Mapped[str] = mapped_column(String(64), nullable=False, comment="公告标题")
     notice_type: Mapped[str] = mapped_column(

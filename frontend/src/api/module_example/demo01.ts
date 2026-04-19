@@ -105,6 +105,7 @@ export interface Demo01Table extends BaseType {
   updated_id?: number;
   created_by?: CommonType;
   updated_by?: CommonType;
+  deleted_by?: CommonType;
 }
 
 /** 与后端 Demo01CreateSchema / Demo01UpdateSchema 一致（不含 id，更新走 URL） */

@@ -162,6 +162,8 @@ declare global {
     description?: string;
     created_time?: string;
     updated_time?: string;
+    deleted_time?: string;
+    deleted_id?: number;
   }
 
   /**

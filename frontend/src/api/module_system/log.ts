@@ -62,4 +62,5 @@ export interface LogTable extends BaseType {
   process_time?: string;
   created_by?: CommonType;
   updated_by?: CommonType;
+  deleted_by?: CommonType;
 }

@@ -265,7 +265,6 @@ const handleSessionCommand = async (command: string, session: ChatSession) => {
       if (index > -1) {
         sessions.value.splice(index, 1);
       }
-      ElMessage.success("删除成功");
     } catch (error) {
       if (error !== "cancel") {
         ElMessage.error("删除失败");

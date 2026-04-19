@@ -1,5 +1,6 @@
 import builtins
 from collections.abc import Sequence
+from datetime import datetime
 from typing import TYPE_CHECKING, Any, Generic, TypeVar
 
 from pydantic import BaseModel
@@ -294,7 +295,7 @@ class CRUDBase(Generic[ModelType, CreateSchemaType, UpdateSchemaType]):
 
     async def delete(self, ids: builtins.list[int]) -> None:
         """
-        删除对象
+        软删除对象
 
         参数:
         - ids (List[int]): 对象ID列表
@@ -313,16 +314,32 @@ class CRUDBase(Generic[ModelType, CreateSchemaType, UpdateSchemaType]):
             if len(pk_cols) > 1:
                 raise CustomException(msg="暂不支持复合主键的批量删除")
 
-            # 只删除有权限的数据
-            sql = delete(self.model).where(pk_cols[0].in_(ids))
-            await self.auth.db.execute(sql)
-            await self.auth.db.flush()
+            # 检查模型是否支持软删除
+            if hasattr(self.model, "is_deleted") and hasattr(self.model, "deleted_time") and hasattr(self.model, "deleted_id"):
+                # 执行软删除
+                update_data = {
+                    "is_deleted": True,
+                    "deleted_time": datetime.now()
+                }
+                # 如果有当前用户，设置删除人ID
+                if self.auth.user:
+                    update_data["deleted_id"] = self.auth.user.id
+
+                # 只更新有权限的数据
+                sql = update(self.model).where(pk_cols[0].in_(ids)).values(**update_data)
+                await self.auth.db.execute(sql)
+                await self.auth.db.flush()
+            else:
+                # 不支持软删除的模型，执行物理删除
+                sql = delete(self.model).where(pk_cols[0].in_(ids))
+                await self.auth.db.execute(sql)
+                await self.auth.db.flush()
         except Exception as e:
             raise CustomException(msg=f"删除失败: {e!s}")
 
     async def clear(self) -> None:
         """
-        清空对象表
+        软清空对象表
 
         返回:
         - None
@@ -331,9 +348,26 @@ class CRUDBase(Generic[ModelType, CreateSchemaType, UpdateSchemaType]):
         - CustomException: 清空失败时抛出异常
         """
         try:
-            sql = delete(self.model)
-            await self.auth.db.execute(sql)
-            await self.auth.db.flush()
+            # 检查模型是否支持软删除
+            if hasattr(self.model, "is_deleted") and hasattr(self.model, "deleted_time") and hasattr(self.model, "deleted_id"):
+                # 执行软删除
+                update_data = {
+                    "is_deleted": True,
+                    "deleted_time": datetime.now()
+                }
+                # 如果有当前用户，设置删除人ID
+                if self.auth.user:
+                    update_data["deleted_id"] = self.auth.user.id
+
+                # 更新所有数据为软删除状态
+                sql = update(self.model).values(**update_data)
+                await self.auth.db.execute(sql)
+                await self.auth.db.flush()
+            else:
+                # 不支持软删除的模型，执行物理删除
+                sql = delete(self.model)
+                await self.auth.db.execute(sql)
+                await self.auth.db.flush()
         except Exception as e:
             raise CustomException(msg=f"清空失败: {e!s}")
 
@@ -368,6 +402,47 @@ class CRUDBase(Generic[ModelType, CreateSchemaType, UpdateSchemaType]):
         except Exception as e:
             raise CustomException(msg=f"批量更新失败: {e!s}")
 
+    async def restore(self, ids: builtins.list[int]) -> None:
+        """
+        恢复软删除的对象
+
+        参数:
+        - ids (List[int]): 对象ID列表
+
+        返回:
+        - None
+
+        异常:
+        - CustomException: 恢复失败时抛出异常
+        """
+        try:
+            mapper = sa_inspect(self.model)
+            pk_cols = list(getattr(mapper, "primary_key", []))
+            if not pk_cols:
+                raise CustomException(msg="模型缺少主键，无法恢复")
+            if len(pk_cols) > 1:
+                raise CustomException(msg="暂不支持复合主键的批量恢复")
+
+            # 检查模型是否支持软删除
+            if hasattr(self.model, "is_deleted") and hasattr(self.model, "deleted_time") and hasattr(self.model, "deleted_id"):
+                # 执行恢复操作
+                update_data = {
+                    "is_deleted": False,
+                    "deleted_time": None,
+                    "deleted_id": None
+                }
+
+                # 只更新有权限的数据
+                sql = update(self.model).where(pk_cols[0].in_(ids)).values(**update_data)
+                await self.auth.db.execute(sql)
+                await self.auth.db.flush()
+            else:
+                raise CustomException(msg="该模型不支持软删除，无法恢复")
+        except CustomException:
+            raise
+        except Exception as e:
+            raise CustomException(msg=f"恢复失败: {e!s}")
+
     async def __filter_permissions(self, sql: Select) -> Select:
         """
         过滤数据权限（仅用于Select）。
@@ -389,6 +464,10 @@ class CRUDBase(Generic[ModelType, CreateSchemaType, UpdateSchemaType]):
         - CustomException: 查询参数不存在时抛出异常
         """
         conditions = []
+        # 默认添加软删除条件，只查询未删除的数据
+        if hasattr(self.model, "is_deleted"):
+            conditions.append(getattr(self.model, "is_deleted") == False)
+
         for key, value in kwargs.items():
             if value is None or value == "":
                 continue

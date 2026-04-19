@@ -83,8 +83,11 @@ class CommonQueryParam:
         self,
         created_id: int | None = Query(None, description="创建人"),
         updated_id: int | None = Query(None, description="更新人"),
+        deleted_id: int | None = Query(None, description="删除人"),
     ) -> None:
         if created_id:
             self.created_id = ("eq", created_id)
         if updated_id:
             self.updated_id = ("eq", updated_id)
+        if deleted_id:
+            self.deleted_id = ("eq", deleted_id)

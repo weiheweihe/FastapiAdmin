@@ -82,6 +82,7 @@ export interface WorkflowTable extends BaseType {
   edges?: any[];
   created_by?: CommonType;
   updated_by?: CommonType;
+  deleted_by?: CommonType;
 }
 
 export interface WorkflowForm extends BaseFormType {

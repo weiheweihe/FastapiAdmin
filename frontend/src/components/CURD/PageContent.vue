@@ -561,7 +561,6 @@ function handleDelete(id?: number | string) {
         props.contentConfig
           .deleteAction(ids)
           .then(() => {
-            ElMessage.success("删除成功");
             removeIds.value = [];
             //清空选中项
             tableRef.value?.clearSelection();

@@ -14,7 +14,7 @@ class GenTableModel(ModelMixin, UserMixin):
 
     __tablename__: str = "gen_table"
     __table_args__: dict[str, str] = {"comment": "代码生成表"}
-    __loader_options__: list[str] = ["columns", "created_by", "updated_by"]
+    __loader_options__: list[str] = ["columns", "created_by", "updated_by", "deleted_by"]
 
     table_name: Mapped[str] = mapped_column(
         String(200), nullable=False, default="", comment="表名称"
@@ -109,7 +109,7 @@ class GenTableColumnModel(ModelMixin, UserMixin):
 
     __tablename__: str = "gen_table_column"
     __table_args__: dict[str, str] = {"comment": "代码生成表字段"}
-    __loader_options__: list[str] = ["created_by", "updated_by"]
+    __loader_options__: list[str] = ["created_by", "updated_by", "deleted_by"]
 
     # 数据库设计表字段
     column_name: Mapped[str] = mapped_column(String(200), nullable=False, comment="列名称")

@@ -17,7 +17,7 @@ class WorkflowNodeTypeModel(ModelMixin, UserMixin):
 
     __tablename__: str = "task_workflow_node_type"
     __table_args__: dict[str, str] = {"comment": "工作流编排节点类型（非定时任务节点）"}
-    __loader_options__: list[str] = ["created_by", "updated_by"]
+    __loader_options__: list[str] = ["created_by", "updated_by", "deleted_by"]
 
     name: Mapped[str] = mapped_column(String(128), nullable=False, comment="显示名称")
     code: Mapped[str] = mapped_column(String(64), nullable=False, unique=True, comment="节点编码，对应画布 node.type")

@@ -1,7 +1,7 @@
 from datetime import datetime
 from typing import TYPE_CHECKING, Optional
 
-from sqlalchemy import DateTime, ForeignKey, Integer, String, Text
+from sqlalchemy import Boolean, DateTime, ForeignKey, Integer, String, Text
 from sqlalchemy.ext.asyncio import AsyncAttrs
 from sqlalchemy.orm import (
     DeclarativeBase,
@@ -109,6 +109,21 @@ class ModelMixin(MappedBase):
         index=True,
     )
 
+    is_deleted: Mapped[bool] = mapped_column(
+        Boolean,
+        default=False,
+        nullable=False,
+        comment="是否已删除(0:未删除 1:已删除)",
+        index=True,
+    )
+    deleted_time: Mapped[datetime | None] = mapped_column(
+        DateTime,
+        default=None,
+        nullable=True,
+        comment="删除时间",
+        index=True,
+    )
+
 
 class TenantMixin(MappedBase):
     """
@@ -157,6 +172,15 @@ class UserMixin(MappedBase):
         comment="更新人ID",
     )
 
+    deleted_id: Mapped[int | None] = mapped_column(
+        Integer,
+        ForeignKey("sys_user.id", ondelete="SET NULL", onupdate="CASCADE"),
+        default=None,
+        nullable=True,
+        index=True,
+        comment="删除人ID",
+    )
+
     @declared_attr
     def created_by(self) -> Mapped[Optional["UserModel"]]:
         """
@@ -184,5 +208,20 @@ class UserMixin(MappedBase):
             "UserModel",
             lazy="selectin",
             foreign_keys=lambda: self.updated_id,  # pyright: ignore[reportArgumentType]
+            uselist=False,
+        )
+
+    @declared_attr
+    def deleted_by(self) -> Mapped[Optional["UserModel"]]:
+        """
+        删除人关联关系（延迟加载，避免循环依赖）。
+
+        返回:
+        - Mapped[Optional[UserModel]]: 删除人 ORM 关系。
+        """
+        return relationship(
+            "UserModel",
+            lazy="selectin",
+            foreign_keys=lambda: self.deleted_id,  # pyright: ignore[reportArgumentType]
             uselist=False,
         )
