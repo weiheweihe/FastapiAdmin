@@ -107,6 +107,7 @@ export interface NodeTable extends BaseType {
   end_date?: string;
   created_by?: CommonType;
   updated_by?: CommonType;
+  deleted_by?: CommonType;
 }
 
 export interface NodeForm {

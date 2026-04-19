@@ -85,6 +85,7 @@ export interface NoticeTable extends BaseType {
   notice_content?: string;
   created_by?: CommonType;
   updated_by?: CommonType;
+  deleted_by?: CommonType;
 }
 
 export interface NoticeForm extends BaseFormType {

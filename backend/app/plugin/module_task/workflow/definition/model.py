@@ -11,7 +11,7 @@ class WorkflowModel(ModelMixin, UserMixin):
 
     __tablename__: str = "task_workflow"
     __table_args__ = (UniqueConstraint("code", name="uq_task_workflow_code"), {"comment": "工作流定义表"})
-    __loader_options__: list[str] = ["created_by", "updated_by"]
+    __loader_options__: list[str] = ["created_by", "updated_by", "deleted_by"]
 
     name: Mapped[str] = mapped_column(String(128), nullable=False, comment="流程名称")
     code: Mapped[str] = mapped_column(String(64), nullable=False, comment="流程编码")

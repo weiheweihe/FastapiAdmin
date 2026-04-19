@@ -86,6 +86,7 @@ export interface WorkflowNodeTypeTable extends BaseType {
   is_active?: boolean;
   created_by?: CommonType;
   updated_by?: CommonType;
+  deleted_by?: CommonType;
 }
 
 export interface WorkflowNodeTypeForm {

@@ -96,6 +96,7 @@ export interface DemoTable extends BaseType {
   description?: string;
   created_by?: CommonType;
   updated_by?: CommonType;
+  deleted_by?: CommonType;
   a?: number;
   b?: number;
   c?: number;

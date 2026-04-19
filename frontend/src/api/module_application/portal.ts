@@ -101,6 +101,7 @@ export interface ApplicationInfo extends BaseType {
   tenant?: TenantType;
   created_by?: CommonType;
   updated_by?: CommonType;
+  deleted_by?: CommonType;
 }
 
 /**

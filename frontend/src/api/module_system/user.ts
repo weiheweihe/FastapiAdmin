@@ -190,6 +190,7 @@ export interface UserInfo extends BaseType {
   last_login?: string;
   created_by?: CommonType;
   updated_by?: CommonType;
+  deleted_by?: CommonType;
 }
 
 export interface deptTreeType {

@@ -75,6 +75,7 @@ export interface PositionTable extends BaseType {
   order?: number;
   created_by?: CommonType;
   updated_by?: CommonType;
+  deleted_by?: CommonType;
 }
 
 export interface PositionForm extends BaseFormType {

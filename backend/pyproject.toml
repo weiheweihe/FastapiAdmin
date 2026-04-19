@@ -119,6 +119,9 @@ ignore = [
     "W191",  # indentation contains tabs
     "B904",  # Within an `except` clause
     "B010",  # Do not call with a constant attribute value.
+    "B009",  # Do not use getattr() with a constant attribute value.
+    "E712",  # Avoid equality comparisons to `False`; use `not getattr(self.model, "is_deleted"):` for false checks
+    "W293",  # blank line with whitespace
 ]
 
 [tool.ruff.lint.per-file-ignores]

@@ -75,6 +75,7 @@ class UserModel(ModelMixin, TenantMixin, UserMixin):
         "positions",
         "created_by",
         "updated_by",
+        "deleted_by",
     ]
 
     username: Mapped[str] = mapped_column(
