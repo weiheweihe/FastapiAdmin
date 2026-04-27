@@ -45,7 +45,10 @@ export interface RouteVO {
  * 后端常把「模块目录」与「其下功能菜单」写成同一绝对 route_path（如均为 /module_xxx/demo02）。
  * Vue Router 嵌套子路由应使用空 path 挂到父 path 下，否则重复绝对路径会导致匹配异常。
  */
-function normalizeMenuNestedPaths(items: MenuTable[], parentAbsolutePath?: string): MenuTable[] {
+function normalizeMenuNestedPaths(
+  items: MenuTable[],
+  parentAbsolutePath?: string,
+): MenuTable[] {
   return items.map((node) => {
     const raw = (node.route_path ?? "").trim();
     let routePath: string | null | undefined = node.route_path;
@@ -139,7 +142,9 @@ export const usePermissionStore = defineStore("permission", () => {
    */
   const resetRouter = () => {
     // 创建常量路由名称集合，用于O(1)时间复杂度的查找
-    const constantRouteNames = new Set(constantRoutes.map((route) => route.name).filter(Boolean));
+    const constantRouteNames = new Set(
+      constantRoutes.map((route) => route.name).filter(Boolean),
+    );
 
     // 从 router 实例中移除动态路由
     routes.value.forEach((route) => {
@@ -168,7 +173,10 @@ export const usePermissionStore = defineStore("permission", () => {
  * 转换后端路由数据为Vue Router配置
  * 处理组件路径映射和Layout层级嵌套
  */
-const transformRoutes = (routes: RouteVO[], isTopLevel: boolean = true): RouteRecordRaw[] => {
+const transformRoutes = (
+  routes: RouteVO[],
+  isTopLevel: boolean = true,
+): RouteRecordRaw[] => {
   return routes.map((route) => {
     // 创建路由对象，保留所有路由属性
     const normalizedRoute = { ...route } as RouteRecordRaw;
@@ -185,8 +193,6 @@ const transformRoutes = (routes: RouteVO[], isTopLevel: boolean = true): RouteRe
     // 3. 叶子路由使用实际组件
     // 4. 递归处理子路由，实现无限层级菜单
     if (normalizedRoute.children && normalizedRoute.children.length > 0) {
-      // normalizedRoute.children = transformRoutes(route.children);
-
       // 非叶子路由
       if (isTopLevel) {
         // 顶级路由（一级目录），使用Layout组件
@@ -197,8 +203,25 @@ const transformRoutes = (routes: RouteVO[], isTopLevel: boolean = true): RouteRe
       }
       // 递归处理子路由，标记为非顶级路由
       normalizedRoute.children = transformRoutes(route.children, false);
+    } else if (isTopLevel && normalizedRoute.component) {
+      // 顶级叶子路由：自动包装 Layout，使其在侧边栏显示为一级菜单
+      const childComponent = normalizedRoute.component
+        ? modules[`../../views/${normalizedRoute.component}.vue`] ||
+          modules["../../views/error/404.vue"]
+        : modules["../../views/error/404.vue"];
+      const originalName = normalizedRoute.name;
+      normalizedRoute.name = `${String(originalName)}Parent`;
+      normalizedRoute.component = Layout;
+      normalizedRoute.children = [
+        {
+          path: "",
+          name: originalName,
+          meta: normalizedRoute.meta,
+          component: childComponent,
+        } as RouteRecordRaw,
+      ];
     } else {
-      // 叶子路由，使用实际组件
+      // 非顶级叶子路由，使用实际组件
       normalizedRoute.component = normalizedRoute.component
         ? modules[`../../views/${normalizedRoute.component}.vue`] ||
           modules["../../views/error/404.vue"]

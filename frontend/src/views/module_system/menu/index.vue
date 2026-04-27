@@ -842,7 +842,18 @@ const rules = reactive({
     { required: true, message: "请输入菜单名称", trigger: "blur" },
     { min: 2, max: 50, message: "长度 2 到 50 个字符", trigger: "blur" },
   ],
-  parent_id: [{ required: true, message: "请选择父级菜单", trigger: "blur" }],
+  parent_id: [
+    {
+      validator: (_rule: any, value: any, callback: any) => {
+        if (formData.type === MenuTypeEnum.BUTTON && !value) {
+          callback(new Error("请选择父级菜单"));
+        } else {
+          callback();
+        }
+      },
+      trigger: "blur",
+    },
+  ],
   type: [{ required: true, message: "请选择菜单类型", trigger: "blur" }],
   order: [{ required: true, message: "请输入排序", trigger: "blur" }],
   permission: [{ required: true, message: "请输入权限标识", trigger: "blur" }],
@@ -943,12 +954,19 @@ async function handleOpenDialog(
   createParentLocked.value = false;
   if (id) {
     const response = await MenuAPI.detailMenu(id);
+    const data = response.data.data as Record<string, any>;
+    // 后端可能返回 null，字符串字段需回退为 "" 以满足 el-input/el-select 的 modelValue 类型要求
+    for (const key of Object.keys(data)) {
+      if (data[key] === null) {
+        data[key] = "";
+      }
+    }
     if (type === "detail") {
       dialogVisible.title = "菜单详情";
-      Object.assign(detailFormData.value, response.data.data);
+      Object.assign(detailFormData.value, data);
     } else if (type === "update") {
       dialogVisible.title = "修改菜单";
-      Object.assign(formData, response.data.data);
+      Object.assign(formData, data);
     }
   } else {
     dialogVisible.title = "新增菜单";

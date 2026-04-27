@@ -1,6 +1,6 @@
 <template>
   <el-breadcrumb class="flex-y-center">
-    <el-breadcrumb-item v-for="(item, index) in breadcrumbs" :key="item.path">
+    <el-breadcrumb-item v-for="(item, index) in breadcrumbs" :key="index">
       <span
         v-if="item.redirect === 'noredirect' || index === breadcrumbs.length - 1"
         class="color-gray-400"
@@ -35,9 +35,14 @@ function getBreadcrumb() {
   if (!isDashboard(first)) {
     matched = [{ path: "/home", meta: { title: "dashboard" } } as any].concat(matched);
   }
-  breadcrumbs.value = matched.filter((item) => {
+  matched = matched.filter((item) => {
     return item.meta && item.meta.title && item.meta.breadcrumb !== false;
   });
+  // 去重：连续相同 path 只保留最后一个（如 Layout 包装层与实际页面 path 相同）
+  breadcrumbs.value = matched.filter(
+    (item, index) => index === matched.length - 1 || item.path !== matched[index + 1].path,
+  );
+
 }
 
 function isDashboard(route: RouteLocationMatched) {
