@@ -956,10 +956,9 @@ async function handleOpenDialog(
     const response = await MenuAPI.detailMenu(id);
     const data = response.data.data as Record<string, any>;
     // 后端可能返回 null，字符串字段需回退为 "" 以满足 el-input/el-select 的 modelValue 类型要求
-    for (const key of Object.keys(data)) {
-      if (data[key] === null) {
-        data[key] = "";
-      }
+    // el-tree-select 不接受 null，转为 undefined
+    if (data.parent_id === null) {
+      data.parent_id = undefined;
     }
     if (type === "detail") {
       dialogVisible.title = "菜单详情";
